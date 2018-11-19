@@ -13,3 +13,4 @@ iparking-entity/.classpath
 iparking-entity/.settings/org.eclipse.wst.common.component
 iparking-entity/.settings/org.eclipse.wst.common.project.facet.core.prefs.xml
 iparking-entity/.settings/org.eclipse.wst.common.project.facet.core.xml
+*.component

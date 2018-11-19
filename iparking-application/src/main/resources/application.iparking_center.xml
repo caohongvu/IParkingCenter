@@ -16,20 +16,20 @@
     <!-- Define Jndi Datasource -->
     <jee:jndi-lookup id="iparkingCenter" jndi-name="jdbc/iparking_center" expected-type="javax.sql.DataSource"/>
     <!-- Define Spring Repository -->
-    <jpa:repositories base-package="net.cis.repository.iparking.center" entity-manager-factory-ref="entityManagerFactory1"/>
+    <jpa:repositories base-package="net.cis.repository.iparking.center" />
 
     <!-- Get the entity manager injected into the factory bean -->
     <bean  class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
     <!-- JPA Vendor Adapter -->
-    <bean id="jpaVendorAdapter1" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="database" value="MYSQL"/>
     </bean>
 
     <!-- Entity Manager Factory -->
-    <bean id="entityManagerFactory1" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="iparkingCenter">
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="iparkingCenter">
         <property name="dataSource" ref="iparkingCenter"/>
-        <property name="jpaVendorAdapter" ref="jpaVendorAdapter1"/>
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
         <property name="jpaProperties">
             <map>
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
@@ -43,11 +43,11 @@
     </bean>
 
     <!-- Define Transaction Manager -->
-    <bean id="transactionManager1" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory1"/>
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
     <!-- Enable Transactional Manner -->
-    <tx:annotation-driven transaction-manager="transactionManager1"/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
 </beans>

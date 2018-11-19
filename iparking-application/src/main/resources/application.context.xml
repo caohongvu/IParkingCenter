@@ -18,9 +18,7 @@
         <property name="locations" value="classpath:application.properties"/>
     </bean>
 
-    <import resource="application.payment_center.xml"/>
     <import resource="application.iparking_center.xml"/>
-    <import resource="application.invoice_center.xml"/>
     <import resource="application.jndi.xml"/>
 
 </beans>

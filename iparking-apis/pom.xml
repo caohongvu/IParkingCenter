@@ -152,12 +152,12 @@
 					<version>2.4</version>
 					<configuration>
 						<warSourceDirectory>src/main/webapp</warSourceDirectory>
-						<warName>payment-apis</warName>
+						<warName>iparking-apis</warName>
 					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<finalName>needii</finalName>
+		<finalName>iparking-apis</finalName>
 	</build>
 
 </project>
