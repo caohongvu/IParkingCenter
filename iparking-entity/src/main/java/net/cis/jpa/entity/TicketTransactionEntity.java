@@ -39,6 +39,9 @@ public class TicketTransactionEntity {
 	@Column(name="payment_trans_no")
 	private String paymentTransNo;
 	
+	@Column(name="cus_token")
+	private String cusToken;
+	
 	@Column(name="cus_token_scheme")
 	private String cusTokenScheme;
 	
@@ -52,7 +55,7 @@ public class TicketTransactionEntity {
 	private String cashHolder;
 	
 	@Column(name="payment_amount")
-	private String payment_amount;
+	private String paymentAmount;
 	
 	@Column(name="apply_from_time")
 	private String applyFromTime;
@@ -63,6 +66,9 @@ public class TicketTransactionEntity {
 	@Column(name="payment_status")
 	private int paymentStatus;
 
+	@Column(name="auto_extend")
+	private int autoExtend;
+	
 	public String getId() {
 		return id;
 	}
@@ -167,12 +173,12 @@ public class TicketTransactionEntity {
 		this.cashHolder = cashHolder;
 	}
 
-	public String getPayment_amount() {
-		return payment_amount;
+	public String getPaymentAmount() {
+		return paymentAmount;
 	}
 
-	public void setPayment_amount(String payment_amount) {
-		this.payment_amount = payment_amount;
+	public void setPaymentAmount(String paymentAmount) {
+		this.paymentAmount = paymentAmount;
 	}
 
 	public String getApplyFromTime() {
@@ -197,6 +203,22 @@ public class TicketTransactionEntity {
 
 	public void setPaymentStatus(int paymentStatus) {
 		this.paymentStatus = paymentStatus;
+	}
+
+	public String getCusToken() {
+		return cusToken;
+	}
+
+	public void setCusToken(String cusToken) {
+		this.cusToken = cusToken;
+	}
+
+	public int getAutoExtend() {
+		return autoExtend;
+	}
+
+	public void setAutoExtend(int autoExtend) {
+		this.autoExtend = autoExtend;
 	}
 	
 	

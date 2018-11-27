@@ -133,7 +133,7 @@ public class TicketDto {
 		this.status = status;
 	}
 
-	public boolean getIsInSession() {
+	public boolean getInSession() {
 		return inSession;
 	}
 

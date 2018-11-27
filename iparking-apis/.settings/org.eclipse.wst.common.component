@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                                                                                        
+                                                                                                        
+    
+    
+    
+    
     
     
     
@@ -21,7 +25,11 @@
     
     
     <wb-module deploy-name="iparking-apis">
-                                                                                                                                                                                
+                                                                                                                                                                                                                
+        
+        
+        
+        
         
         
         
@@ -43,7 +51,11 @@
         
         
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                                                                                                                                                                                
+                                                                                                                                                                                                                
+        
+        
+        
+        
         
         
         
@@ -65,7 +77,11 @@
         
         
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
-                                                                                                                                                                                
+                                                                                                                                                                                                                
+        
+        
+        
+        
         
         
         
@@ -99,7 +115,11 @@
         <dependent-module archiveName="cis-thirdparty-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/cis-thirdparty/cis-thirdparty">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-                                                                                                                                                                                
+                                                                                                                                                                                                                
+        
+        
+        
+        
         
         
         
@@ -121,9 +141,17 @@
         
         
         <property name="java-output-path" value="/nfc-apis/target/classes"/>
-                
+                                                
+        
+        
+        
+        
         <property name="context-root" value="iparking-apis"/>
-                                                                                                                                                                            
+                                                                                                                                                                                                            
+    
+    
+    
+    
     
     
     
@@ -145,7 +173,11 @@
     
     
     </wb-module>
-                                                                                    
+                                                                                                    
+
+
+
+
 
 
 

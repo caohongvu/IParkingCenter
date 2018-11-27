@@ -41,6 +41,14 @@ public class TicketTransactionEndpoint extends BaseEndpoint {
 		return ticketTransaction;
 	}
 	
+	@RequestMapping(value = "/{paymentOrderNo}/find-payment-order-no/", method = RequestMethod.GET)
+	@ApiOperation("Fetch details of transaction")
+	public @ResponseBody TicketTransactionDto getByPaymentOrder(@PathVariable("paymentOrderNo") String paymentOrderNo) throws Exception {
+		TicketTransactionDto ticketTransaction = ticketTransactionService.findByPaymentOrderNo(paymentOrderNo);
+		return ticketTransaction;
+	}
+	
+	
 	@RequestMapping(value = "/update/", method = RequestMethod.POST)
 	@ApiOperation("Update details of transaction")
 	public @ResponseBody TicketTransactionDto updateTransaction(@RequestBody TicketTransactionDto ticketTransactionDto) throws Exception {

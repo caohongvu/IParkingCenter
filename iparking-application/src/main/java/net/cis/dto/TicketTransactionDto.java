@@ -22,6 +22,8 @@ public class TicketTransactionDto {
 	
 	private String paymentTransNo;
 	
+	private String cusToken;
+	
 	private String cusTokenScheme;
 	
 	private String createdAt;
@@ -37,6 +39,8 @@ public class TicketTransactionDto {
 	private String applyToTime;
 	
 	private int paymentStatus;
+	
+	private int autoExtend;
 
 	public String getId() {
 		return id;
@@ -172,6 +176,23 @@ public class TicketTransactionDto {
 
 	public void setPaymentStatus(int paymentStatus) {
 		this.paymentStatus = paymentStatus;
+	}
+
+	
+	public String getCusToken() {
+		return cusToken;
+	}
+
+	public void setCusToken(String cusToken) {
+		this.cusToken = cusToken;
+	}
+
+	public int getAutoExtend() {
+		return autoExtend;
+	}
+
+	public void setAutoExtend(int autoExtend) {
+		this.autoExtend = autoExtend;
 	}
 	
 	
