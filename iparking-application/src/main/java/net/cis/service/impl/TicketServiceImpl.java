@@ -9,10 +9,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.cis.dto.ParkingDto;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.entity.TicketEntity;
 import net.cis.repository.iparking.center.TicketRepository;
 import net.cis.service.TicketService;
+import net.cis.service.cache.ParkingPlaceCache;
 
 /**
  * Created by Vincent on 02/10/2018
@@ -23,7 +25,8 @@ public class TicketServiceImpl implements TicketService {
 	@Autowired
 	private TicketRepository ticketRepository;
 	
-	
+	@Autowired
+	private ParkingPlaceCache parkingPlaceCache;
 
 	ModelMapper mapper;
 	
@@ -45,6 +48,8 @@ public class TicketServiceImpl implements TicketService {
 		}
 		TicketDto ticketDto = new TicketDto();
 		mapper.map(entity, ticketDto);
+		ParkingDto parkingDto = parkingPlaceCache.get(String.valueOf(ticketDto.getParkingPlace()));
+		ticketDto.setCppCode(parkingDto.getParkingCode());
 		return ticketDto;
 	}
 

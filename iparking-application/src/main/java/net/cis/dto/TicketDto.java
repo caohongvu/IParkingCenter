@@ -9,6 +9,8 @@ public class TicketDto {
 	
 	private long parkingPlace;
 	
+	private String cppCode;
+	
 	private long customer;
 	
 	private String carNumberPlate;
@@ -51,6 +53,14 @@ public class TicketDto {
 
 	public void setParkingPlace(long parkingPlace) {
 		this.parkingPlace = parkingPlace;
+	}
+	
+	public String getCppCode() {
+		return cppCode;
+	}
+
+	public void setCppCode(String cppCode) {
+		this.cppCode = cppCode;
 	}
 
 	public long getCustomer() {
