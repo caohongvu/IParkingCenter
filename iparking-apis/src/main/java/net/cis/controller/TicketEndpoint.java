@@ -53,9 +53,23 @@ public class TicketEndpoint extends BaseEndpoint {
 			toDate = format.parse(date +" 23:59:59");
 			calendar.setTime(format.parse(date+" 00:00:00"));
 		}
+		
 		calendar.set(Calendar.HOUR, -36);
 		Date fromDate = calendar.getTime();
 		
+		if(inSession != null && inSession == 0) {
+			if(Calendar.getInstance().after(toDate)) {
+				fromDate = format.parse(date+" 00:00:00");
+			} else {
+				if(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) > 7) {
+					fromDate = format.parse(date+" 00:00:00");
+				} else {
+					calendar.setTime(format.parse(date+" 18:00:00"));
+					calendar.set(Calendar.DATE, -1);
+					fromDate = calendar.getTime();
+				}
+			}
+		}
 		
 		page = page -1;
 		if(page < 0) {
