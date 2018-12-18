@@ -7,10 +7,12 @@ import javax.annotation.PostConstruct;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import net.cis.dto.ParkingDto;
 import net.cis.dto.TicketDto;
+import net.cis.jpa.criteria.TicketCriteria;
 import net.cis.jpa.entity.TicketEntity;
 import net.cis.repository.iparking.center.TicketRepository;
 import net.cis.service.TicketService;
@@ -55,8 +57,14 @@ public class TicketServiceImpl implements TicketService {
 
 
 	@Override
-	public List<TicketDto> findAll() {
-		List<TicketEntity> ticketEntities = ticketRepository.findAll();
+	public List<TicketDto> findAll(TicketCriteria ticketCriteria, Pageable pageable) {
+		
+		List<TicketEntity> ticketEntities = null;
+		Boolean inSession = null;
+		if(ticketCriteria.getInSession() != null) {
+			inSession = ticketCriteria.getInSession() == 1;
+		}
+		ticketEntities = ticketRepository.findAll(ticketCriteria.getCppId(), inSession, pageable);
 		List<TicketDto> ticketDtos = this.map(ticketEntities);
 		return ticketDtos;
 	}
