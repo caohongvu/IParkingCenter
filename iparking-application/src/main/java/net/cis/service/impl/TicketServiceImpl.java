@@ -64,7 +64,7 @@ public class TicketServiceImpl implements TicketService {
 		if(ticketCriteria.getInSession() != null) {
 			inSession = ticketCriteria.getInSession() == 1;
 		}
-		ticketEntities = ticketRepository.findAll(ticketCriteria.getCppId(), inSession, pageable);
+		ticketEntities = ticketRepository.findAll(ticketCriteria.getCppId(), inSession,ticketCriteria.getFromDate(),ticketCriteria.getToDate(), pageable);
 		List<TicketDto> ticketDtos = this.map(ticketEntities);
 		return ticketDtos;
 	}

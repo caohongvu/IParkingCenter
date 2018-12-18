@@ -1,5 +1,7 @@
 package net.cis.dto;
 
+import java.util.Date;
+
 /**
  * Created by Vincent on 02/10/2018
  */
@@ -35,7 +37,7 @@ public class TicketDto {
 	
 	private String ticketData;
 	
-	private String createdAt;
+	private Date createdAt;
 	
 	private String updatedAt;
 
@@ -159,11 +161,11 @@ public class TicketDto {
 		this.ticketData = ticketData;
 	}
 
-	public String getCreatedAt() {
+	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
+	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 

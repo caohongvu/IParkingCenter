@@ -1,5 +1,7 @@
 package net.cis.jpa.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,7 +64,7 @@ public class TicketEntity {
 	private String ticketData;
 	
 	@Column(name="created_at")
-	private String createdAt;
+	private Date createdAt;
 	
 	@Column(name="updated_at")
 	private String updatedAt;
@@ -179,11 +181,11 @@ public class TicketEntity {
 		this.ticketData = ticketData;
 	}
 
-	public String getCreatedAt() {
+	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
+	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 
