@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.cis.common.util.constant.TicketConstants;
 import net.cis.common.web.BaseEndpoint;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.criteria.TicketCriteria;
@@ -35,6 +36,7 @@ public class TicketEndpoint extends BaseEndpoint {
 	TicketService ticketService;
 	
 	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyyy HH:mm:ss");
+	SimpleDateFormat shortFormat = new SimpleDateFormat("dd/MM/yyyyy");
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket")
@@ -48,16 +50,17 @@ public class TicketEndpoint extends BaseEndpoint {
 		TicketCriteria ticketCriteria = new TicketCriteria();
 		
 		Calendar calendar = Calendar.getInstance();
-		Date toDate = calendar.getTime();
-		if(date != null) {
-			toDate = format.parse(date +" 23:59:59");
-			calendar.setTime(format.parse(date+" 00:00:00"));
+		if(date == null || date.trim().isEmpty()) {
+			date = shortFormat.format(calendar.getTime());
 		}
 		
+		Date toDate = format.parse(date +" 23:59:59");
+		calendar.setTime(format.parse(date+" 00:00:00"));
 		calendar.set(Calendar.HOUR, -36);
+		
 		Date fromDate = calendar.getTime();
 		
-		if(inSession != null && inSession == 0) {
+		if(inSession == null || (inSession != null && inSession == 0)) {
 			if(Calendar.getInstance().after(toDate)) {
 				fromDate = format.parse(date+" 00:00:00");
 			} else {
@@ -84,6 +87,7 @@ public class TicketEndpoint extends BaseEndpoint {
 		}
 		ticketCriteria.setFromDate(fromDate);
 		ticketCriteria.setToDate(toDate);
+		ticketCriteria.setStatus(TicketConstants.PAID_TICKET);
 		
 		Pageable pageable = new PageRequest(page, size);
 		List<TicketDto> tickets = ticketService.findAll(ticketCriteria, pageable);

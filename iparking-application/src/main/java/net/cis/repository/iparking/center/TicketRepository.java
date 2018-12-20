@@ -16,6 +16,6 @@ import net.cis.jpa.entity.TicketEntity;
 
 public interface TicketRepository  extends JpaRepository<TicketEntity, Long> {
 	
-	@Query(value = "Select ticket from TicketEntity ticket where (parkingPlace =:cppId OR :cppId is NULL) AND (inSession =:inSession OR :inSession is NULL) AND createdAt between :fromDate AND :toDate order by createdAt DESC")
-	public List<TicketEntity> findAll(@Param("cppId") Long cppId, @Param("inSession") Boolean inSession,@Param("fromDate")Date fromDate,@Param("toDate")Date toDate,  Pageable pageable);
+	@Query(value = "Select ticket from TicketEntity ticket where (parkingPlace =:cppId OR :cppId is NULL) AND (inSession =:inSession OR :inSession is NULL) AND (createdAt between :fromDate AND :toDate) AND (status = :status OR :status is NULL) order by createdAt DESC")
+	public List<TicketEntity> findAll(@Param("cppId") Long cppId, @Param("inSession") Boolean inSession,@Param("fromDate")Date fromDate,@Param("toDate")Date toDate, @Param("status") Integer status,  Pageable pageable);
 }
