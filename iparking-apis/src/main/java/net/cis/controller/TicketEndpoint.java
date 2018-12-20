@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ import net.cis.common.util.constant.TicketConstants;
 import net.cis.common.web.BaseEndpoint;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.criteria.TicketCriteria;
+import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.TicketService;
 
 /**
@@ -37,6 +40,7 @@ public class TicketEndpoint extends BaseEndpoint {
 	
 	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyyy HH:mm:ss");
 	SimpleDateFormat shortFormat = new SimpleDateFormat("dd/MM/yyyyy");
+	
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket")
@@ -101,6 +105,64 @@ public class TicketEndpoint extends BaseEndpoint {
 		TicketDto ticket = ticketService.findById(id);
 		return ticket;
 	}
+	
+	@RequestMapping(value = "/find-by-customer", method = RequestMethod.GET)
+	@ApiOperation("Fetch all ticket")
+	public @ResponseBody List<TicketDto> fetchByCustomer(
+			HttpServletRequest request,
+			@RequestParam(name="fromDate", required=false) Long from,
+			@RequestParam(name="toDate", required=false) Long to,
+			@RequestParam(name="page", required=false, defaultValue="1") int page,
+			@RequestParam(name="size", required=false, defaultValue="500") int size) throws Exception {
+		
+		page = page -1;
+		if(page < 0) {
+			page = 0;
+		}
+		
+		TicketCriteria ticketCriteria = new TicketCriteria();
+		long customer = Long.parseLong(TokenAuthenticationService.getAuthenticationInfo(request));
+		Pageable pageable = new PageRequest(page, size);
+		
+		Date fromDate = new Date(from);
+		
+		if(to == null) {
+			to = Calendar.getInstance().getTimeInMillis();
+		}
+		Date toDate = new Date(to);
+		
+		ticketCriteria.setFromDate(fromDate);
+		ticketCriteria.setToDate(toDate);
+		ticketCriteria.setCustomer(customer);
+		ticketCriteria.setStatus(1);
+		List<TicketDto> tickets = ticketService.findAll(ticketCriteria, pageable);
+		
+		return tickets;
+	}
+	
+	
+	@RequestMapping(value = "/session-out/", method = RequestMethod.POST)
+	@ApiOperation("Update ticket for session out")
+	public @ResponseBody TicketDto updateTicketSessionOut(@RequestParam("id") Long id) throws Exception {
+		TicketDto ticket = ticketService.findById(id);
+		ticket.setInSession(false);
+		ticket = ticketService.save(ticket);
+		
+		return ticket;
+	}
+	
+	@RequestMapping(value = "/session-in/", method = RequestMethod.POST)
+	@ApiOperation("Update ticket for session out")
+	public @ResponseBody TicketDto updateTicketSessionIn(@RequestParam("id") Long id) throws Exception {
+		TicketDto ticket = ticketService.findById(id);
+		ticket.setInSession(true);
+		ticket = ticketService.save(ticket);
+		
+		return ticket;
+	}
+	
+	
+	
 	
 	@RequestMapping(value = "/update/", method = RequestMethod.POST)
 	@ApiOperation("Update details of ticket")

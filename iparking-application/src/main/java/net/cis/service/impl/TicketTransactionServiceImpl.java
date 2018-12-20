@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import net.cis.dto.TicketTransactionDto;
 import net.cis.jpa.entity.TicketTransactionEntity;
-import net.cis.repository.iparking.center.TicketTransactionRepository;
+import net.cis.repository.TicketTransactionRepository;
 import net.cis.service.TicketTransactionService;
 
 /**

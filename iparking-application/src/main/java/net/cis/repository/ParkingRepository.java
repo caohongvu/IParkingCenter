@@ -1,4 +1,4 @@
-package net.cis.repository.iparking.center;
+package net.cis.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -14,7 +14,7 @@ import net.cis.dto.ParkingDto;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.criteria.TicketCriteria;
 import net.cis.jpa.entity.TicketEntity;
-import net.cis.repository.iparking.center.TicketRepository;
+import net.cis.repository.TicketRepository;
 import net.cis.service.TicketService;
 import net.cis.service.cache.ParkingPlaceCache;
 
@@ -52,6 +52,7 @@ public class TicketServiceImpl implements TicketService {
 		mapper.map(entity, ticketDto);
 		ParkingDto parkingDto = parkingPlaceCache.get(String.valueOf(ticketDto.getParkingPlace()));
 		ticketDto.setCppCode(parkingDto.getParkingCode());
+		ticketDto.setCppAddress(parkingDto.getAddress());
 		return ticketDto;
 	}
 
@@ -64,7 +65,8 @@ public class TicketServiceImpl implements TicketService {
 		if(ticketCriteria.getInSession() != null) {
 			inSession = ticketCriteria.getInSession() == 1;
 		}
-		ticketEntities = ticketRepository.findAll(ticketCriteria.getCppId(), inSession,ticketCriteria.getFromDate(),ticketCriteria.getToDate(),ticketCriteria.getStatus(), pageable);
+		ticketEntities = ticketRepository.findAll(ticketCriteria.getCppId(), ticketCriteria.getCustomer(), inSession,ticketCriteria.getFromDate(),ticketCriteria.getToDate(),ticketCriteria.getStatus(), pageable);
+		
 		List<TicketDto> ticketDtos = this.map(ticketEntities);
 		return ticketDtos;
 	}
@@ -76,6 +78,10 @@ public class TicketServiceImpl implements TicketService {
 		source.stream().map((entity) -> {
 			TicketDto dto = new TicketDto();
 			mapper.map(entity, dto);
+			ParkingDto parkingDto = parkingPlaceCache.get(String.valueOf(entity.getParkingPlace()));
+			dto.setCppCode(parkingDto.getParkingCode());
+			dto.setCppAddress(parkingDto.getAddress());
+			
 			return dto;
 		}).forEachOrdered((dto) -> {
 			rtn.add(dto);

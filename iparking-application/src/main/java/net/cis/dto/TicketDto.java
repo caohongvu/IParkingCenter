@@ -13,6 +13,8 @@ public class TicketDto {
 	
 	private String cppCode;
 	
+	private String cppAddress;
+	
 	private long customer;
 	
 	private String carNumberPlate;
@@ -63,6 +65,15 @@ public class TicketDto {
 
 	public void setCppCode(String cppCode) {
 		this.cppCode = cppCode;
+	}
+
+	
+	public String getCppAddress() {
+		return cppAddress;
+	}
+
+	public void setCppAddress(String cppAddress) {
+		this.cppAddress = cppAddress;
 	}
 
 	public long getCustomer() {

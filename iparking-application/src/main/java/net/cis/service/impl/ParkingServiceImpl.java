@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import net.cis.dto.ParkingDto;
 import net.cis.jpa.entity.ParkingEntity;
-import net.cis.repository.iparking.center.ParkingRepository;
+import net.cis.repository.ParkingRepository;
 import net.cis.service.ParkingService;
 import net.cis.service.cache.ParkingPlaceCache;
 

@@ -12,6 +12,7 @@ public class TicketCriteria {
 	private Long cppId;
 	private Date fromDate;
 	private Date toDate;
+	private Long customer;
 	
 	private Integer status;
 	
@@ -45,6 +46,13 @@ public class TicketCriteria {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+	public Long getCustomer() {
+		return customer;
+	}
+	public void setCustomer(Long customer) {
+		this.customer = customer;
+	}
+	
 	
 	
 }
