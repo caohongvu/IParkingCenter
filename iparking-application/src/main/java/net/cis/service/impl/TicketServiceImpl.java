@@ -16,6 +16,7 @@ import net.cis.jpa.criteria.TicketCriteria;
 import net.cis.jpa.entity.TicketEntity;
 import net.cis.repository.TicketRepository;
 import net.cis.service.TicketService;
+import net.cis.service.cache.MonthlyTicketCache;
 import net.cis.service.cache.ParkingPlaceCache;
 
 /**
@@ -29,6 +30,9 @@ public class TicketServiceImpl implements TicketService {
 	
 	@Autowired
 	private ParkingPlaceCache parkingPlaceCache;
+	
+	@Autowired
+	private MonthlyTicketCache monthlyTicketCache;
 
 	ModelMapper mapper;
 	
@@ -51,8 +55,10 @@ public class TicketServiceImpl implements TicketService {
 		TicketDto ticketDto = new TicketDto();
 		mapper.map(entity, ticketDto);
 		ParkingDto parkingDto = parkingPlaceCache.get(String.valueOf(ticketDto.getParkingPlace()));
-		ticketDto.setCppCode(parkingDto.getParkingCode());
-		ticketDto.setCppAddress(parkingDto.getAddress());
+		if(parkingDto != null) {
+			ticketDto.setCppCode(parkingDto.getParkingCode());
+			ticketDto.setCppAddress(parkingDto.getAddress());
+		}
 		return ticketDto;
 	}
 
@@ -79,9 +85,10 @@ public class TicketServiceImpl implements TicketService {
 			TicketDto dto = new TicketDto();
 			mapper.map(entity, dto);
 			ParkingDto parkingDto = parkingPlaceCache.get(String.valueOf(entity.getParkingPlace()));
-			dto.setCppCode(parkingDto.getParkingCode());
-			dto.setCppAddress(parkingDto.getAddress());
-			
+			if(parkingDto != null) {
+				dto.setCppCode(parkingDto.getParkingCode());
+				dto.setCppAddress(parkingDto.getAddress());
+			}
 			return dto;
 		}).forEachOrdered((dto) -> {
 			rtn.add(dto);
@@ -94,6 +101,11 @@ public class TicketServiceImpl implements TicketService {
 	@PostConstruct
 	public void initialize() {
 		mapper = new ModelMapper();
+		List<TicketEntity> monthlyTicketsInSession = ticketRepository.findByMonthlyTicketInSession();
+		for(TicketEntity entity : monthlyTicketsInSession) {
+			monthlyTicketCache.put(entity.getMonthlyTicketId(), entity.getId());
+		}
+		
 	}
 
 

@@ -80,6 +80,7 @@ public class ParkingServiceImpl implements ParkingService {
 		List<ParkingDto> dtos = this.findAll();
 		for(ParkingDto dto : dtos) {
 			this.parkingPlaceCache.put(dto.getOldId(), dto);
+			this.parkingPlaceCache.put(dto.getParkingCode(), dto);
 		}
 	}
 

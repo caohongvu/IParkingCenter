@@ -39,6 +39,8 @@ public class TicketDto {
 	
 	private String ticketData;
 	
+	private long monthlyTicketId;
+	
 	private Date createdAt;
 	
 	private String updatedAt;
@@ -170,6 +172,15 @@ public class TicketDto {
 
 	public void setTicketData(String ticketData) {
 		this.ticketData = ticketData;
+	}
+
+	
+	public long getMonthlyTicketId() {
+		return monthlyTicketId;
+	}
+
+	public void setMonthlyTicketId(long monthlyTicketId) {
+		this.monthlyTicketId = monthlyTicketId;
 	}
 
 	public Date getCreatedAt() {

@@ -20,12 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.cis.common.util.TicketUtil;
+import net.cis.common.util.Utils;
 import net.cis.common.util.constant.TicketConstants;
 import net.cis.common.web.BaseEndpoint;
+import net.cis.dto.MonthlyTicketDto;
+import net.cis.dto.ParkingDto;
 import net.cis.dto.TicketDto;
+import net.cis.jpa.criteria.MonthlyTicketCriteria;
 import net.cis.jpa.criteria.TicketCriteria;
 import net.cis.security.filter.TokenAuthenticationService;
+import net.cis.service.MonthlyTicketService;
 import net.cis.service.TicketService;
+import net.cis.service.cache.MonthlyTicketCache;
+import net.cis.service.cache.ParkingPlaceCache;
 
 /**
  * Created by Vincent on 02/10/2018
@@ -37,6 +45,16 @@ public class TicketEndpoint extends BaseEndpoint {
 
 	@Autowired
 	TicketService ticketService;
+	
+	@Autowired
+	MonthlyTicketService monthlyTicketService;
+	
+	@Autowired
+	private ParkingPlaceCache parkingPlaceCache;
+	
+	@Autowired
+	private MonthlyTicketCache monthlyTicketCache;
+
 	
 	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyyy HH:mm:ss");
 	SimpleDateFormat shortFormat = new SimpleDateFormat("dd/MM/yyyyy");
@@ -141,24 +159,67 @@ public class TicketEndpoint extends BaseEndpoint {
 	}
 	
 	
+	@RequestMapping(value = "/monthly/", method = RequestMethod.POST)
+	@ApiOperation("Get all valid monthly ticket belong parking place")
+	public @ResponseBody List<MonthlyTicketDto> fecthMonthlyTicket(
+			HttpServletRequest request,
+			@RequestParam("cppCode") String cppCode,
+			@RequestParam(name="page", required=false, defaultValue="1") int page,
+			@RequestParam(name="size", required=false, defaultValue="500") int size
+			) throws Exception {
+		
+		page = page -1;
+		if(page < 0) {
+			page = 0;
+		}
+		Pageable pageable = new PageRequest(page, size);
+		
+		MonthlyTicketCriteria ticketCriteria = new MonthlyTicketCriteria();
+		ticketCriteria.setCppCode(cppCode);
+		List<MonthlyTicketDto> tickets = monthlyTicketService.findAll(ticketCriteria, pageable);
+		
+		return tickets;
+	}
+	
 	@RequestMapping(value = "/session-out/", method = RequestMethod.POST)
 	@ApiOperation("Update ticket for session out")
 	public @ResponseBody TicketDto updateTicketSessionOut(@RequestParam("id") Long id) throws Exception {
 		TicketDto ticket = ticketService.findById(id);
 		ticket.setInSession(false);
+		ticket.setActualEndTime(Utils.getDatetimeFormatVN(Calendar.getInstance().getTime(), "yyyy-MM-dd HH:mm:ss"));
 		ticket = ticketService.save(ticket);
+		monthlyTicketCache.remove(ticket.getMonthlyTicketId());
 		
 		return ticket;
 	}
 	
 	@RequestMapping(value = "/session-in/", method = RequestMethod.POST)
 	@ApiOperation("Update ticket for session out")
-	public @ResponseBody TicketDto updateTicketSessionIn(@RequestParam("id") Long id) throws Exception {
-		TicketDto ticket = ticketService.findById(id);
+	public @ResponseBody MonthlyTicketDto updateTicketSessionIn(@RequestParam("monthlyTicketId") Long monthlyTicketId) throws Exception {
+		
+		MonthlyTicketDto monthlyTicketDto = monthlyTicketService.findOne(monthlyTicketId);
+		ParkingDto parkingDto = parkingPlaceCache.get(monthlyTicketDto.getParkingPlace());
+		
+		TicketDto ticket = new TicketDto();
+		ticket.setCarNumberPlate(monthlyTicketDto.getNumberPlate());
+		ticket.setCarPricingGroup(TicketConstants.MONTHLY_PRICE_GROUP);
+		ticket.setCarType(TicketConstants.MONTHLY_CAR_TYPE);
+		ticket.setCreatedAt(Calendar.getInstance().getTime());
+		ticket.setCustomer(TicketConstants.MONTHLY_CUSTOMER);
+		ticket.setParkingPlace(Long.valueOf(parkingDto.getOldId()));
+		ticket.setStartTime(Utils.getDatetimeFormatVN(Calendar.getInstance().getTime(), "yyyy-MM-dd HH:mm:ss"));
+		ticket.setStatus(TicketConstants.PAID_TICKET);
+		ticket.setTicketData(TicketConstants.MONTHLY_TICKE_DATA);
+		ticket.setUpdatedAt(Utils.getDatetimeFormatVN(Calendar.getInstance().getTime(), "yyyy-MM-dd HH:mm:ss"));
 		ticket.setInSession(true);
+		ticket.setMonthlyTicketId(monthlyTicketDto.getId());
+		ticket.setId(TicketUtil.generateTicketId());
 		ticket = ticketService.save(ticket);
 		
-		return ticket;
+		monthlyTicketCache.put(monthlyTicketDto.getId(), ticket.getId());
+		monthlyTicketDto.setInSession(true);
+		monthlyTicketDto.setInSessionTicketId(ticket.getId());
+		return monthlyTicketDto;
 	}
 	
 	
