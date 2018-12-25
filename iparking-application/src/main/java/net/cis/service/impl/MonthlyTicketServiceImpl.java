@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import net.cis.dto.MonthlyTicketDto;
 import net.cis.jpa.criteria.MonthlyTicketCriteria;
 import net.cis.jpa.entity.MonthlyTicketEntity;
-import net.cis.jpa.entity.TicketEntity;
 import net.cis.repository.MonthlyTicketRepository;
 import net.cis.repository.TicketRepository;
 import net.cis.service.MonthlyTicketService;
@@ -43,6 +42,11 @@ public class MonthlyTicketServiceImpl implements MonthlyTicketService {
 		MonthlyTicketEntity entity = monthlyTicketRepository.findOne(id);
 		MonthlyTicketDto dto = new MonthlyTicketDto();
 		mapper.map(entity, dto);
+		Long relatedTicket = monthlyTicketCache.get(entity.getId());
+		if(relatedTicket != null) {
+			dto.setInSession(true);
+			dto.setInSessionTicketId(relatedTicket);
+		}
 		
 		return dto;
 	}

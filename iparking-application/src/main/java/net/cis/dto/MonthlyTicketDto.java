@@ -2,6 +2,7 @@ package net.cis.dto;
 
 import java.util.Date;
 
+import net.cis.common.util.TicketUtil;
 import net.cis.common.util.Utils;
 
 /**
@@ -146,6 +147,12 @@ public class MonthlyTicketDto {
 		this.inSessionTicketId = inSessionTicketId;
 	}
 	
+	public String getSessionFrom() {
+		return TicketUtil.getMonthlyTicketSessionFrom(this.metadata);
+	}
+	public String getSessionTo() {
+		return TicketUtil.getMonthlyTicketSessionTo(this.metadata);
+	}
 	
 	
 	

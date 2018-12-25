@@ -159,6 +159,15 @@ public class TicketEndpoint extends BaseEndpoint {
 	}
 	
 	
+	@RequestMapping(value = "/monthly/{id}/detail", method = RequestMethod.GET)
+	@ApiOperation("Get detail monthly ticket by ticket id")
+	public @ResponseBody MonthlyTicketDto fecthDetailMonthlyTicket(HttpServletRequest request, @RequestParam("ticketId") long ticketId) throws Exception {
+		
+		MonthlyTicketDto ticket = monthlyTicketService.findOne(ticketId);
+		
+		return ticket;
+	}
+	
 	@RequestMapping(value = "/monthly/", method = RequestMethod.POST)
 	@ApiOperation("Get all valid monthly ticket belong parking place")
 	public @ResponseBody List<MonthlyTicketDto> fecthMonthlyTicket(
