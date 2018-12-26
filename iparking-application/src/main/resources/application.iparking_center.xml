@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-       xmlns:jee="http://www.springframework.org/schema/jee"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx.xsd
@@ -13,41 +11,55 @@
         http://www.springframework.org/schema/jee
         http://www.springframework.org/schema/jee/spring-jee.xsd">
 
-    <!-- Define Jndi Datasource -->
-    <jee:jndi-lookup id="iparkingCenter" jndi-name="jdbc/iparking_center" expected-type="javax.sql.DataSource"/>
-    <!-- Define Spring Repository -->
-    <jpa:repositories base-package="net.cis.repository" />
+	<!-- Define Jndi Datasource -->
+	<jee:jndi-lookup id="iparkingCenter" jndi-name="jdbc/iparking_center"
+		expected-type="javax.sql.DataSource" />
+	<!-- Define Spring Repository -->
+	<jpa:repositories base-package="net.cis.repository" />
 
-    <!-- Get the entity manager injected into the factory bean -->
-    <bean  class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+	<!-- Get the entity manager injected into the factory bean -->
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
-    <!-- JPA Vendor Adapter -->
-    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="database" value="MYSQL"/>
-    </bean>
+	<!-- JPA Vendor Adapter -->
+	<bean id="jpaVendorAdapter"
+		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+		<property name="database" value="MYSQL" />
+	</bean>
 
-    <!-- Entity Manager Factory -->
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="iparkingCenter">
-        <property name="dataSource" ref="iparkingCenter"/>
-        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
-        <property name="jpaProperties">
-            <map>
-                <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
-                <entry key="hibernate.jdbc.batch_size" value="1024"/>
-                <entry key="hibernate.show_sql" value="false"/>
-                <entry key="hibernate.format_sql" value="false"/>
-                <entry key="hibernate.globally_quoted_identifiers" value="true"/>
-                <entry key="hibernate.connection.autocommit" value="true" />
-            </map>
-        </property>
-    </bean>
+	<!-- Entity Manager Factory -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		depends-on="iparkingCenter">
+		<property name="dataSource" ref="iparkingCenter" />
+		<property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+		<property name="jpaProperties">
+			<map>
+				<entry key="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+				<entry key="hibernate.jdbc.batch_size" value="1024" />
+				<entry key="hibernate.show_sql" value="false" />
+				<entry key="hibernate.format_sql" value="false" />
+				<entry key="hibernate.globally_quoted_identifiers" value="true" />
+				<entry key="hibernate.connection.autocommit" value="true" />
+			</map>
+		</property>
+	</bean>
 
-    <!-- Define Transaction Manager -->
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
+	<!-- Define Transaction Manager -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+	<bean id="propertyConfigurer" class="net.cis.utils.PropertiesUtils">
+		<property name="dataSourceName" value="iparkingCenter" />
+		<property name="localOverride" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:application.properties</value>
+			</list>
+		</property>
+	</bean>
 
-    <!-- Enable Transactional Manner -->
-    <tx:annotation-driven transaction-manager="transactionManager"/>
+	<!-- Enable Transactional Manner -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
 
 </beans>
