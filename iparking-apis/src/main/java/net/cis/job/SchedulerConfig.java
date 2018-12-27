@@ -3,6 +3,7 @@ package net.cis.job;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.Trigger;
@@ -12,43 +13,94 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 
-import net.cis.repository.ParkingConfigRepository;
-import net.cis.service.EmailService;
+import net.cis.service.VerifyUserService;
+import net.cis.utils.ParkingCenterConstants;
 import net.cis.utils.PropertiesUtils;
 
+/**
+ * 
+ * @author liemnh
+ *
+ */
 @Configuration
 @EnableScheduling
 public class SchedulerConfig implements SchedulingConfigurer {
 
+	protected final Logger LOGGER = Logger.getLogger(getClass());
+
 	@Autowired
-	ParkingConfigRepository parkingConfigRepository;
-	@Autowired
-	EmailService emailService;
+	VerifyUserService verifyUserService;
 
 	private String cronJobEmailConfig() {
-		String cronTabExpression = "0/5 * * * * *";
-		if (!StringUtils.isEmpty(PropertiesUtils.getProperty("JOB_EMAIL")))
-			cronTabExpression = PropertiesUtils.getProperty("JOB_EMAIL");
-		System.out.println("Cron job email:" + cronTabExpression);
+		String cronTabExpression = PropertiesUtils.getProperty("JOB_EMAIL");
+		if (StringUtils.isEmpty(cronTabExpression))
+			cronTabExpression = "0/5 * * * * *";
+		LOGGER.info("Cron job email partten:" + cronTabExpression);
 		return cronTabExpression;
+	}
+
+	private boolean cronJobEmailEnableConfig() {
+		String strEnable = PropertiesUtils.getProperty("JOB_EMAIL_ENABLE");
+		if (StringUtils.isEmpty(strEnable)) {
+			return Boolean.FALSE;
+		}
+		if (ParkingCenterConstants.JOB_ENABLE.equals(strEnable)) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
+
+	private String cronJobPushNotificationConfig() {
+		String cronTabExpression = PropertiesUtils.getProperty("JOB_PUSH_NOTIFICATION");
+		if (StringUtils.isEmpty(cronTabExpression))
+			cronTabExpression = "0/5 * * * * *";
+		LOGGER.info("Cron job push notification partten:" + cronTabExpression);
+		return cronTabExpression;
+	}
+
+	private boolean cronJobPushNotificationEnableConfig() {
+		String strEnable = PropertiesUtils.getProperty("JOB_PUSH_NOTIFICATION_ENABLE");
+		if (StringUtils.isEmpty(strEnable)) {
+			return Boolean.FALSE;
+		}
+		if (ParkingCenterConstants.JOB_ENABLE.equals(strEnable)) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+
+		// job send email verify
 		taskRegistrar.addTriggerTask(new Runnable() {
 			@Override
 			public void run() {
-				emailService.sendEmailActive("", "liem.nguyen@cis.net.vn");
+				if (cronJobEmailEnableConfig())
+					verifyUserService.verifyEmail();
 			}
 		}, new Trigger() {
 			@Override
 			public Date nextExecutionTime(TriggerContext triggerContext) {
-				String cron = cronJobEmailConfig();
-				CronTrigger trigger = new CronTrigger(cron);
+				CronTrigger trigger = new CronTrigger(cronJobEmailConfig());
+				Date nextExec = trigger.nextExecutionTime(triggerContext);
+				return nextExec;
+			}
+		});
+		// job push notifcation
+		taskRegistrar.addTriggerTask(new Runnable() {
+			@Override
+			public void run() {
+				if (cronJobPushNotificationEnableConfig())
+					verifyUserService.pushNotification();
+			}
+		}, new Trigger() {
+			@Override
+			public Date nextExecutionTime(TriggerContext triggerContext) {
+				CronTrigger trigger = new CronTrigger(cronJobPushNotificationConfig());
 				Date nextExec = trigger.nextExecutionTime(triggerContext);
 				return nextExec;
 			}
 		});
 	}
-
 }

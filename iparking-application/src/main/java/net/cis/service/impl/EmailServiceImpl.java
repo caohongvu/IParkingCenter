@@ -10,7 +10,6 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -30,7 +29,6 @@ public class EmailServiceImpl implements EmailService {
 
 	@Override
 	public void send(String title, String content) {
-
 		mailSender.send(new MimeMessagePreparator() {
 			@Override
 			public void prepare(MimeMessage mimeMessage) throws Exception {
@@ -43,11 +41,11 @@ public class EmailServiceImpl implements EmailService {
 		});
 	}
 
-	public static int noOfQuickServiceThreads = 20;
+	public static int noOfQuickServiceThreads = 100;
 
 	private ScheduledExecutorService quickService = Executors.newScheduledThreadPool(noOfQuickServiceThreads);
 
-	public void sendASynchronousMail(String title, String content) throws MailException, RuntimeException {
+	public void sendASynchronousMail(String title, String content) {
 		SimpleMailMessage mail = new SimpleMailMessage();
 		mail.setFrom("automailer@cis.net.vn");
 		mail.setTo("operation_iparking@cis.net.vn");
@@ -59,6 +57,7 @@ public class EmailServiceImpl implements EmailService {
 				try {
 					mailSender.send(mail);
 				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		});
@@ -86,6 +85,7 @@ public class EmailServiceImpl implements EmailService {
 					try {
 						mailSender.send(message);
 					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			});
