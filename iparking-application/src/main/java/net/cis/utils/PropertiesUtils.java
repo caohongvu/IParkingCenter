@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+
 /**
  * 
  * @author Liemnh
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
  */
 public class PropertiesUtils extends PropertyPlaceholderConfigurer implements Serializable {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	private static CustomProperties customProps;

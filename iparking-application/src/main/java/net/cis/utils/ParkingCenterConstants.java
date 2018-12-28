@@ -11,4 +11,6 @@ public class ParkingCenterConstants {
 	public static final String JOB_ENABLE = "1";
 	public static final String JOB_DISABLE = "0";
 
+	public static final String URL_ACTIVE = "https://api.iparking.vn/p/active_info?";
+
 }
