@@ -16,6 +16,7 @@ public interface ParkingService {
     void delete(ParkingDto parkingDto);
     
     List<ParkingDto> findAll();
-
+    
+    ParkingDto findByOldId(String oldId);
 }
  
