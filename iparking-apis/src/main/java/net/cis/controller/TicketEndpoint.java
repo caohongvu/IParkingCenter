@@ -28,6 +28,7 @@ import net.cis.dto.DailyTicketPaymentDto;
 import net.cis.dto.DailyTicketPaymentEndPointDto;
 import net.cis.dto.MonthlyTicketDto;
 import net.cis.dto.ParkingDto;
+import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.criteria.DailyTicketPaymentCriteria;
 import net.cis.jpa.criteria.MonthlyTicketCriteria;
@@ -249,7 +250,7 @@ public class TicketEndpoint extends BaseEndpoint {
 
 	@RequestMapping(value = "/payment", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
-	public @ResponseBody DailyTicketPaymentEndPointDto fetchTicketsPayment(
+	public @ResponseBody Object fetchTicketsPayment(
 			@RequestParam(name = "orderID", required = false) String orderID,
 			@RequestParam(name = "transID", required = false) String transID,
 			@RequestParam(name = "cpp_code", required = false) String cppCode,
@@ -306,7 +307,7 @@ public class TicketEndpoint extends BaseEndpoint {
 		ticketCriteria.setEnd_time(formatTime.format(toDate));
 
 		Pageable pageable = new PageRequest(page, size);
-		DailyTicketPaymentEndPointDto enpoint = dailyTicketPaymentService.findAllFooter(ticketCriteria, pageable);
+		ResponseApi enpoint = dailyTicketPaymentService.findAllFooter(ticketCriteria, pageable);
 
 		return enpoint;
 	}
