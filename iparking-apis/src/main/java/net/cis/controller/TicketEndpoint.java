@@ -275,7 +275,7 @@ public class TicketEndpoint extends BaseEndpoint {
 		}
 
 		if (cppCode != null && cppCode != "") {
-			ticketCriteria.setCppCode(cppCode);
+			ticketCriteria.setCppCode(cppCode.toUpperCase());
 		}
 
 		if (orderID != null && orderID != "") {
@@ -291,7 +291,7 @@ public class TicketEndpoint extends BaseEndpoint {
 		}
 
 		if (numberPlate != null && numberPlate != "") {
-			ticketCriteria.setNumberplate(numberPlate);
+			ticketCriteria.setNumberplate(numberPlate.toUpperCase());
 		}
 
 		if (cardNumber != null && cardNumber != "") {

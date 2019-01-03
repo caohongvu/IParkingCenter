@@ -69,6 +69,9 @@ public class DailyTicketPaymentServiceImpl implements DailyTicketPaymentService{
 				ticketCriteria.getNumberplate(), ticketCriteria.getPhone(), 
 				ticketCriteria.getStart_time(), ticketCriteria.getEnd_time(),
 				ticketCriteria.getCardNumber(), ticketCriteria.getTransType(), pageable);
+		if(ticketEntities == null || ticketEntities.size() == 0) {
+			return null;
+		}
 		
 		List<DailyTicketPaymentDto> ticketDtos = this.map(ticketEntities);
 		DailyTicketPaymentFooterEntity ticketFooterEntity = null;
