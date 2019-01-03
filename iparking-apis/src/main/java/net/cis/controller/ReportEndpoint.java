@@ -19,13 +19,11 @@ import net.cis.jpa.criteria.DailyTicketPaymentCriteria;
 import net.cis.service.DailyTicketPaymentService;
 
 
-
 @RestController
 @RequestMapping("/report")
 @Api(value = "report Endpoint", description = "The URL to handle report endpoint")
-public class Report {
+public class ReportEndpoint {
 	
-
 	@Autowired
 	private DailyTicketPaymentService dailyTicketPaymentService;
 	
