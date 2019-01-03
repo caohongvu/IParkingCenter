@@ -12,6 +12,7 @@ public class ParkingContractDto {
 	private String contractNo;
 	private String company;
 	private String parkingPlace;
+	private long cusId;
 	private long validFrom;
 	private long validTo;
 	private int numberOfMonth;
@@ -53,6 +54,13 @@ public class ParkingContractDto {
 	}
 	public void setParkingPlace(String parkingPlace) {
 		this.parkingPlace = parkingPlace;
+	}
+	
+	public long getCusId() {
+		return cusId;
+	}
+	public void setCusId(long cusId) {
+		this.cusId = cusId;
 	}
 	public long getValidFrom() {
 		return validFrom;
