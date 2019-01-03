@@ -24,17 +24,12 @@ import net.cis.common.util.TicketUtil;
 import net.cis.common.util.Utils;
 import net.cis.common.util.constant.TicketConstants;
 import net.cis.common.web.BaseEndpoint;
-import net.cis.dto.DailyTicketPaymentDto;
-import net.cis.dto.DailyTicketPaymentEndPointDto;
 import net.cis.dto.MonthlyTicketDto;
 import net.cis.dto.ParkingDto;
-import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketDto;
-import net.cis.jpa.criteria.DailyTicketPaymentCriteria;
 import net.cis.jpa.criteria.MonthlyTicketCriteria;
 import net.cis.jpa.criteria.TicketCriteria;
 import net.cis.security.filter.TokenAuthenticationService;
-import net.cis.service.DailyTicketPaymentService;
 import net.cis.service.MonthlyTicketService;
 import net.cis.service.TicketService;
 import net.cis.service.cache.MonthlyTicketCache;
@@ -59,9 +54,6 @@ public class TicketEndpoint extends BaseEndpoint {
 
 	@Autowired
 	private MonthlyTicketCache monthlyTicketCache;
-
-	@Autowired
-	private DailyTicketPaymentService dailyTicketPaymentService;
 
 	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	SimpleDateFormat shortFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -248,68 +240,6 @@ public class TicketEndpoint extends BaseEndpoint {
 		return ticket;
 	}
 
-	@RequestMapping(value = "/payment", method = RequestMethod.GET)
-	@ApiOperation("Fetch all ticket payment")
-	public @ResponseBody Object fetchTicketsPayment(
-			@RequestParam(name = "orderID", required = false) String orderID,
-			@RequestParam(name = "transID", required = false) String transID,
-			@RequestParam(name = "cpp_code", required = false) String cppCode,
-			@RequestParam(name = "number_plate", required = false) String numberPlate,
-			@RequestParam(name = "phone", required = false) Long phone,
-			@RequestParam(name = "from_time", required = false) Long start_time,
-			@RequestParam(name = "end_time", required = false) Long end_time,
-			@RequestParam(name = "card_number", required = false) String cardNumber,
-			@RequestParam(name = "trans_type", required = false) String transType,
-			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-			@RequestParam(name = "size", required = false, defaultValue = "500") int size) throws Exception {
-
-		DailyTicketPaymentCriteria ticketCriteria = new DailyTicketPaymentCriteria();
-		SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-		Date toDate = new Date(end_time*1000L);
-
-		Date fromDate = new Date(start_time*1000L);
-
-		page = page - 1;
-		if (page < 0) {
-			page = 0;
-		}
-
-		if (cppCode != null && cppCode != "") {
-			ticketCriteria.setCppCode(cppCode.toUpperCase());
-		}
-
-		if (orderID != null && orderID != "") {
-			ticketCriteria.setOrderID(orderID);
-		}
-
-		if (transID != null && transID != "") {
-			ticketCriteria.setTransId(transID);
-		}
-
-		if (phone != null && phone != 0) {
-			ticketCriteria.setPhone(phone);
-		}
-
-		if (numberPlate != null && numberPlate != "") {
-			ticketCriteria.setNumberplate(numberPlate.toUpperCase());
-		}
-
-		if (cardNumber != null && cardNumber != "") {
-			ticketCriteria.setCardNumber(cardNumber);
-		}
-
-		if (transType != null && transType != "") {
-			ticketCriteria.setTransType(transType);
-		}
-
-		ticketCriteria.setStart_time(formatTime.format(fromDate));
-		ticketCriteria.setEnd_time(formatTime.format(toDate));
-
-		Pageable pageable = new PageRequest(page, size);
-		ResponseApi enpoint = dailyTicketPaymentService.findAllFooter(ticketCriteria, pageable);
-
-		return enpoint;
-	}
+	
 
 }
