@@ -12,6 +12,7 @@ public class ParkingContractDto {
 	private String contractNo;
 	private String company;
 	private String parkingPlace;
+	private String cppAddress;
 	private long cusId;
 	private long validFrom;
 	private long validTo;
@@ -56,6 +57,12 @@ public class ParkingContractDto {
 		this.parkingPlace = parkingPlace;
 	}
 	
+	public String getCppAddress() {
+		return cppAddress;
+	}
+	public void setCppAddress(String cppAddress) {
+		this.cppAddress = cppAddress;
+	}
 	public long getCusId() {
 		return cusId;
 	}

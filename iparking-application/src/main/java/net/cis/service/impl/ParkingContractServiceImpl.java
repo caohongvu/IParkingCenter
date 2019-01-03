@@ -9,10 +9,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.cis.dto.CompanyDto;
 import net.cis.dto.ParkingContractDto;
+import net.cis.dto.ParkingDto;
 import net.cis.jpa.entity.ParkingContractEntity;
 import net.cis.repository.ParkingContractRepository;
 import net.cis.service.ParkingContractService;
+import net.cis.service.cache.CompanyCache;
+import net.cis.service.cache.ParkingPlaceCache;
 
 /**
  * Created by Vincent on 02/10/2018
@@ -26,6 +30,12 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 
 	@Autowired
 	ParkingContractRepository parkingContractRepository;
+	
+	@Autowired
+	ParkingPlaceCache parkingPlaceCache;
+	
+	@Autowired
+	private CompanyCache companyCache;
 	
 	@Override
 	public ParkingContractDto findOne(long id) {
@@ -67,6 +77,11 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 		source.stream().map((entity) -> {
 			ParkingContractDto dto = new ParkingContractDto();
 			mapper.map(entity, dto);
+			ParkingDto parking = parkingPlaceCache.get(dto.getParkingPlace());
+			CompanyDto company = companyCache.get(dto.getCompany());
+			
+			dto.setCppAddress(parking.getAddress());
+			dto.setCompany(company.getCompanyName());
 			return dto;
 		}).forEachOrdered((dto) -> {
 			rtn.add(dto);
