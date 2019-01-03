@@ -1,5 +1,7 @@
 package net.cis.service;
 
+import java.util.List;
+
 import net.cis.dto.ParkingContractDto;
 
 /**
@@ -9,6 +11,7 @@ public interface ParkingContractService {
 
    
     ParkingContractDto findOne(long id);
+    List<ParkingContractDto> findByCustomer(Long cusId);
     
     ParkingContractDto save(ParkingContractDto parkingContractDto);
     

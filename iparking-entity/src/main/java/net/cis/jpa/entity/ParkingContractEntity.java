@@ -33,6 +33,9 @@ public class ParkingContractEntity {
 	@Column(name = "parking_place")
 	private String parkingPlace;
 	
+	@Column(name = "cus_id")
+	private long cusId;
+	
 	@Column(name = "valid_from")
 	private long validFrom;
 	
@@ -107,6 +110,15 @@ public class ParkingContractEntity {
 
 	public void setParkingPlace(String parkingPlace) {
 		this.parkingPlace = parkingPlace;
+	}
+
+	
+	public long getCusId() {
+		return cusId;
+	}
+
+	public void setCusId(long cusId) {
+		this.cusId = cusId;
 	}
 
 	public long getValidFrom() {

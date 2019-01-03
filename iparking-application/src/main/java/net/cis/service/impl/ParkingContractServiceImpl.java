@@ -36,6 +36,12 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 		return dto;
 	}
 	
+	@Override
+	public List<ParkingContractDto> findByCustomer(Long cusId) {
+		List<ParkingContractEntity> entities = parkingContractRepository.findByCusId(cusId);
+		
+		return this.map(entities);
+	}
 
 	@Override
 	public ParkingContractDto save(ParkingContractDto parkingContractDto) {
@@ -74,6 +80,9 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 	public void initialize() {
 		mapper = new ModelMapper();
 	}
+
+
+	
 
 
 	
