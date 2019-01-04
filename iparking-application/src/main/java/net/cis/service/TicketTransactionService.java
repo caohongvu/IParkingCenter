@@ -2,6 +2,9 @@ package net.cis.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
+import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketTransactionDto;
 
 /**
@@ -18,6 +21,8 @@ public interface TicketTransactionService {
     void delete(TicketTransactionDto ticketTransactionDto);
     
     List<TicketTransactionDto> findAll();
+
+	ResponseApi findByTicketId(Long ticketId);
 
 }
  

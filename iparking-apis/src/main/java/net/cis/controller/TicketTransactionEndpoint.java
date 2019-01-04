@@ -3,16 +3,20 @@ package net.cis.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.common.web.BaseEndpoint;
+import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketTransactionDto;
 import net.cis.service.TicketTransactionService;
 
@@ -67,6 +71,13 @@ public class TicketTransactionEndpoint extends BaseEndpoint {
 	@ApiOperation("Create details of transaction")
 	public void deleteTransaction(@RequestBody TicketTransactionDto ticketTransactionDto) throws Exception {
 		ticketTransactionService.delete(ticketTransactionDto);
+	}
+	
+	@RequestMapping(value = "/{ticket_id}/transactions/", method = RequestMethod.GET)
+	@ApiOperation("Select all ticket by Ticket_id")
+	public @ResponseBody Object fetchTicketTransactionByTicketId(@PathVariable("ticket_id") Long ticketId) throws Exception {
+			ResponseApi enpoint = ticketTransactionService.findByTicketId(ticketId);
+			return enpoint;
 	}
 	
 	
