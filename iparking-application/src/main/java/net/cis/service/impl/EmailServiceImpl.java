@@ -1,15 +1,11 @@
 package net.cis.service.impl;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -61,43 +57,5 @@ public class EmailServiceImpl implements EmailService {
 				}
 			}
 		});
-	}
-
-	public void sendEmailActive(String urlActive, String email) {
-		BufferedReader br = null;
-		try {
-			FileReader reader = new FileReader(new ClassPathResource("email_verify.html").getFile());
-			StringBuilder sb = new StringBuilder();
-			br = new BufferedReader(reader);
-			String line;
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-			}
-			MimeMessage message = mailSender.createMimeMessage();
-			message.setContent(sb.toString().replace("[URL_ACTIVE]", urlActive), "text/html; charset=utf-8");
-			MimeMessageHelper helper = new MimeMessageHelper(message);
-			helper.setFrom("automailer@cis.net.vn");
-			helper.setTo(email);
-			helper.setSubject("Xác thực email với iParking");
-			quickService.submit(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						mailSender.send(message);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
 	}
 }
