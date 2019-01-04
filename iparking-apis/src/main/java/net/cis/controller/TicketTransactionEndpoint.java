@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.common.web.BaseEndpoint;
+import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketTransactionDto;
 import net.cis.service.TicketTransactionService;
 
@@ -68,6 +69,21 @@ public class TicketTransactionEndpoint extends BaseEndpoint {
 	public void deleteTransaction(@RequestBody TicketTransactionDto ticketTransactionDto) throws Exception {
 		ticketTransactionService.delete(ticketTransactionDto);
 	}
+	
+	@RequestMapping(value = "/{ticket_id}/transactions/", method = RequestMethod.GET)
+	@ApiOperation("Select all ticket by Ticket_id")
+	public @ResponseBody Object fetchTicketTransactionByTicketId(@PathVariable("ticket_id") Long ticketId) throws Exception {
+			ResponseApi enpoint = ticketTransactionService.findByTicketId(ticketId);
+			return enpoint;
+	}
+	
+	@RequestMapping(value = "/{id}/portal", method = RequestMethod.GET)
+	@ApiOperation("Detail for transaction in portal")
+	public @ResponseBody Object getTicketTransactionDetailPortal(@PathVariable("id") String id) throws Exception {
+			ResponseApi enpoint = ticketTransactionService.getDetailPortal(id);
+			return enpoint;
+	}
+	
 	
 	
 }

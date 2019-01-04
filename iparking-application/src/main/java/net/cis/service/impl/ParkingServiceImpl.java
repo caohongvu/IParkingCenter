@@ -92,5 +92,17 @@ public class ParkingServiceImpl implements ParkingService {
 		}
 	}
 
+	@Override
+	public ParkingDto findByOldId(String oldId) {
+		ModelMapper mapper = new ModelMapper();
+		ParkingEntity entity = parkingRepository.findByOldId(oldId);
+		if(entity == null) {
+			return null;
+		}
+		ParkingDto parkingDto = new ParkingDto();
+		mapper.map(entity, parkingDto);
+		return parkingDto;
+	}
+
 
 }

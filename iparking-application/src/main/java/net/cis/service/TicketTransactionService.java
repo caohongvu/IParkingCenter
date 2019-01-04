@@ -2,6 +2,8 @@ package net.cis.service;
 
 import java.util.List;
 
+
+import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketTransactionDto;
 
 /**
@@ -18,6 +20,10 @@ public interface TicketTransactionService {
     void delete(TicketTransactionDto ticketTransactionDto);
     
     List<TicketTransactionDto> findAll();
+
+	ResponseApi findByTicketId(Long ticketId);
+	
+	ResponseApi getDetailPortal(String id);
 
 }
  

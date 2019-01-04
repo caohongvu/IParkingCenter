@@ -1,3 +1,4 @@
+
 package net.cis.controller;
 
 import java.text.SimpleDateFormat;
@@ -8,7 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -52,6 +53,12 @@ import net.cis.service.cache.ParkingPlaceCache;
 @Api(value = "ticket Endpoint", description = "The URL to handle ticket endpoint")
 public class TicketEndpoint extends BaseEndpoint {
 	protected final Logger LOGGER = Logger.getLogger(getClass());
+
+	@Autowired
+	CustomerRepository customerRepository;
+
+	@Autowired
+	CustomerService customerService;
 	@Autowired
 	TicketService ticketService;
 
@@ -64,14 +71,8 @@ public class TicketEndpoint extends BaseEndpoint {
 	@Autowired
 	private MonthlyTicketCache monthlyTicketCache;
 
-	@Autowired
-	CustomerRepository customerRepository;
-
-	@Autowired
-	CustomerService customerService;
-
-	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyyy HH:mm:ss");
-	SimpleDateFormat shortFormat = new SimpleDateFormat("dd/MM/yyyyy");
+	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	SimpleDateFormat shortFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket")
@@ -305,7 +306,6 @@ public class TicketEndpoint extends BaseEndpoint {
 				}
 				objTicketDto.setCustomer((long) resultCreateCustomer.get("Data"));
 			}
-			
 
 			objTicketDto.setParkingPlace(parkingPlace);
 			objTicketDto.setCarNumberPlate(carNumberPlate);

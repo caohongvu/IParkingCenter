@@ -1,4 +1,4 @@
-package net.cis.service.impl;
+ package net.cis.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ import net.cis.dto.MonthlyTicketDto;
 import net.cis.jpa.criteria.MonthlyTicketCriteria;
 import net.cis.jpa.entity.MonthlyTicketEntity;
 import net.cis.repository.MonthlyTicketRepository;
-import net.cis.repository.TicketRepository;
 import net.cis.service.MonthlyTicketService;
 import net.cis.service.cache.MonthlyTicketCache;
 
@@ -27,8 +26,6 @@ public class MonthlyTicketServiceImpl implements MonthlyTicketService {
 	@Autowired
 	private MonthlyTicketRepository monthlyTicketRepository;
 	
-	@Autowired 
-	private TicketRepository ticketRepository;
 	
 
 	@Autowired
