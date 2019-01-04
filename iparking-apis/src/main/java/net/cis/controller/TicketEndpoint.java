@@ -240,6 +240,4 @@ public class TicketEndpoint extends BaseEndpoint {
 		return ticket;
 	}
 
-	
-
 }

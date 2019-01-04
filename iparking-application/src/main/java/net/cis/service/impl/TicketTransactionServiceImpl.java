@@ -1,11 +1,15 @@
 package net.cis.service.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +17,10 @@ import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketTransactionDto;
+import net.cis.dto.TicketTransactionPortalDto;
 import net.cis.jpa.entity.TicketTransactionEntity;
-
+import net.cis.jpa.entity.TicketTransactionPortalEntity;
+import net.cis.repository.TicketTransactionPortalReponsitory;
 import net.cis.repository.TicketTransactionRepository;
 import net.cis.service.TicketTransactionService;
 
@@ -26,6 +32,9 @@ public class TicketTransactionServiceImpl implements TicketTransactionService {
 
 	@Autowired
 	private TicketTransactionRepository ticketTransactionRepository;
+	
+	@Autowired
+	private TicketTransactionPortalReponsitory ticketTransactionPortalRepository;
 
 	
 	
@@ -52,6 +61,7 @@ public class TicketTransactionServiceImpl implements TicketTransactionService {
 		mapper.map(entity, ticketTransactionDto);
 		return ticketTransactionDto;
 	}
+	
 	
 	@Override
 	public TicketTransactionDto findByPaymentOrderNo(String paymentOrderNo) {
@@ -131,6 +141,37 @@ public class TicketTransactionServiceImpl implements TicketTransactionService {
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
+	}
+
+	@Override
+	public ResponseApi getDetailPortal(String id) {
+		// TODO Auto-generated method stub
+		ResponseApi responseApi = new ResponseApi();
+		ModelMapper mapper = new ModelMapper();
+		ErrorDto errorDto = new ErrorDto();
+		try {
+			TicketTransactionPortalEntity entity = ticketTransactionPortalRepository.getDetailPortalById(id);
+			if(entity == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+				errorDto.setMessage("");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			TicketTransactionPortalDto ticketTransactionPortalDto = new TicketTransactionPortalDto();
+			
+			mapper.map(entity, ticketTransactionPortalDto);
+			
+			errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+			errorDto.setMessage("");
+			responseApi.setError(errorDto);
+			responseApi.setData(ticketTransactionPortalDto);
+
+			return responseApi;
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+		
+		return responseApi;
 	}
 
 }

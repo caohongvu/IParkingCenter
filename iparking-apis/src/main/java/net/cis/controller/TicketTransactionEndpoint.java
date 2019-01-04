@@ -3,13 +3,10 @@ package net.cis.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -79,6 +76,14 @@ public class TicketTransactionEndpoint extends BaseEndpoint {
 			ResponseApi enpoint = ticketTransactionService.findByTicketId(ticketId);
 			return enpoint;
 	}
+	
+	@RequestMapping(value = "/{id}/portal", method = RequestMethod.GET)
+	@ApiOperation("Detail for transaction in portal")
+	public @ResponseBody Object getTicketTransactionDetailPortal(@PathVariable("id") String id) throws Exception {
+			ResponseApi enpoint = ticketTransactionService.getDetailPortal(id);
+			return enpoint;
+	}
+	
 	
 	
 }
