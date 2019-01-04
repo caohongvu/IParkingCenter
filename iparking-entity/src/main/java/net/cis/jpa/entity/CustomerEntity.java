@@ -1,10 +1,14 @@
 package net.cis.jpa.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -17,6 +21,7 @@ public class CustomerEntity implements Serializable {
 
 	@Id
 	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Column(name = "phone")
@@ -25,11 +30,30 @@ public class CustomerEntity implements Serializable {
 	@Column(name = "phone2")
 	private String phone2;
 
+	@Column(name = "telco")
+	private String telco;
+
+	@Lob
+	@Column(name = "password")
+	private String password;
+
+	@Column(name = "checksum")
+	private String checksum;
+
 	@Column(name = "status")
 	private int status;
 
 	@Column(name = "old_id")
 	private long oldId;
+
+	@Column(name = "created_at")
+	private Date createAt;
+
+	@Column(name = "updated_at")
+	private Date updateAt;
+
+	@Column(name = "otp")
+	private String otp;
 
 	public long getId() {
 		return id;

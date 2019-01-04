@@ -6,6 +6,7 @@ import net.cis.jpa.entity.CustomerEntity;
 
 public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> {
 	CustomerEntity findByPhone2(String phone2);
-	
-	
+
+	CustomerEntity findByOldId(long oldId);
+
 }

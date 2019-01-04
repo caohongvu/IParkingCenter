@@ -14,12 +14,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.Utils;
 import net.cis.common.util.constant.UserConstant;
+import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
+import net.cis.dto.CustomerInfoDto;
 import net.cis.dto.ResponseDto;
-import net.cis.jpa.entity.CustomerCarEntity;
-import net.cis.jpa.entity.CustomerInfoEntity;
-import net.cis.repository.CustomerCarRepository;
 import net.cis.repository.CustomerInfoRepository;
+import net.cis.service.CustomerService;
 
 /**
  * 
@@ -31,7 +31,7 @@ import net.cis.repository.CustomerInfoRepository;
 @Api(value = "customer Endpoint", description = "The URL to handle customer endpoint")
 public class CustomerEndpoint {
 	@Autowired
-	CustomerCarRepository customerCarRepository;
+	CustomerService customerService;
 	@Autowired
 	CustomerInfoRepository customerInfoRepository;
 
@@ -45,28 +45,23 @@ public class CustomerEndpoint {
 			responseDto.setMessage("Biển số xe sai định dạng");
 			return responseDto;
 		}
-
 		// thuc hien lay thong tin customer tu bien so xe
-		List<CustomerCarEntity> lstCustomerCarEntity = customerCarRepository.findCustomerCarByNumberPlate(numberPlate,
+		List<CustomerCarDto> lstCustomerCarDto = customerService.findCustomerCarByNumberPlate(numberPlate,
 				UserConstant.STATUS_VERIFIED);
-		if (lstCustomerCarEntity != null && lstCustomerCarEntity.size() == 1) {
-			CustomerDto objCustomerDto = new CustomerDto();
-			CustomerCarEntity objCustomerCarEntity = lstCustomerCarEntity.get(0);
-			if (objCustomerCarEntity.getCustomer() != null) {
-				objCustomerDto.setId(objCustomerCarEntity.getCustomer().getOldId());
-				objCustomerDto.setPhone2(objCustomerCarEntity.getCustomer().getPhone2());
-				objCustomerDto.setPhone(objCustomerCarEntity.getCustomer().getPhone());
-				objCustomerDto.setStatus(objCustomerCarEntity.getCustomer().getStatus());
-				// tim kiem thong tin email
-				CustomerInfoEntity objCustomerInfoEntity = customerInfoRepository
-						.findByCusId(objCustomerCarEntity.getCustomer().getOldId());
-				if (objCustomerInfoEntity != null) {
-					objCustomerDto.setEmail(objCustomerInfoEntity.getEmail());
-				}
-			}
-			objCustomerDto.setNumberPlate(objCustomerCarEntity.getNumberPlate());
-
-			responseDto.setData(objCustomerDto);
+		if (lstCustomerCarDto != null && lstCustomerCarDto.size() == 1) {
+			CustomerCarDto objCustomerCarDto = lstCustomerCarDto.get(0);
+			CustomerInfoDto objCustomerInfoDto = customerService
+					.findCustomerInfoByCusId(objCustomerCarDto.getCustomer());
+			CustomerDto objCustomerDto = customerService.findCustomerByOldId(objCustomerCarDto.getCustomer());
+			Object dataObject = new Object() {
+				public long id = objCustomerCarDto.getCustomer();
+				public String phone = objCustomerDto.getPhone();
+				public String phone2 = objCustomerDto.getPhone2();
+				public int status = objCustomerDto.getStatus();
+				public String numberPlate = objCustomerCarDto.getNumberPlate();
+				public String email = objCustomerInfoDto.getEmail();
+			};
+			responseDto.setData(dataObject);
 			return responseDto;
 		}
 		return responseDto;

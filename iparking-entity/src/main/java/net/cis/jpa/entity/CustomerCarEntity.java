@@ -5,8 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -24,9 +22,8 @@ public class CustomerCarEntity implements Serializable {
 	@Column(name = "number_plate")
 	private String numberPlate;
 
-	@ManyToOne
-	@JoinColumn(name = "customer", referencedColumnName = "old_id")
-	private CustomerEntity customer;
+	@Column(name = "customer")
+	private long customer;
 
 	@Column(name = "verified")
 	private int verified;
@@ -47,11 +44,11 @@ public class CustomerCarEntity implements Serializable {
 		this.numberPlate = numberPlate;
 	}
 
-	public CustomerEntity getCustomer() {
+	public long getCustomer() {
 		return customer;
 	}
 
-	public void setCustomer(CustomerEntity customer) {
+	public void setCustomer(long customer) {
 		this.customer = customer;
 	}
 

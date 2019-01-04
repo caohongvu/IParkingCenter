@@ -304,7 +304,9 @@ public class TicketEndpoint extends BaseEndpoint {
 					responseDto.setMessage("Lỗi tạo Customer");
 					return responseDto;
 				}
-				objTicketDto.setCustomer((long) resultCreateCustomer.get("Data"));
+				long idCustomer = (long) resultCreateCustomer.get("Data");
+				// thuc hien tao customer ben db iparking_center
+				objTicketDto.setCustomer(idCustomer);
 			}
 
 			objTicketDto.setParkingPlace(parkingPlace);
