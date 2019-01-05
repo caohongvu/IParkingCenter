@@ -38,7 +38,7 @@ public class CustomerEntity implements Serializable {
 	private String password;
 
 	@Column(name = "checksum")
-	private String checksum;
+	private String checkSum;
 
 	@Column(name = "status")
 	private int status;
@@ -54,6 +54,54 @@ public class CustomerEntity implements Serializable {
 
 	@Column(name = "otp")
 	private String otp;
+
+	public String getTelco() {
+		return telco;
+	}
+
+	public void setTelco(String telco) {
+		this.telco = telco;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getCheckSum() {
+		return checkSum;
+	}
+
+	public void setCheckSum(String checkSum) {
+		this.checkSum = checkSum;
+	}
+
+	public Date getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(Date createAt) {
+		this.createAt = createAt;
+	}
+
+	public Date getUpdateAt() {
+		return updateAt;
+	}
+
+	public void setUpdateAt(Date updateAt) {
+		this.updateAt = updateAt;
+	}
+
+	public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
 
 	public long getId() {
 		return id;

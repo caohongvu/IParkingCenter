@@ -1,5 +1,7 @@
 package net.cis.dto;
 
+import java.util.Date;
+
 public class CustomerInfoDto {
 	private long id;
 	private long cusId;
@@ -8,6 +10,15 @@ public class CustomerInfoDto {
 	private String email;
 	private String verificationCode;
 	private int status;
+	private Date createdAt;
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
 
 	public long getId() {
 		return id;

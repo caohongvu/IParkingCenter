@@ -1,19 +1,56 @@
 package net.cis.dto;
 
+import java.util.Date;
+
 public class CustomerDto {
 	private long id;
 	private String phone;
 	private String phone2;
 	private int status;
-	private String email;
-	private String numberPlate;
+	private Date createdAt;
+	private Date updatedAt;
+	private String checkSum;
+	private long oldId;
+	private String otp;
 
-	public String getNumberPlate() {
-		return numberPlate;
+	public String getOtp() {
+		return otp;
 	}
 
-	public void setNumberPlate(String numberPlate) {
-		this.numberPlate = numberPlate;
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+
+	public String getCheckSum() {
+		return checkSum;
+	}
+
+	public void setCheckSum(String checkSum) {
+		this.checkSum = checkSum;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public long getOldId() {
+		return oldId;
+	}
+
+	public void setOldId(long oldId) {
+		this.oldId = oldId;
 	}
 
 	public long getId() {
@@ -46,14 +83,6 @@ public class CustomerDto {
 
 	public void setStatus(int status) {
 		this.status = status;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 }

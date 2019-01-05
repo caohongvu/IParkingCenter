@@ -43,6 +43,11 @@ public class CustomerServiceImpl implements CustomerService {
 
 	ModelMapper mapper;
 
+	@PostConstruct
+	public void initialize() {
+		mapper = new ModelMapper();
+	}
+
 	@Override
 	public Map<String, Object> createCustomerInPoseidonDb(String phone) throws Exception {
 		// TODO Auto-generated method stub
@@ -111,8 +116,18 @@ public class CustomerServiceImpl implements CustomerService {
 		return objCustomerDto;
 	}
 
-	@PostConstruct
-	public void initialize() {
-		mapper = new ModelMapper();
+	@Override
+	public CustomerDto findByPhone2(String phone) throws Exception {
+		CustomerDto objCustomerDto = new CustomerDto();
+		mapper.map(customerRepository.findByPhone2(phone), objCustomerDto);
+		return objCustomerDto;
+	}
+
+	@Override
+	public CustomerInfoDto saveCustomerInfoEntity(CustomerInfoDto objCustomerInfoDto) throws Exception {
+		CustomerInfoEntity objCustomerInfoEntity = new CustomerInfoEntity();
+		mapper.map(objCustomerInfoDto, objCustomerInfoEntity);
+		mapper.map(customerInfoRepository.save(objCustomerInfoEntity), objCustomerInfoDto);
+		return objCustomerInfoDto;
 	}
 }

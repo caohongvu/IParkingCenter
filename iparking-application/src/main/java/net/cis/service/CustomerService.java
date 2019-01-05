@@ -17,4 +17,8 @@ public interface CustomerService {
 	CustomerInfoDto findCustomerInfoByCusId(long cusId) throws Exception;
 	
 	CustomerDto findCustomerByOldId(long cusId) throws Exception;
+
+	CustomerDto findByPhone2(String phone) throws Exception;
+	
+	CustomerInfoDto saveCustomerInfoEntity(CustomerInfoDto objCustomerInfoDto)  throws Exception;
 }

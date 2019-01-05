@@ -30,16 +30,16 @@ import net.cis.common.util.TicketUtil;
 import net.cis.common.util.Utils;
 import net.cis.common.util.constant.TicketConstants;
 import net.cis.common.web.BaseEndpoint;
+import net.cis.dto.CustomerDto;
 import net.cis.dto.MonthlyTicketDto;
 import net.cis.dto.ParkingDto;
 import net.cis.dto.ResponseDto;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.criteria.MonthlyTicketCriteria;
 import net.cis.jpa.criteria.TicketCriteria;
-import net.cis.jpa.entity.CustomerEntity;
-import net.cis.repository.CustomerRepository;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CustomerService;
+import net.cis.service.EmailService;
 import net.cis.service.MonthlyTicketService;
 import net.cis.service.TicketService;
 import net.cis.service.cache.MonthlyTicketCache;
@@ -53,10 +53,6 @@ import net.cis.service.cache.ParkingPlaceCache;
 @Api(value = "ticket Endpoint", description = "The URL to handle ticket endpoint")
 public class TicketEndpoint extends BaseEndpoint {
 	protected final Logger LOGGER = Logger.getLogger(getClass());
-
-	@Autowired
-	CustomerRepository customerRepository;
-
 	@Autowired
 	CustomerService customerService;
 	@Autowired
@@ -70,6 +66,9 @@ public class TicketEndpoint extends BaseEndpoint {
 
 	@Autowired
 	private MonthlyTicketCache monthlyTicketCache;
+
+	@Autowired
+	EmailService emailService;
 
 	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	SimpleDateFormat shortFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -290,12 +289,13 @@ public class TicketEndpoint extends BaseEndpoint {
 				return responseDto;
 			}
 			TicketDto objTicketDto = new TicketDto();
-			//thuc hien generate ID ticket
+			// thuc hien generate ID ticket
 			objTicketDto.setId(TicketUtil.generateTicketId());
 			// lay thong tin customer
-			CustomerEntity objCustomer = customerRepository.findByPhone2(customerPhone);
-			if (objCustomer != null) {
-				objTicketDto.setCustomer(objCustomer.getOldId());
+			CustomerDto objCustomerDto = customerService.findByPhone2(customerPhone);
+			long customerId = 0l;
+			if (objCustomerDto != null) {
+				customerId = objCustomerDto.getOldId();
 			} else {
 				// thuc hien tao customer bên db shard
 				Map<String, Object> resultCreateCustomer = customerService.createCustomerInPoseidonDb(customerPhone);
@@ -305,9 +305,21 @@ public class TicketEndpoint extends BaseEndpoint {
 					responseDto.setMessage("Lỗi tạo Customer");
 					return responseDto;
 				}
-				long idCustomer = (long) resultCreateCustomer.get("Data");
+				customerId = (long) resultCreateCustomer.get("Data");
 				// thuc hien tao customer ben db iparking_center
-				objTicketDto.setCustomer(idCustomer);
+				CustomerDto objCustomerDtoSave = new CustomerDto();
+				objCustomerDtoSave.setPhone(customerPhone);
+				objCustomerDtoSave.setPhone2(customerPhone);
+				objCustomerDtoSave.setOldId(customerId);
+				objCustomerDtoSave.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+				objCustomerDtoSave.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+				customerService.createCustomerInIparkingCenter(objCustomerDtoSave);
+
+			}
+			objTicketDto.setCustomer(customerId);
+			// thuc hiện kiểm tra email verfify
+			if (!StringUtils.isEmpty(email)) {
+				emailService.checkAndsendMailActiveASynchronous(customerId, customerPhone, email);
 			}
 
 			objTicketDto.setParkingPlace(parkingPlace);
