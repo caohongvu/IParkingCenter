@@ -35,7 +35,7 @@ public class CustomerEndpoint {
 	@Autowired
 	CustomerInfoRepository customerInfoRepository;
 
-	@RequestMapping(value = "/find-by-numberplate/", method = RequestMethod.GET)
+	@RequestMapping(value = "/find-by-numberplate", method = RequestMethod.GET)
 	@ApiOperation("Fetch details of ticket")
 	public @ResponseBody ResponseDto getById(@RequestParam(name = "numberPlate") String numberPlate) throws Exception {
 		ResponseDto responseDto = new ResponseDto();

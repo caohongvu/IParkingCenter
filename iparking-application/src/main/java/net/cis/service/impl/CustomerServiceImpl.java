@@ -23,7 +23,6 @@ import net.cis.dto.CustomerInfoDto;
 import net.cis.jpa.entity.CustomerCarEntity;
 import net.cis.jpa.entity.CustomerEntity;
 import net.cis.jpa.entity.CustomerInfoEntity;
-import net.cis.jpa.entity.TicketEntity;
 import net.cis.repository.CustomerCarRepository;
 import net.cis.repository.CustomerInfoRepository;
 import net.cis.repository.CustomerRepository;
@@ -72,9 +71,11 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerEntity createCustomerInIparkingCenter(CustomerEntity customerEntity) {
-		// TODO Auto-generated method stub
-		return customerRepository.save(customerEntity);
+	public CustomerDto createCustomerInIparkingCenter(CustomerDto customerDto) {
+		CustomerEntity objCustomerEntity = new CustomerEntity();
+		mapper.map(customerDto, objCustomerEntity);
+		mapper.map(customerRepository.save(objCustomerEntity), customerDto);
+		return customerDto;
 	}
 
 	@Override

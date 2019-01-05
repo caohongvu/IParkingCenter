@@ -256,7 +256,7 @@ public class TicketEndpoint extends BaseEndpoint {
 		return ticket;
 	}
 
-	@RequestMapping(value = "/create-ticket/", method = RequestMethod.POST)
+	@RequestMapping(value = "/create-ticket", method = RequestMethod.POST)
 	@ApiOperation("Create ticket from app suppervisor")
 	public @ResponseBody ResponseDto createTicketForAppSupperVisor(@RequestParam("customerPhone") String customerPhone,
 			@RequestParam("parkingPlace") Long parkingPlace, @RequestParam("carType") int carType,
@@ -290,6 +290,7 @@ public class TicketEndpoint extends BaseEndpoint {
 				return responseDto;
 			}
 			TicketDto objTicketDto = new TicketDto();
+			//thuc hien generate ID ticket
 			objTicketDto.setId(TicketUtil.generateTicketId());
 			// lay thong tin customer
 			CustomerEntity objCustomer = customerRepository.findByPhone2(customerPhone);

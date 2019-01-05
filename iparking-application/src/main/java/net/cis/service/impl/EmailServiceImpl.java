@@ -38,7 +38,6 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	public static int noOfQuickServiceThreads = 100;
-
 	private ScheduledExecutorService quickService = Executors.newScheduledThreadPool(noOfQuickServiceThreads);
 
 	public void sendASynchronousMail(String title, String content) {

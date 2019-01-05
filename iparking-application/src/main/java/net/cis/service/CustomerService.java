@@ -6,12 +6,11 @@ import java.util.Map;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
-import net.cis.jpa.entity.CustomerEntity;
 
 public interface CustomerService {
 	Map<String, Object> createCustomerInPoseidonDb(String phone) throws Exception;
 
-	CustomerEntity createCustomerInIparkingCenter(CustomerEntity customerEntity);
+	CustomerDto createCustomerInIparkingCenter(CustomerDto customerDto);
 
 	List<CustomerCarDto> findCustomerCarByNumberPlate(String numberPlate, int verified) throws Exception;
 
