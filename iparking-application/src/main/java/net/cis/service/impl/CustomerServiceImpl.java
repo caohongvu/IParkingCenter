@@ -84,7 +84,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<CustomerCarDto> findCustomerCarByNumberPlate(String numberPlate, int verified) throws Exception {
+	public List<CustomerCarDto> findCustomerCarByNumberPlate(String numberPlate, Integer verified) throws Exception {
 		List<CustomerCarEntity> lstCustomerCarEntity = customerCarRepository.findCustomerCarByNumberPlate(numberPlate,
 				verified);
 		return this.map(lstCustomerCarEntity);
@@ -129,5 +129,13 @@ public class CustomerServiceImpl implements CustomerService {
 		mapper.map(objCustomerInfoDto, objCustomerInfoEntity);
 		mapper.map(customerInfoRepository.save(objCustomerInfoEntity), objCustomerInfoDto);
 		return objCustomerInfoDto;
+	}
+
+	@Override
+	public CustomerCarDto saveCustomerCarEntity(CustomerCarDto objCustomerCarDto) throws Exception {
+		CustomerCarEntity objCustomerCaEntity = new CustomerCarEntity();
+		mapper.map(objCustomerCarDto, objCustomerCaEntity);
+		mapper.map(customerCarRepository.save(objCustomerCaEntity), objCustomerCarDto);
+		return objCustomerCarDto;
 	}
 }
