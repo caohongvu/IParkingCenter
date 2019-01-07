@@ -8,42 +8,62 @@ import java.util.Date;
 public class TicketDto {
 
 	private long id;
-	
+
 	private long parkingPlace;
-	
+
 	private String cppCode;
-	
+
 	private String cppAddress;
-	
+
 	private long customer;
-	
+
 	private String carNumberPlate;
-	
+
 	private int carType;
-	
+
 	private int carPricingGroup;
-	
+
 	private double paidAmount;
-	
+
 	private double mustPayAmount;
-	
+
 	private String startTime;
-	
+
 	private String endTime;
-	
+
 	private String actualEndTime;
-	
+
 	private int status;
-	
+
 	private boolean inSession;
-	
+
 	private String ticketData;
-	
+
 	private long monthlyTicketId;
-	
+
 	private Date createdAt;
-	
+
 	private String updatedAt;
+
+	private String customerPhone;
+
+	private String email;
+
+	public String getCustomerPhone() {
+		return customerPhone;
+	}
+
+	public void setCustomerPhone(String customerPhone) {
+		this.customerPhone = customerPhone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	public long getId() {
 		return id;
@@ -60,7 +80,7 @@ public class TicketDto {
 	public void setParkingPlace(long parkingPlace) {
 		this.parkingPlace = parkingPlace;
 	}
-	
+
 	public String getCppCode() {
 		return cppCode;
 	}
@@ -69,7 +89,6 @@ public class TicketDto {
 		this.cppCode = cppCode;
 	}
 
-	
 	public String getCppAddress() {
 		return cppAddress;
 	}
@@ -174,7 +193,6 @@ public class TicketDto {
 		this.ticketData = ticketData;
 	}
 
-	
 	public long getMonthlyTicketId() {
 		return monthlyTicketId;
 	}
@@ -198,5 +216,5 @@ public class TicketDto {
 	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	
+
 }

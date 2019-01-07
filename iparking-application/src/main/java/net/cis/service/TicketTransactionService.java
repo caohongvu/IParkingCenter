@@ -2,7 +2,6 @@ package net.cis.service;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 
 import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketTransactionDto;
@@ -23,6 +22,8 @@ public interface TicketTransactionService {
     List<TicketTransactionDto> findAll();
 
 	ResponseApi findByTicketId(Long ticketId);
+	
+	ResponseApi getDetailPortal(String id);
 
 }
  
