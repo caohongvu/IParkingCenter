@@ -42,6 +42,9 @@ public class ParkingEntity {
 	@Column(name="capacity")
 	private int capacity;
 	
+	@Column(name="adjust")
+	private int adjust;
+	
 	@Column(name="parking_place_data")
 	private String parkingPlaceData;
 	
@@ -125,6 +128,16 @@ public class ParkingEntity {
 
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
+	}
+
+	
+	
+	public int getAdjust() {
+		return adjust;
+	}
+
+	public void setAdjust(int adjust) {
+		this.adjust = adjust;
 	}
 
 	public String getParkingPlaceData() {
