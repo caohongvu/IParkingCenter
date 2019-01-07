@@ -1,15 +1,20 @@
+
 package net.cis.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,16 +25,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.TicketUtil;
 import net.cis.common.util.Utils;
 import net.cis.common.util.constant.TicketConstants;
 import net.cis.common.web.BaseEndpoint;
+import net.cis.dto.CustomerCarDto;
+import net.cis.dto.CustomerDto;
 import net.cis.dto.MonthlyTicketDto;
 import net.cis.dto.ParkingDto;
+import net.cis.dto.ResponseDto;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.criteria.MonthlyTicketCriteria;
 import net.cis.jpa.criteria.TicketCriteria;
 import net.cis.security.filter.TokenAuthenticationService;
+import net.cis.service.CustomerService;
+import net.cis.service.EmailService;
 import net.cis.service.MonthlyTicketService;
 import net.cis.service.TicketService;
 import net.cis.service.cache.MonthlyTicketCache;
@@ -42,7 +53,9 @@ import net.cis.service.cache.ParkingPlaceCache;
 @RequestMapping("/ticket")
 @Api(value = "ticket Endpoint", description = "The URL to handle ticket endpoint")
 public class TicketEndpoint extends BaseEndpoint {
-
+	protected final Logger LOGGER = Logger.getLogger(getClass());
+	@Autowired
+	CustomerService customerService;
 	@Autowired
 	TicketService ticketService;
 
@@ -54,6 +67,9 @@ public class TicketEndpoint extends BaseEndpoint {
 
 	@Autowired
 	private MonthlyTicketCache monthlyTicketCache;
+
+	@Autowired
+	EmailService emailService;
 
 	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	SimpleDateFormat shortFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -240,6 +256,100 @@ public class TicketEndpoint extends BaseEndpoint {
 		return ticket;
 	}
 
-	
+	@RequestMapping(value = "/create-ticket", method = RequestMethod.POST)
+	@ApiOperation("Create ticket from app suppervisor")
+	public @ResponseBody ResponseDto createTicketForAppSupperVisor(@RequestParam("customerPhone") String customerPhone,
+			@RequestParam("parkingPlace") Long parkingPlace, @RequestParam("carType") int carType,
+			@RequestParam("carPricingGroup") int carPricingGroup, @RequestParam("carNumberPlate") String carNumberPlate,
+			@RequestParam(name = "email", required = false) String email,
+			@RequestParam(name = "otp", required = false) String otp) throws Exception {
+		ResponseDto responseDto = new ResponseDto();
+		responseDto.setCode(HttpStatus.OK.toString());
+		LOGGER.info("create-ticket customerPhone:" + customerPhone);
+		LOGGER.info("create-ticket parkingPlace:" + parkingPlace);
+		LOGGER.info("create-ticket carType:" + carType);
+		LOGGER.info("create-ticket carPricingGroup:" + carPricingGroup);
+		LOGGER.info("create-ticket carNumberPlate:" + carNumberPlate);
+		LOGGER.info("create-ticket email:" + email);
+		try {
+			if (StringUtils.isEmpty(customerPhone)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Số điện thoại khách hàng sai định dạng");
+				return responseDto;
+			}
+
+			if (!Utils.validateVNPhoneNumber(customerPhone)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Số điện thoại khách hàng sai định dạng");
+				return responseDto;
+			}
+
+			if (!Utils.validateNumberPlate(carNumberPlate)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Biển số xe sai định dạng");
+				return responseDto;
+			}
+			TicketDto objTicketDto = new TicketDto();
+			// thuc hien generate ID ticket
+			objTicketDto.setId(TicketUtil.generateTicketId());
+			// lay thong tin customer
+			CustomerDto objCustomerDto = customerService.findByPhone2(customerPhone);
+			long customerId = 0l;
+			if (objCustomerDto != null) {
+				customerId = objCustomerDto.getOldId();
+			} else {
+				// thuc hien tao customer bên db shard
+				Map<String, Object> resultCreateCustomer = customerService.createCustomerInPoseidonDb(customerPhone);
+				if (resultCreateCustomer == null
+						|| !HttpStatus.OK.toString().equals(resultCreateCustomer.get("Code"))) {
+					responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+					responseDto.setMessage("Lỗi tạo Customer");
+					return responseDto;
+				}
+				customerId = (long) resultCreateCustomer.get("Data");
+				// thuc hien tao customer ben db iparking_center
+				CustomerDto objCustomerDtoSave = new CustomerDto();
+				objCustomerDtoSave.setPhone(customerPhone);
+				objCustomerDtoSave.setPhone2(customerPhone);
+				objCustomerDtoSave.setOldId(customerId);
+				objCustomerDtoSave.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+				objCustomerDtoSave.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+				customerService.createCustomerInIparkingCenter(objCustomerDtoSave);
+				
+				// thuc hien insert customer_car va gui OTP
+				CustomerCarDto objCustomerCarDto = new CustomerCarDto();
+				
+			}
+			
+			objTicketDto.setCustomer(customerId);
+			// thuc hiện kiểm tra email verfify
+			if (!StringUtils.isEmpty(email)) {
+				emailService.checkAndsendMailActiveASynchronous(customerId, customerPhone, email);
+			}
+
+			objTicketDto.setParkingPlace(parkingPlace);
+			objTicketDto.setCarNumberPlate(carNumberPlate);
+			objTicketDto.setCarType(carType);
+			objTicketDto.setCarPricingGroup(carPricingGroup);
+			objTicketDto.setPaidAmount(0);
+			objTicketDto.setMustPayAmount(0);
+			objTicketDto.setStatus(0);
+			objTicketDto.setTicketData("");
+			objTicketDto.setInSession(Boolean.TRUE);
+			objTicketDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			objTicketDto
+					.setUpdatedAt(Utils.getDatetimeFormatVN(Calendar.getInstance().getTime(), "yyyy-MM-dd HH:mm:ss"));
+
+			objTicketDto = ticketService.save(objTicketDto);
+			responseDto.setData(objTicketDto);
+			return responseDto;
+		} catch (Exception ex) {
+			LOGGER.error("Loi he thong :" + ex.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			responseDto.setMessage("Lỗi hệ thống:" + ex.getMessage());
+			return responseDto;
+		}
+
+	}
 
 }

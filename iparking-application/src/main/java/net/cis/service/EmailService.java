@@ -9,5 +9,6 @@ public interface EmailService {
 
 	public void sendASynchronousMail(String title, String content) throws Exception;
 
-	public void sendEmailActive(String urlActive, String email) throws Exception;
+	public void checkAndsendMailActiveASynchronous(long customer, String phone, String email) throws Exception;
+
 }

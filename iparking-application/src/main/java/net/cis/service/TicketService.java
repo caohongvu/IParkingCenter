@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 import net.cis.dto.TicketDto;
+import net.cis.dto.TicketPriceDto;
 import net.cis.jpa.criteria.TicketCriteria;
 
 /**
@@ -19,6 +20,8 @@ public interface TicketService {
     void delete(TicketDto ticketDto);
     
     List<TicketDto> findAll(TicketCriteria ticketCriteria, Pageable pageable);
+    
+    TicketPriceDto getPrice(String ticketId, int min);
 
 }
  

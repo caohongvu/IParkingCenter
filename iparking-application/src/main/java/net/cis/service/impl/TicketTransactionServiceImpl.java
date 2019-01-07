@@ -1,16 +1,26 @@
 package net.cis.service.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.cis.constants.ResponseErrorCodeConstants;
+import net.cis.dto.ErrorDto;
+import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketTransactionDto;
+import net.cis.dto.TicketTransactionPortalDto;
 import net.cis.jpa.entity.TicketTransactionEntity;
+import net.cis.jpa.entity.TicketTransactionPortalEntity;
+import net.cis.repository.TicketTransactionPortalReponsitory;
 import net.cis.repository.TicketTransactionRepository;
 import net.cis.service.TicketTransactionService;
 
@@ -22,6 +32,10 @@ public class TicketTransactionServiceImpl implements TicketTransactionService {
 
 	@Autowired
 	private TicketTransactionRepository ticketTransactionRepository;
+	
+	@Autowired
+	private TicketTransactionPortalReponsitory ticketTransactionPortalRepository;
+
 	
 	
 	ModelMapper mapper;
@@ -47,6 +61,7 @@ public class TicketTransactionServiceImpl implements TicketTransactionService {
 		mapper.map(entity, ticketTransactionDto);
 		return ticketTransactionDto;
 	}
+	
 	
 	@Override
 	public TicketTransactionDto findByPaymentOrderNo(String paymentOrderNo) {
@@ -81,7 +96,7 @@ public class TicketTransactionServiceImpl implements TicketTransactionService {
 		});
 		return rtn;
 	}
-
+	
 
 	@PostConstruct
 	public void initialize() {
@@ -89,11 +104,74 @@ public class TicketTransactionServiceImpl implements TicketTransactionService {
 	}
 
 
+
 	@Override
 	public void delete(TicketTransactionDto ticketTransactionDto) {
 		if(ticketTransactionDto != null) {
 			ticketTransactionRepository.delete(ticketTransactionDto.getId());
 		}
+	}
+
+	
+	public ResponseApi findByTicketId(Long ticketId) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+
+		List<TicketTransactionEntity> ticketTransactionsEntities = null;
+		
+		try {
+			ticketTransactionsEntities = ticketTransactionRepository.findByTicketId(ticketId);
+				if (ticketTransactionsEntities == null) {
+					errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+					errorDto.setMessage("");
+					responseApi.setError(errorDto);
+					return responseApi;
+				}
+				List<TicketTransactionDto> ticketTransacitonDtos = this.map(ticketTransactionsEntities);
+
+				responseApi.setData(ticketTransacitonDtos);
+				errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+				errorDto.setMessage("");
+				responseApi.setError(errorDto);
+				return responseApi;
+			
+		}catch (Exception e) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusInternalServerError);
+			errorDto.setMessage(ResponseErrorCodeConstants.DBAccessErr);
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
+
+	@Override
+	public ResponseApi getDetailPortal(String id) {
+		// TODO Auto-generated method stub
+		ResponseApi responseApi = new ResponseApi();
+		ModelMapper mapper = new ModelMapper();
+		ErrorDto errorDto = new ErrorDto();
+		try {
+			TicketTransactionPortalEntity entity = ticketTransactionPortalRepository.getDetailPortalById(id);
+			if(entity == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+				errorDto.setMessage("");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			TicketTransactionPortalDto ticketTransactionPortalDto = new TicketTransactionPortalDto();
+			
+			mapper.map(entity, ticketTransactionPortalDto);
+			
+			errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+			errorDto.setMessage("");
+			responseApi.setError(errorDto);
+			responseApi.setData(ticketTransactionPortalDto);
+
+			return responseApi;
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+		
+		return responseApi;
 	}
 
 }
