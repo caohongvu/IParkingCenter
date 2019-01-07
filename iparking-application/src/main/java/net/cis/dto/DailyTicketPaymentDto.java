@@ -2,7 +2,7 @@ package net.cis.dto;
 
 import java.util.Date;
 
-import javax.persistence.Column;
+
 
 public class DailyTicketPaymentDto {
 	private long id;	
