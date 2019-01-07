@@ -30,6 +30,7 @@ import net.cis.common.util.TicketUtil;
 import net.cis.common.util.Utils;
 import net.cis.common.util.constant.TicketConstants;
 import net.cis.common.web.BaseEndpoint;
+import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.MonthlyTicketDto;
 import net.cis.dto.ParkingDto;
@@ -314,8 +315,12 @@ public class TicketEndpoint extends BaseEndpoint {
 				objCustomerDtoSave.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 				objCustomerDtoSave.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
 				customerService.createCustomerInIparkingCenter(objCustomerDtoSave);
-
+				
+				// thuc hien insert customer_car va gui OTP
+				CustomerCarDto objCustomerCarDto = new CustomerCarDto();
+				
 			}
+			
 			objTicketDto.setCustomer(customerId);
 			// thuc hiện kiểm tra email verfify
 			if (!StringUtils.isEmpty(email)) {
