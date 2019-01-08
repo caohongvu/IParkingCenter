@@ -23,3 +23,5 @@ iparking-apis/.settings/org.eclipse.wst.common.component
 /.project
 /.classpath
 /.settings
+/.idea
+*.iml
