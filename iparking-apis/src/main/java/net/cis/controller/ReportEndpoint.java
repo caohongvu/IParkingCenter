@@ -97,7 +97,7 @@ public class ReportEndpoint {
 	}
 	
 	@RequestMapping(value = "/monthly/ticket/payment", method = RequestMethod.GET)
-	@ApiOperation("Fetch all ticket payment")
+	@ApiOperation("Fetch all monthly ticket payment")
 	public @ResponseBody Object fetchMonthlyTicketsPayment(
 			@RequestParam(name = "transID", required = false) String transID,
 			@RequestParam(name = "cpp_code", required = false) String cppCode,

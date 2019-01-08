@@ -13,9 +13,11 @@ import org.hibernate.annotations.Formula;
 @Table(name = "monthly_ticket_payment_view")
 public class MonthlyTicketPaymentFooterEntity {
 	@Id
-	@Column(name="id")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
+    @Column(name = "id")
+	private String id; // The row number!
+	
+	@Column(name="ticket_id")
+	private Long ticket_id;
 	
 	@Column(name="transaction_id")
 	private String transaction_id;
@@ -76,13 +78,21 @@ public class MonthlyTicketPaymentFooterEntity {
 	
 	@Formula("SUM(payment_amount)")
 	private double totalPayment_amount;
-	
-	public Long getId() {
+
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Long getTicket_id() {
+		return ticket_id;
+	}
+
+	public void setTicket_id(Long ticket_id) {
+		this.ticket_id = ticket_id;
 	}
 
 	public String getTransaction_id() {

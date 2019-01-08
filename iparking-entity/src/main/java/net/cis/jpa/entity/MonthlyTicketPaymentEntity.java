@@ -3,18 +3,20 @@ package net.cis.jpa.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "monthly_ticket_payment_view")
 public class MonthlyTicketPaymentEntity {
+	
 	@Id
-	@Column(name="id")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
+    @Column(name = "id")
+    private String id; // The row number!
+	
+	@Column(name="ticket_id")
+	private Long ticket_id;
 	
 	@Column(name="transaction_id")
 	private String transaction_id;
@@ -58,12 +60,21 @@ public class MonthlyTicketPaymentEntity {
 	@Column(name="apply_to_time")
 	private String apply_to_time;
 
-	public Long getId() {
+
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Long getTicket_id() {
+		return ticket_id;
+	}
+
+	public void setTicket_id(Long ticket_id) {
+		this.ticket_id = ticket_id;
 	}
 
 	public String getTransaction_id() {
@@ -177,6 +188,7 @@ public class MonthlyTicketPaymentEntity {
 	public void setApply_to_time(String apply_to_time) {
 		this.apply_to_time = apply_to_time;
 	}
+	
 	
 	
 	

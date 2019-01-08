@@ -3,7 +3,7 @@ package net.cis.dto;
 
 
 public class MonthlyTicketPaymentDto {
-	private Long id;
+	private Long ticket_id;
 	private String transaction_id;
 	private String contract_code;
 	private String contract_no;
@@ -19,11 +19,12 @@ public class MonthlyTicketPaymentDto {
 	private String apply_from_time;
 	private String apply_to_time;
 	private String periodPayment;
-	public Long getId() {
-		return id;
+	
+	public Long getTicket_id() {
+		return ticket_id;
 	}
-	public void setId(Long id) {
-		this.id = id;
+	public void setTicket_id(Long ticket_id) {
+		this.ticket_id = ticket_id;
 	}
 	public String getTransaction_id() {
 		return transaction_id;
