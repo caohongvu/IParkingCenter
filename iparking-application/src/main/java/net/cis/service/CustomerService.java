@@ -8,9 +8,9 @@ import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
 
 public interface CustomerService {
-	Map<String, Object> createCustomerInPoseidonDb(String phone) throws Exception;
+	Map<String, Object> saveCustomerInPoseidonDb(String phone) throws Exception;
 
-	CustomerDto createCustomerInIparkingCenter(CustomerDto customerDto);
+	CustomerDto saveCustomerInIparkingCenter(CustomerDto customerDto);
 
 	List<CustomerCarDto> findCustomerCarByNumberPlate(String numberPlate, Integer verified) throws Exception;
 
@@ -23,4 +23,6 @@ public interface CustomerService {
 	CustomerInfoDto saveCustomerInfoEntity(CustomerInfoDto objCustomerInfoDto) throws Exception;
 
 	CustomerCarDto saveCustomerCarEntity(CustomerCarDto objCustomerCarDto) throws Exception;
+
+	void saveCustomerInfoInPoseidonDb(long cusId,String phone, String email) throws Exception;
 }

@@ -34,8 +34,8 @@ public class CustomerEntity implements Serializable {
 	private String telco;
 
 	@Lob
-	@Column(name = "password")
-	private String password;
+	@Column(name = "password", columnDefinition = "BLOB")
+	private byte[] password;
 
 	@Column(name = "checksum")
 	private String checkSum;
@@ -47,10 +47,10 @@ public class CustomerEntity implements Serializable {
 	private long oldId;
 
 	@Column(name = "created_at")
-	private Date createAt;
+	private Date createdAt;
 
 	@Column(name = "updated_at")
-	private Date updateAt;
+	private Date updatedAt;
 
 	@Column(name = "otp")
 	private String otp;
@@ -63,11 +63,11 @@ public class CustomerEntity implements Serializable {
 		this.telco = telco;
 	}
 
-	public String getPassword() {
+	public byte[] getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(byte[] password) {
 		this.password = password;
 	}
 
@@ -79,20 +79,20 @@ public class CustomerEntity implements Serializable {
 		this.checkSum = checkSum;
 	}
 
-	public Date getCreateAt() {
-		return createAt;
+	public Date getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setCreateAt(Date createAt) {
-		this.createAt = createAt;
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
-	public Date getUpdateAt() {
-		return updateAt;
+	public Date getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setUpdateAt(Date updateAt) {
-		this.updateAt = updateAt;
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public String getOtp() {

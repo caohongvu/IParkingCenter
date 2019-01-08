@@ -4,7 +4,25 @@ public class CustomerCarDto {
 	private long id;
 	private String numberPlate;
 	private long customer;
+	private int createdAt;
+	private int updatedAt;
 	private int verified;
+
+	public int getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(int createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public int getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(int updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 
 	public long getId() {
 		return id;
