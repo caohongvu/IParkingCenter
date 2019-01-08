@@ -14,11 +14,11 @@ import org.hibernate.annotations.Formula;
 @Entity
 @Table(name="daily_ticket_payment_view")
 public class DailyTicketPaymentFooterEntity {
+
+	@Column(name="ticket_id")
+	private long ticket_id;
+
 	@Id
-	@Column(name="id")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private long id;
-	
 	@Column(name="transaction_id")
 	private String transaction_id;
 	
@@ -103,11 +103,11 @@ public class DailyTicketPaymentFooterEntity {
 		this.totalPayment_amount = totalPayment_amount;
 	}
 	
-	public long getId() {
-		return id;
+	public long getTicket_id() {
+		return ticket_id;
 	}
-	public void setId(long id) {
-		this.id = id;
+	public void setTicket_id(long ticket_id) {
+		this.ticket_id = ticket_id;
 	}
 	public String getTransaction_id() {
 		return transaction_id;

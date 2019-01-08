@@ -1,24 +1,16 @@
 package net.cis.jpa.criteria;
 
-
-
-public class DailyTicketPaymentCriteria {
-	private String orderID;
+public class MonthlyTicketPaymentCriteria {
 	private String transId;
 	private String cppCode;
 	private String numberplate;
+	private String contract_no;
+	private String contract_code;
 	private Long phone;
 	private String start_time;
 	private String end_time;
 	private String cardNumber;
-	private String transType;
-	
-	public String getOrderID() {
-		return orderID;
-	}
-	public void setOrderID(String orderID) {
-		this.orderID = orderID;
-	}
+	private String periodPayment;
 	public String getTransId() {
 		return transId;
 	}
@@ -36,6 +28,18 @@ public class DailyTicketPaymentCriteria {
 	}
 	public void setNumberplate(String numberplate) {
 		this.numberplate = numberplate;
+	}
+	public String getContract_no() {
+		return contract_no;
+	}
+	public void setContract_no(String contract_no) {
+		this.contract_no = contract_no;
+	}
+	public String getContract_code() {
+		return contract_code;
+	}
+	public void setContract_code(String contract_code) {
+		this.contract_code = contract_code;
 	}
 	public Long getPhone() {
 		return phone;
@@ -61,13 +65,11 @@ public class DailyTicketPaymentCriteria {
 	public void setCardNumber(String cardNumber) {
 		this.cardNumber = cardNumber;
 	}
-	public String getTransType() {
-		return transType;
+	public String getPeriodPayment() {
+		return periodPayment;
 	}
-	public void setTransType(String transType) {
-		this.transType = transType;
+	public void setPeriodPayment(String periodPayment) {
+		this.periodPayment = periodPayment;
 	}
-	
-	
 	
 }

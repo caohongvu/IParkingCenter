@@ -2,10 +2,10 @@ package net.cis.dto;
 
 import java.util.Date;
 
-import javax.persistence.Column;
+
 
 public class DailyTicketPaymentDto {
-	private long id;	
+	private long ticket_id;	
 	private String transaction_id;
 	private String parking_code;
 	private String cppCode;
@@ -22,11 +22,11 @@ public class DailyTicketPaymentDto {
 	private Long phone;
 	private String card_number;
 	
-	public long getId() {
-		return id;
+	public long getTicket_id() {
+		return ticket_id;
 	}
-	public void setId(long id) {
-		this.id = id;
+	public void setTicket_id(long ticket_id) {
+		this.ticket_id = ticket_id;
 	}
 	public String getTransaction_id() {
 		return transaction_id;

@@ -12,12 +12,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name="daily_ticket_payment_view")
 public class DailyTicketPaymentEntity {
-	
+
+	@Column(name="ticket_id")
+	private long ticket_id;
+
 	@Id
-	@Column(name="id")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private long id;
-	
 	@Column(name="transaction_id")
 	private String transaction_id;
 	
@@ -60,12 +59,13 @@ public class DailyTicketPaymentEntity {
 	@Column(name="card_number")
 	private String card_number;
 	
-	public long getId() {
-		return id;
+
+	public long getTicket_id() {
+		return ticket_id;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setTicket_id(long ticket_id) {
+		this.ticket_id = ticket_id;
 	}
 
 	public String getParking_code() {
