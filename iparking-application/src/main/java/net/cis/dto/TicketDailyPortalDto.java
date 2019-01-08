@@ -9,7 +9,7 @@ public class TicketDailyPortalDto {
 
 	private String cppCode;
 
-	private String cppAddress;
+	private String address;
 
 	private long customer;
 
@@ -73,12 +73,13 @@ public class TicketDailyPortalDto {
 		this.cppCode = cppCode;
 	}
 
-	public String getCppAddress() {
-		return cppAddress;
+
+	public String getAddress() {
+		return address;
 	}
 
-	public void setCppAddress(String cppAddress) {
-		this.cppAddress = cppAddress;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public long getCustomer() {
