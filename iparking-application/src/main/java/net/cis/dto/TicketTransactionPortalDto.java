@@ -4,7 +4,7 @@ package net.cis.dto;
 public class TicketTransactionPortalDto {
 	private String id;
 	
-	private long ticketId;
+	private String ticketId;
 	
 	private long customer;
 	
@@ -46,9 +46,9 @@ public class TicketTransactionPortalDto {
 	
 	private String cardNumber;
 	
-	private String invoidCode;
+	private String invoiceCode;
 	
-	private String createInvoid;
+	private String createInvoice;
 	
 	
 
@@ -77,20 +77,21 @@ public class TicketTransactionPortalDto {
 		this.cardNumber = cardNumber;
 	}
 
-	public String getInvoidCode() {
-		return invoidCode;
+
+	public String getInvoiceCode() {
+		return invoiceCode;
 	}
 
-	public void setInvoidCode(String invoidCode) {
-		this.invoidCode = invoidCode;
+	public void setInvoiceCode(String invoiceCode) {
+		this.invoiceCode = invoiceCode;
 	}
 
-	public String getCreateInvoid() {
-		return createInvoid;
+	public String getCreateInvoice() {
+		return createInvoice;
 	}
 
-	public void setCreateInvoid(String createInvoid) {
-		this.createInvoid = createInvoid;
+	public void setCreateInvoice(String createInvoice) {
+		this.createInvoice = createInvoice;
 	}
 
 	public String getId() {
@@ -101,11 +102,11 @@ public class TicketTransactionPortalDto {
 		this.id = id;
 	}
 
-	public long getTicketId() {
+	public String getTicketId() {
 		return ticketId;
 	}
 
-	public void setTicketId(long ticketId) {
+	public void setTicketId(String ticketId) {
 		this.ticketId = ticketId;
 	}
 

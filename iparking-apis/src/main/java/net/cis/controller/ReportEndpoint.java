@@ -3,6 +3,8 @@ package net.cis.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,11 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.cis.common.util.StatusUtil;
+import net.cis.dto.ErrorDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.DailyTicketPaymentCriteria;
 import net.cis.jpa.criteria.MonthlyTicketPaymentCriteria;
+import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.DailyTicketPaymentService;
 import net.cis.service.MonthlyTicketPaymentService;
+import net.cis.service.ReportDelegatePaymentService;
 
 
 @RestController
@@ -31,6 +37,9 @@ public class ReportEndpoint {
 	
 	@Autowired
 	private MonthlyTicketPaymentService monthlyTicketPaymentService;
+	
+	@Autowired
+	private ReportDelegatePaymentService reportDelegatePaymentService;
 	
 	@RequestMapping(value = "/daily/ticket/payment", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
@@ -166,4 +175,24 @@ public class ReportEndpoint {
 		return enpoint;
 	}
 
+	
+	@RequestMapping(value = "/supervisor/delegate/payment", method = RequestMethod.GET)
+	@ApiOperation("Fetch all delegate ticket payment")
+	public @ResponseBody ResponseApi fetchDelegateTicketsPayment(HttpServletRequest request, @RequestParam("date") String date) {
+		ResponseApi response = new ResponseApi();
+		
+		Long[] carppIds = null;
+		String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
+		
+		
+		
+		ErrorDto error = new ErrorDto();
+		error.setCode(StatusUtil.SUCCESS_STATUS);
+		error.setMessage(StatusUtil.SUCCESS_MESSAGE);
+		response.setData(reportDelegatePaymentService.findByCarppIdsAndDate(carppIds,date));
+		response.setError(error);
+		
+		return response;
+	}
+	
 }

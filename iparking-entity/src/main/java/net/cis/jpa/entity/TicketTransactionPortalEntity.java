@@ -16,7 +16,7 @@ public class TicketTransactionPortalEntity {
 	private String id;
 	
 	@Column(name="ticket_id")
-	private long ticketId;
+	private String ticketId;
 
 	@Column(name="customer")
 	private long customer;
@@ -28,7 +28,7 @@ public class TicketTransactionPortalEntity {
 	private long isDelegate;
 	
 	@Column(name="payment_order_no")
-	private long paymentOrderNo;
+	private String paymentOrderNo;
 	
 	@Column(name="payment_order_type")
 	private String paymentOrderType;
@@ -126,11 +126,11 @@ public class TicketTransactionPortalEntity {
 		this.id = id;
 	}
 
-	public long getTicketId() {
+	public String getTicketId() {
 		return ticketId;
 	}
 
-	public void setTicketId(long ticketId) {
+	public void setTicketId(String ticketId) {
 		this.ticketId = ticketId;
 	}
 
@@ -158,11 +158,11 @@ public class TicketTransactionPortalEntity {
 		this.isDelegate = isDelegate;
 	}
 
-	public long getPaymentOrderNo() {
+	public String getPaymentOrderNo() {
 		return paymentOrderNo;
 	}
 
-	public void setPaymentOrderNo(long paymentOrderNo) {
+	public void setPaymentOrderNo(String paymentOrderNo) {
 		this.paymentOrderNo = paymentOrderNo;
 	}
 

@@ -15,6 +15,8 @@ public class ParkingDto {
 	 private int status;
 	 private Date iparkingJoined;
 	 private int capacity;
+	 private int adjust;
+	 private int currentTicketInSession;
 	 private String parkingPlaceData;
 	 private Date createdAt;
 	 private Date updatedAt;
@@ -69,6 +71,23 @@ public class ParkingDto {
 	}
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
+	}
+	
+	public int getAdjust() {
+		return adjust;
+	}
+	public void setAdjust(int adjust) {
+		this.adjust = adjust;
+	}
+	public int getRemain() {
+		return (capacity + adjust)-currentTicketInSession;
+	}
+	
+	public int getCurrentTicketInSession() {
+		return currentTicketInSession;
+	}
+	public void setCurrentTicketInSession(int currentTicketInSession) {
+		this.currentTicketInSession = currentTicketInSession;
 	}
 	public String getParkingPlaceData() {
 		return parkingPlaceData;
