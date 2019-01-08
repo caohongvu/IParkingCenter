@@ -23,12 +23,14 @@ import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingActorDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.DailyTicketPaymentCriteria;
+import net.cis.jpa.criteria.TicketDailyCriteria;
 import net.cis.jpa.criteria.MonthlyTicketPaymentCriteria;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.DailyTicketPaymentService;
 import net.cis.service.MonthlyTicketPaymentService;
 import net.cis.service.ParkingActorService;
 import net.cis.service.ReportDelegatePaymentService;
+import net.cis.service.TicketDailyPortalService;
 
 
 @RestController
@@ -41,6 +43,9 @@ public class ReportEndpoint {
 	
 	@Autowired
 	private ReportDelegatePaymentService reportDelegatePaymentService;
+	
+	@Autowired
+	private TicketDailyPortalService ticketDailyPortalService;
 	
 	@Autowired
 	private MonthlyTicketPaymentService monthlyTicketPaymentService;
@@ -203,5 +208,50 @@ public class ReportEndpoint {
 		
 		return response;
 	}
+	
+	@RequestMapping(value= "/daily/ticket",method = RequestMethod.GET)
+	@ApiOperation("Fetch all ticket daily")
+	public @ResponseBody Object fetchDailyTicket(
+			@RequestParam(name = "cpp_code", required = false) String cppCode,
+			@RequestParam(name = "number_plate", required = false) String numberPlate,
+			@RequestParam(name = "phone", required = false) Long phone,
+			@RequestParam(name = "start_time", required = false) Long start_time,
+			@RequestParam(name = "end_time", required = false) Long end_time,
+			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+			@RequestParam(name = "size", required = false, defaultValue = "500") int size) {
+		
+		SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		Date endDate = new Date(end_time*1000L);
+
+		Date fromDate = new Date(start_time*1000L);
+
+		page = page - 1;
+		if (page < 0) {
+			page = 0;
+		}
+		
+		TicketDailyCriteria ticketDailyCriteria = new TicketDailyCriteria();
+		
+		if (cppCode != null && cppCode != "") {
+			ticketDailyCriteria.setCppCode(cppCode.toUpperCase());
+		}
+		if (phone != null && phone != 0) {
+			ticketDailyCriteria.setPhone2(phone);
+		}
+
+		if (numberPlate != null && numberPlate != "") {
+			ticketDailyCriteria.setNumberplate(numberPlate.toUpperCase());
+		}
+		ticketDailyCriteria.setStart_time(formatTime.format(fromDate));
+		ticketDailyCriteria.setTo_time(formatTime.format(endDate));
+		
+		Pageable pageable = new PageRequest(page, size);
+		ResponseApi enpoint = ticketDailyPortalService.getAllTicketDailyPortal(ticketDailyCriteria, pageable);
+
+		return enpoint;
+		
+	}
+
 	
 }

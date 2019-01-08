@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.DateTimeUtil;
+import net.cis.common.util.MessageUtil;
 import net.cis.common.util.TicketUtil;
 import net.cis.common.util.Utils;
 import net.cis.common.util.constant.TicketConstants;
@@ -331,10 +332,14 @@ public class TicketEndpoint extends BaseEndpoint {
 				objCustomerDtoSave.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
 				objCustomerDto = customerService.saveCustomerInIparkingCenter(objCustomerDtoSave);
 			}
+
+			// check sendOTP by customerId and numberPlate
+			sendOtp = customerService.checkCustomerCarSendOtp(carNumberPlate, customerId);
 			if (sendOtp) {
 				// thuc hien gui OTP cho khách hàng
 				String codeOtp = Utils.createRandomNumber(6);
-				boolean resultSendOtp = smsService.sendSms(customerPhone, "Mã OTP của khách hàng là: " + codeOtp);
+				boolean resultSendOtp = smsService.sendSms(customerPhone,
+						String.format(MessageUtil.MESSAGE_SEND_OTP, codeOtp));
 				if (resultSendOtp) {
 					objCustomerDto.setOtp(codeOtp);
 					customerService.saveCustomerInIparkingCenter(objCustomerDto);
@@ -346,7 +351,7 @@ public class TicketEndpoint extends BaseEndpoint {
 					return responseDto;
 				} else {
 					responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-					responseDto.setMessage("Lỗi gửi OTP đến khách hàng");
+					responseDto.setMessage(MessageUtil.MESSAGE_SEND_OTP_ERROR);
 					return responseDto;
 				}
 			}

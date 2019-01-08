@@ -14,6 +14,8 @@ public interface CustomerService {
 
 	List<CustomerCarDto> findCustomerCarByNumberPlate(String numberPlate, Integer verified) throws Exception;
 
+	CustomerCarDto findCustomerCarByNumberPlateAndCusId(String numberPlate, long cusId) throws Exception;
+
 	CustomerInfoDto findCustomerInfoByCusId(long cusId) throws Exception;
 
 	CustomerDto findCustomerByOldId(long cusId) throws Exception;
@@ -24,5 +26,7 @@ public interface CustomerService {
 
 	CustomerCarDto saveCustomerCarEntity(CustomerCarDto objCustomerCarDto) throws Exception;
 
-	void saveCustomerInfoInPoseidonDb(long cusId,String phone, String email) throws Exception;
+	void saveCustomerInfoInPoseidonDb(long cusId, String phone, String email) throws Exception;
+
+	boolean checkCustomerCarSendOtp(String numberPlate, long cusId) throws Exception;
 }
