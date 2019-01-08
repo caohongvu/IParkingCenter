@@ -26,7 +26,7 @@ public class ReportDelegatePaymentServiceImpl implements ReportDelegatePaymentSe
 	ModelMapper mapper;
 	
 	@Override
-	public List<ReportDelegatePaymentDto> findByCarppIdsAndDate(Long[] carppIds, String date) {
+	public List<ReportDelegatePaymentDto> findByCarppIdsAndDate(List<Long> carppIds, String date) {
 		List<ReportDelegatePaymentEntity> entities = reportDelegatePaymentRepository.findByCarppIdInAndCreatedDate(carppIds, date);
 		return this.map(entities);
 	}

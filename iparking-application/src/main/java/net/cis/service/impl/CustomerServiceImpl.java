@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -32,6 +33,8 @@ import net.cis.utils.RestfulUtil;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
+	protected final Logger LOGGER = Logger.getLogger(getClass());
+
 	@Autowired
 	CustomerRepository customerRepository;
 
@@ -49,34 +52,61 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Map<String, Object> createCustomerInPoseidonDb(String phone) throws Exception {
+	public Map<String, Object> saveCustomerInPoseidonDb(String phone) throws Exception {
 		// TODO Auto-generated method stub
 		String finalURL = URLConstants.URL_CREATE_CUSTOMER;
 		List<NameValuePair> formParams = new ArrayList<>();
 		formParams.add(new BasicNameValuePair("phone", phone));
 		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
 				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		LOGGER.info("createCustomerInPoseidonDb Response: " + responseContent);
 		return parseJSonToCreatePoseidonResponseObject(responseContent);
 	}
 
 	private Map<String, Object> parseJSonToCreatePoseidonResponseObject(String dataResult) throws JSONException {
 		Map<String, Object> result = new HashMap<String, Object>();
 		JSONObject ticketJSon = new JSONObject(dataResult);
-		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Error");
-		if (ticketDataJSon.has("Code")) {
-			result.put("Code", ticketDataJSon.getString("Code"));
+		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
+		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
+		if (ticketErrorJSon.has("Code")) {
+			result.put("Code", ticketErrorJSon.getString("Code"));
 		}
-		if (ticketDataJSon.has("Message")) {
-			result.put("Message", ticketDataJSon.getString("Message"));
+		if (ticketErrorJSon.has("Message")) {
+			result.put("Message", ticketErrorJSon.getString("Message"));
 		}
-		if (ticketJSon.has("Data")) {
-			result.put("Data", ticketJSon.getString("Data"));
+		if (ticketDataJSon.has("Id")) {
+			result.put("cus_id", ticketDataJSon.getLong("Id"));
 		}
+		if (ticketDataJSon.has("Phone")) {
+			result.put("Phone", ticketDataJSon.getString("Phone"));
+		}
+		if (ticketDataJSon.has("Phone2")) {
+			result.put("Phone2", ticketDataJSon.getString("Phone2"));
+		}
+		if (ticketDataJSon.has("Telco")) {
+			result.put("Telco", ticketDataJSon.getString("Telco"));
+		}
+		if (ticketDataJSon.has("Password")) {
+			result.put("Password", ticketDataJSon.getString("Password"));
+		}
+		if (ticketDataJSon.has("Status")) {
+			result.put("Status", ticketDataJSon.getInt("Status"));
+		}
+		if (ticketDataJSon.has("Created_at")) {
+			result.put("Created_at", ticketDataJSon.getString("Created_at"));
+		}
+		if (ticketDataJSon.has("Updated_at")) {
+			result.put("Updated_at", ticketDataJSon.getString("Updated_at"));
+		}
+		if (ticketDataJSon.has("Checksum")) {
+			result.put("Checksum", ticketDataJSon.getString("Checksum"));
+		}
+
 		return result;
 	}
 
 	@Override
-	public CustomerDto createCustomerInIparkingCenter(CustomerDto customerDto) {
+	public CustomerDto saveCustomerInIparkingCenter(CustomerDto customerDto) {
 		CustomerEntity objCustomerEntity = new CustomerEntity();
 		mapper.map(customerDto, objCustomerEntity);
 		mapper.map(customerRepository.save(objCustomerEntity), customerDto);
@@ -104,6 +134,8 @@ public class CustomerServiceImpl implements CustomerService {
 	public CustomerInfoDto findCustomerInfoByCusId(long cusId) throws Exception {
 		CustomerInfoDto objCustomerInfoDto = new CustomerInfoDto();
 		CustomerInfoEntity objCustomerInfoEntity = customerInfoRepository.findByCusId(cusId);
+		if (objCustomerInfoEntity == null)
+			return null;
 		mapper.map(objCustomerInfoEntity, objCustomerInfoDto);
 		return objCustomerInfoDto;
 	}
@@ -112,6 +144,8 @@ public class CustomerServiceImpl implements CustomerService {
 	public CustomerDto findCustomerByOldId(long cusId) throws Exception {
 		CustomerDto objCustomerDto = new CustomerDto();
 		CustomerEntity objCustomerEntity = customerRepository.findByOldId(cusId);
+		if (objCustomerEntity == null)
+			return null;
 		mapper.map(objCustomerEntity, objCustomerDto);
 		return objCustomerDto;
 	}
@@ -119,7 +153,10 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public CustomerDto findByPhone2(String phone) throws Exception {
 		CustomerDto objCustomerDto = new CustomerDto();
-		mapper.map(customerRepository.findByPhone2(phone), objCustomerDto);
+		CustomerEntity objCustomerEntity = customerRepository.findByPhone2(phone);
+		if (objCustomerEntity == null)
+			return null;
+		mapper.map(objCustomerEntity, objCustomerDto);
 		return objCustomerDto;
 	}
 
@@ -137,5 +174,18 @@ public class CustomerServiceImpl implements CustomerService {
 		mapper.map(objCustomerCarDto, objCustomerCaEntity);
 		mapper.map(customerCarRepository.save(objCustomerCaEntity), objCustomerCarDto);
 		return objCustomerCarDto;
+	}
+
+	@Override
+	public void saveCustomerInfoInPoseidonDb(long cusId, String phone, String email) throws Exception {
+		// TODO Auto-generated method stub
+		String finalURL = URLConstants.URL_CREATE_UPDATE_CUSTOMER_INFO;
+		List<NameValuePair> formParams = new ArrayList<>();
+		formParams.add(new BasicNameValuePair("customerID", String.valueOf(cusId)));
+		formParams.add(new BasicNameValuePair("phone", phone));
+		formParams.add(new BasicNameValuePair("email", email));
+		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		LOGGER.info("saveCustomerInfoInPoseidonDb Response: " + responseContent);
 	}
 }

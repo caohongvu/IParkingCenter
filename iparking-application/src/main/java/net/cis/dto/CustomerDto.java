@@ -6,12 +6,30 @@ public class CustomerDto {
 	private long id;
 	private String phone;
 	private String phone2;
+	private String telco;
+	private byte[] password;
 	private int status;
 	private Date createdAt;
 	private Date updatedAt;
 	private String checkSum;
 	private long oldId;
 	private String otp;
+
+	public String getTelco() {
+		return telco;
+	}
+
+	public void setTelco(String telco) {
+		this.telco = telco;
+	}
+
+	public byte[] getPassword() {
+		return password;
+	}
+
+	public void setPassword(byte[] password) {
+		this.password = password;
+	}
 
 	public String getOtp() {
 		return otp;

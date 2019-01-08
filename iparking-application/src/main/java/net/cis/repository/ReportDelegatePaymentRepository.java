@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import net.cis.jpa.entity.ReportDelegatePaymentEntity;
 
 public interface ReportDelegatePaymentRepository extends JpaRepository<ReportDelegatePaymentEntity, Long> {
-	List<ReportDelegatePaymentEntity> findByCarppIdInAndCreatedDate(Long[] carppIds, String date);
+	List<ReportDelegatePaymentEntity> findByCarppIdInAndCreatedDate(List<Long> carppIds, String date);
 	
 }

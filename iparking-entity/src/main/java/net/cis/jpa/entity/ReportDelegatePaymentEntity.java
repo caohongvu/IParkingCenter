@@ -16,7 +16,7 @@ public class ReportDelegatePaymentEntity {
     @Column(name="parking_place")
 	private long carppId;
 	
-	@Column(name="parkingCode")
+	@Column(name="parking_code")
 	private String code;
 	
 	@Column(name="address")
