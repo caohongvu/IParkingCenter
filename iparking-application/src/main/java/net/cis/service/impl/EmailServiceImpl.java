@@ -86,12 +86,14 @@ public class EmailServiceImpl implements EmailService {
 						objCustomerInfoDto.setStatus(UserConstant.STATUS_NOT_VERIFIED);
 						objCustomerInfoDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 						customerService.saveCustomerInfoEntity(objCustomerInfoDto);
-						reSendMailActive(customer, phone);
+						customerService.saveCustomerInfoInPoseidonDb(customer, phone, email);
+						// reSendMailActive(customer, phone);
 					} else if (objCustomerInfoDto != null && !email.equalsIgnoreCase(objCustomerInfoDto.getEmail())) {
 						objCustomerInfoDto.setEmail(email);
 						objCustomerInfoDto.setStatus(UserConstant.STATUS_NOT_VERIFIED);
 						customerService.saveCustomerInfoEntity(objCustomerInfoDto);
-						reSendMailActive(customer, phone);
+						customerService.saveCustomerInfoInPoseidonDb(customer, phone, email);
+						// reSendMailActive(customer, phone);
 					} else if (objCustomerInfoDto != null && email.equalsIgnoreCase(objCustomerInfoDto.getEmail())
 							&& (UserConstant.STATUS_NOT_VERIFIED == objCustomerInfoDto.getStatus()
 									|| (UserConstant.STATUS_NOT_VERIFIED == objCustomerInfoDto.getStatus()

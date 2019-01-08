@@ -30,7 +30,6 @@ import net.cis.common.util.TicketUtil;
 import net.cis.common.util.Utils;
 import net.cis.common.util.constant.TicketConstants;
 import net.cis.common.web.BaseEndpoint;
-import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.MonthlyTicketDto;
 import net.cis.dto.ParkingDto;
@@ -42,6 +41,7 @@ import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CustomerService;
 import net.cis.service.EmailService;
 import net.cis.service.MonthlyTicketService;
+import net.cis.service.SmsService;
 import net.cis.service.TicketService;
 import net.cis.service.cache.MonthlyTicketCache;
 import net.cis.service.cache.ParkingPlaceCache;
@@ -70,6 +70,9 @@ public class TicketEndpoint extends BaseEndpoint {
 
 	@Autowired
 	EmailService emailService;
+
+	@Autowired
+	SmsService smsService;
 
 	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	SimpleDateFormat shortFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -289,44 +292,72 @@ public class TicketEndpoint extends BaseEndpoint {
 				responseDto.setMessage("Biển số xe sai định dạng");
 				return responseDto;
 			}
-			TicketDto objTicketDto = new TicketDto();
-			// thuc hien generate ID ticket
-			objTicketDto.setId(TicketUtil.generateTicketId());
 			// lay thong tin customer
 			CustomerDto objCustomerDto = customerService.findByPhone2(customerPhone);
+
+			// kiem tra verify OTP
+			if (!StringUtils.isEmpty(otp) && !otp.equals(objCustomerDto.getOtp())) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Nhập OTP không đúng");
+				return responseDto;
+			}
+
+			boolean sendOtp = Boolean.TRUE;
 			long customerId = 0l;
 			if (objCustomerDto != null) {
 				customerId = objCustomerDto.getOldId();
 			} else {
 				// thuc hien tao customer bên db shard
-				Map<String, Object> resultCreateCustomer = customerService.createCustomerInPoseidonDb(customerPhone);
+				Map<String, Object> resultCreateCustomer = customerService.saveCustomerInPoseidonDb(customerPhone);
 				if (resultCreateCustomer == null
 						|| !HttpStatus.OK.toString().equals(resultCreateCustomer.get("Code"))) {
 					responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-					responseDto.setMessage("Lỗi tạo Customer");
+					responseDto.setMessage("Lỗi tạo Customer In PoseidonDb");
 					return responseDto;
 				}
-				customerId = (long) resultCreateCustomer.get("Data");
+				customerId = (long) resultCreateCustomer.get("cus_id");
 				// thuc hien tao customer ben db iparking_center
 				CustomerDto objCustomerDtoSave = new CustomerDto();
-				objCustomerDtoSave.setPhone(customerPhone);
-				objCustomerDtoSave.setPhone2(customerPhone);
+				objCustomerDtoSave.setPhone((String) resultCreateCustomer.get("Phone"));
+				objCustomerDtoSave.setPhone2((String) resultCreateCustomer.get("Phone2"));
+				objCustomerDtoSave.setTelco((String) resultCreateCustomer.get("Telco"));
+				// TODO câp nhât khi Trường xong service
+				String password = (String) resultCreateCustomer.get("Password");
+				objCustomerDtoSave.setPassword("test".getBytes());
 				objCustomerDtoSave.setOldId(customerId);
+				objCustomerDtoSave.setCheckSum((String) resultCreateCustomer.get("Checksum"));
+				objCustomerDtoSave.setStatus((int) resultCreateCustomer.get("Status"));
 				objCustomerDtoSave.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 				objCustomerDtoSave.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
-				customerService.createCustomerInIparkingCenter(objCustomerDtoSave);
-				
-				// thuc hien insert customer_car va gui OTP
-				CustomerCarDto objCustomerCarDto = new CustomerCarDto();
-				
+				objCustomerDto = customerService.saveCustomerInIparkingCenter(objCustomerDtoSave);
 			}
-			
-			objTicketDto.setCustomer(customerId);
+			if (sendOtp) {
+				// thuc hien gui OTP cho khách hàng
+				String codeOtp = Utils.createRandomNumber(6);
+				boolean resultSendOtp = smsService.sendSms(customerPhone, "Mã OTP của khách hàng là: " + codeOtp);
+				if (resultSendOtp) {
+					objCustomerDto.setOtp(codeOtp);
+					customerService.saveCustomerInIparkingCenter(objCustomerDto);
+					responseDto.setCode(HttpStatus.OK.toString());
+					Object dataObject = new Object() {
+						public String otp = codeOtp;
+					};
+					responseDto.setData(dataObject);
+					return responseDto;
+				} else {
+					responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+					responseDto.setMessage("Lỗi gửi OTP đến khách hàng");
+					return responseDto;
+				}
+			}
 			// thuc hiện kiểm tra email verfify
 			if (!StringUtils.isEmpty(email)) {
 				emailService.checkAndsendMailActiveASynchronous(customerId, customerPhone, email);
 			}
-
+			// thuc hien tao ve
+			TicketDto objTicketDto = new TicketDto();
+			objTicketDto.setId(TicketUtil.generateTicketId());
+			objTicketDto.setCustomer(customerId);
 			objTicketDto.setParkingPlace(parkingPlace);
 			objTicketDto.setCarNumberPlate(carNumberPlate);
 			objTicketDto.setCarType(carType);
