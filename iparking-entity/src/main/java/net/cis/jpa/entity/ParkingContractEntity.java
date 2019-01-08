@@ -55,10 +55,10 @@ public class ParkingContractEntity {
 	private String invoiceConsolidated;
 	
 	@Column(name = "created_at")
-	private Date createdAt;
+	private String createdAt;
 	
 	@Column(name = "updated_at")
-	private Date updatedAt;
+	private String updatedAt;
 	
 	@Column(name = "valid_end")
 	private long validEnd;
@@ -169,19 +169,19 @@ public class ParkingContractEntity {
 		this.invoiceConsolidated = invoiceConsolidated;
 	}
 
-	public Date getCreatedAt() {
+	public String getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public Date getUpdatedAt() {
+	public String getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
+	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
