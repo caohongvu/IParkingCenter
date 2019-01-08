@@ -6,6 +6,6 @@ import net.cis.dto.ReportDelegatePaymentDto;
 
 public interface ReportDelegatePaymentService {
 	
-    List<ReportDelegatePaymentDto> findByCarppIdsAndDate(Long[] carppIds, String date);
+    List<ReportDelegatePaymentDto> findByCarppIdsAndDate(List<Long> carppIds, String date);
 
 }

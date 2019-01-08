@@ -2,6 +2,9 @@ package net.cis.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,10 +21,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.StatusUtil;
 import net.cis.dto.ErrorDto;
+import net.cis.dto.ParkingActorDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.DailyTicketPaymentCriteria;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.DailyTicketPaymentService;
+import net.cis.service.ParkingActorService;
 import net.cis.service.ReportDelegatePaymentService;
 
 
@@ -35,6 +40,9 @@ public class ReportEndpoint {
 	
 	@Autowired
 	private ReportDelegatePaymentService reportDelegatePaymentService;
+	
+	@Autowired
+	private ParkingActorService parkingActorService;
 	
 	@RequestMapping(value = "/daily/ticket/payment", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
@@ -106,10 +114,12 @@ public class ReportEndpoint {
 	public @ResponseBody ResponseApi fetchDelegateTicketsPayment(HttpServletRequest request, @RequestParam("date") String date) {
 		ResponseApi response = new ResponseApi();
 		
-		Long[] carppIds = null;
+		List<Long> carppIds = null;
 		String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
 		
+		List<ParkingActorDto> parkingActors = parkingActorService.findByActors(Long.valueOf(supervisorId));
 		
+		carppIds = parkingActors.stream().map(ParkingActorDto::getCppId).collect(Collectors.toList());
 		
 		ErrorDto error = new ErrorDto();
 		error.setCode(StatusUtil.SUCCESS_STATUS);

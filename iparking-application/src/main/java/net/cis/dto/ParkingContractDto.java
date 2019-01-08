@@ -2,6 +2,8 @@ package net.cis.dto;
 
 import java.util.Date;
 
+import net.cis.common.util.TicketUtil;
+
 /**
  * Created by Vincent on 02/10/2018
  */
@@ -142,6 +144,12 @@ public class ParkingContractDto {
 		this.status = status;
 	}
 	
+	public String getSessionFrom() {
+		return TicketUtil.getMonthlyTicketSessionFrom(this.metadata);
+	}
+	public String getSessionTo() {
+		return TicketUtil.getMonthlyTicketSessionTo(this.metadata);
+	}
 	
 	
 	
