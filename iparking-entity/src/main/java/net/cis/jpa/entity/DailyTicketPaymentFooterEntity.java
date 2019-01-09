@@ -4,8 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -60,6 +58,9 @@ public class DailyTicketPaymentFooterEntity {
 	
 	@Column(name="card_number")
 	private String card_number;
+	
+	@Column(name="invoice_code")
+	private String invoice_code;
 	
 	@Formula("COUNT(*)")
 	private long total_row;
@@ -193,6 +194,14 @@ public class DailyTicketPaymentFooterEntity {
 	public void setCard_number(String card_number) {
 		this.card_number = card_number;
 	}
+	public String getInvoice_code() {
+		return invoice_code;
+	}
+	public void setInvoice_code(String invoice_code) {
+		this.invoice_code = invoice_code;
+	}
+	
+	
 	
 	
 	
