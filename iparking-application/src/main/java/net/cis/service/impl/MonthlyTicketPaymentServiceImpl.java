@@ -50,13 +50,13 @@ public class MonthlyTicketPaymentServiceImpl implements MonthlyTicketPaymentServ
 			Phone.add(entity.getPhone());
 			MonthlyTicketPaymentDto dto = new MonthlyTicketPaymentDto();
 			mapper.map(entity, dto);
-			
-			SimpleDateFormat formatTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+			SimpleDateFormat formatTimeParse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");	
+			SimpleDateFormat formatTime = new SimpleDateFormat("dd-MM-yyyy");
 			try {
-			Date applyFr = formatTime.parse(dto.getApply_from_time());
-			Date applyTo = formatTime.parse(dto.getApply_to_time());
+			Date applyFr = formatTimeParse.parse(dto.getApply_from_time());
+			Date applyTo = formatTimeParse.parse(dto.getApply_to_time());
 
-			String peroid_payment = formatTime.format(applyFr)+"-"+formatTime.format(applyTo);
+			String peroid_payment = formatTime.format(applyFr)+" - "+formatTime.format(applyTo);
 			dto.setPeriodPayment(peroid_payment);
 			} catch (Exception e) {
 				// TODO: handle exception
