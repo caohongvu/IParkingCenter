@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,8 +49,14 @@ public class ParkingContractEndpoint {
 	}
 	
 	@RequestMapping(value="/update/", method= RequestMethod.POST)
-	public @ResponseBody ParkingContractDto update(@RequestBody ParkingContractDto parkingContractDto) throws Exception{
-		
+	public @ResponseBody ParkingContractDto update(@RequestParam(name="id") long id, 
+			@RequestParam("updatedAt") String updatedAt,
+			@RequestParam("paidAmount") Long paidAmount,
+			@RequestParam("validTo") Long validTo) throws Exception{
+		ParkingContractDto parkingContractDto = parkingContractService.findOne(id);
+		parkingContractDto.setUpdatedAt(updatedAt);
+		parkingContractDto.setValidTo(validTo);
+		parkingContractDto.setPaidAmount(parkingContractDto.getPaidAmount()+paidAmount);
 		return parkingContractService.update(parkingContractDto);
 	}
 }

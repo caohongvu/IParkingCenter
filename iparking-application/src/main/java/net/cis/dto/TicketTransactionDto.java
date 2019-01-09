@@ -41,6 +41,18 @@ public class TicketTransactionDto {
 	private int paymentStatus;
 	
 	private int autoExtend;
+	
+	private String invoiceCode;
+	
+	
+
+	public String getInvoiceCode() {
+		return invoiceCode;
+	}
+
+	public void setInvoiceCode(String invoiceCode) {
+		this.invoiceCode = invoiceCode;
+	}
 
 	public String getId() {
 		return id;

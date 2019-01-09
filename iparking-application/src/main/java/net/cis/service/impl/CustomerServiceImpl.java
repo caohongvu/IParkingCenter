@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
+import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.constant.URLConstants;
+import net.cis.common.util.constant.UserConstant;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
@@ -187,5 +189,38 @@ public class CustomerServiceImpl implements CustomerService {
 		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
 				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 		LOGGER.info("saveCustomerInfoInPoseidonDb Response: " + responseContent);
+	}
+
+	@Override
+	public CustomerCarDto findCustomerCarByNumberPlateAndCusId(String numberPlate, long cusId) throws Exception {
+		CustomerCarDto objCustomerCarDto = new CustomerCarDto();
+		CustomerCarEntity objCustomerCarEntity = customerCarRepository
+				.findCustomerCarByNumberPlateAndCustomer(numberPlate, cusId);
+		if (objCustomerCarEntity == null)
+			return null;
+		mapper.map(objCustomerCarEntity, objCustomerCarDto);
+		return objCustomerCarDto;
+	}
+
+	@Override
+	public boolean checkCustomerCarSendOtp(String numberPlate, long cusId) throws Exception {
+		CustomerCarDto objCustomerCarDto = findCustomerCarByNumberPlateAndCusId(numberPlate, cusId);
+		if (objCustomerCarDto == null) {
+			// thuc hien tao customer_car với verified = 0
+			objCustomerCarDto = new CustomerCarDto();
+			objCustomerCarDto.setNumberPlate(numberPlate);
+			objCustomerCarDto.setCustomer(cusId);
+			objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			saveCustomerCarEntity(objCustomerCarDto);
+			return Boolean.TRUE;
+		} else {
+			if (UserConstant.STATUS_VERIFIED == objCustomerCarDto.getVerified()) {
+				return Boolean.FALSE;
+			} else {
+				return Boolean.TRUE;
+			}
+		}
+
 	}
 }

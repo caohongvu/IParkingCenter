@@ -1,7 +1,5 @@
 package net.cis.dto;
 
-import java.util.Date;
-
 import net.cis.common.util.TicketUtil;
 
 /**
@@ -22,8 +20,8 @@ public class ParkingContractDto {
 	private long totalAmount;
 	private long paidAmount;
 	private String invoiceConsolidated;
-	private Date createdAt;
-	private Date updatedAt;
+	private String createdAt;
+	private String updatedAt;
 	private long validEnd;
 	private String metadata;
 	private long monthlyUnitPrice;
@@ -107,16 +105,16 @@ public class ParkingContractDto {
 	public void setInvoiceConsolidated(String invoiceConsolidated) {
 		this.invoiceConsolidated = invoiceConsolidated;
 	}
-	public Date getCreatedAt() {
+	public String getCreatedAt() {
 		return createdAt;
 	}
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
-	public Date getUpdatedAt() {
+	public String getUpdatedAt() {
 		return updatedAt;
 	}
-	public void setUpdatedAt(Date updatedAt) {
+	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 	public long getValidEnd() {
