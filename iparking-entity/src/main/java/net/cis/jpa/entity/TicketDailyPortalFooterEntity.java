@@ -1,0 +1,250 @@
+package net.cis.jpa.entity;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Formula;
+
+@Entity
+@Table(name="daily_ticket_view")
+public class TicketDailyPortalFooterEntity {
+	@Id
+	private long id;
+	
+	@Column(name="parking_place")
+	private long parkingPlace;
+	
+	@Column(name="customer")
+	private long customer;
+	
+	@Column(name="car_number_plate")
+	private String car_number_plate;
+	
+	@Column(name="car_type")
+	private int carType;
+	
+	@Column(name="car_pricing_group")
+	private int carPricingGroup;
+	
+	@Column(name="paid_amount")
+	private double paidAmount;
+	
+	@Column(name="must_pay_amount")
+	private double mustPayAmount;
+	
+	@Column(name="start_time")
+	private String start_time;
+	
+	@Column(name="end_time")
+	private String end_time;
+	
+	@Column(name="actual_end_time")
+	private String actualEndTime;
+	
+	@Column(name="status")
+	private int status;
+	
+	
+	@Column(name="in_session")
+	private boolean inSession;
+	
+	@Column(name="ticket_data")
+	private String ticketData;
+	
+	@Column(name="monthly_ticket_id")
+	private long monthlyTicketId;
+	
+	@Column(name="created_at")
+	private Date createdAt;
+	
+	@Column(name="updated_at")
+	private String updatedAt;
+	
+	@Column(name= "parking_code")
+	private String parking_code;
+	
+	@Column(name ="company_name")
+	private String companyName;
+	
+	@Column(name ="phone2")
+	private String phone2;
+	
+	@Column(name ="duration")
+	private Integer duration;
+	
+	@Column(name ="address")
+	private String address;
+	
+	@Formula("COUNT(*)")
+	private long total_row;
+	@Formula("COUNT(DISTINCT parking_code)")
+	private long countCpp_code;
+	@Formula("COUNT(DISTINCT car_number_plate)")
+	private long countNumber_plate;
+	@Formula("COUNT(DISTINCT phone2)")
+	private long countPhone;
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public long getParkingPlace() {
+		return parkingPlace;
+	}
+	public void setParkingPlace(long parkingPlace) {
+		this.parkingPlace = parkingPlace;
+	}
+	public long getCustomer() {
+		return customer;
+	}
+	public void setCustomer(long customer) {
+		this.customer = customer;
+	}
+	public String getCar_number_plate() {
+		return car_number_plate;
+	}
+	public void setCar_number_plate(String car_number_plate) {
+		this.car_number_plate = car_number_plate;
+	}
+	public int getCarType() {
+		return carType;
+	}
+	public void setCarType(int carType) {
+		this.carType = carType;
+	}
+	public int getCarPricingGroup() {
+		return carPricingGroup;
+	}
+	public void setCarPricingGroup(int carPricingGroup) {
+		this.carPricingGroup = carPricingGroup;
+	}
+	public double getPaidAmount() {
+		return paidAmount;
+	}
+	public void setPaidAmount(double paidAmount) {
+		this.paidAmount = paidAmount;
+	}
+	public double getMustPayAmount() {
+		return mustPayAmount;
+	}
+	public void setMustPayAmount(double mustPayAmount) {
+		this.mustPayAmount = mustPayAmount;
+	}
+	public String getStart_time() {
+		return start_time;
+	}
+	public void setStart_time(String start_time) {
+		this.start_time = start_time;
+	}
+	public String getEnd_time() {
+		return end_time;
+	}
+	public void setEnd_time(String end_time) {
+		this.end_time = end_time;
+	}
+	public String getActualEndTime() {
+		return actualEndTime;
+	}
+	public void setActualEndTime(String actualEndTime) {
+		this.actualEndTime = actualEndTime;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public boolean isInSession() {
+		return inSession;
+	}
+	public void setInSession(boolean inSession) {
+		this.inSession = inSession;
+	}
+	public String getTicketData() {
+		return ticketData;
+	}
+	public void setTicketData(String ticketData) {
+		this.ticketData = ticketData;
+	}
+	public long getMonthlyTicketId() {
+		return monthlyTicketId;
+	}
+	public void setMonthlyTicketId(long monthlyTicketId) {
+		this.monthlyTicketId = monthlyTicketId;
+	}
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+	public String getUpdatedAt() {
+		return updatedAt;
+	}
+	public void setUpdatedAt(String updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+	public String getParking_code() {
+		return parking_code;
+	}
+	public void setParking_code(String parking_code) {
+		this.parking_code = parking_code;
+	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	public String getPhone2() {
+		return phone2;
+	}
+	public void setPhone2(String phone2) {
+		this.phone2 = phone2;
+	}
+	public Integer getDuration() {
+		return duration;
+	}
+	public void setDuration(Integer duration) {
+		this.duration = duration;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public long getTotal_row() {
+		return total_row;
+	}
+	public void setTotal_row(long total_row) {
+		this.total_row = total_row;
+	}
+	public long getCountCpp_code() {
+		return countCpp_code;
+	}
+	public void setCountCpp_code(long countCpp_code) {
+		this.countCpp_code = countCpp_code;
+	}
+	public long getCountNumber_plate() {
+		return countNumber_plate;
+	}
+	public void setCountNumber_plate(long countNumber_plate) {
+		this.countNumber_plate = countNumber_plate;
+	}
+	public long getCountPhone() {
+		return countPhone;
+	}
+	public void setCountPhone(long countPhone) {
+		this.countPhone = countPhone;
+	}
+	
+	
+	
+
+}

@@ -6,5 +6,5 @@ import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.TicketDailyCriteria;
 
 public interface TicketDailyPortalService {
-    ResponseApi getAllTicketDailyPortal(TicketDailyCriteria ticketCriteria, Pageable pageable);
+    ResponseApi getAllTicketDailyFooterPortal(TicketDailyCriteria ticketCriteria, Pageable pageable);
 }

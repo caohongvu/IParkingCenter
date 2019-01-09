@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingActorDto;
 import net.cis.dto.ParkingContractDto;
@@ -50,8 +51,19 @@ public class ConfigEndpoint {
 	public @ResponseBody Object getConfigOfCompany(HttpServletRequest request) throws Exception {
 		String cusId = TokenAuthenticationService.getAuthenticationInfo(request); 
 		
+		ErrorDto errorDto = new ErrorDto();
+		ResponseApi responseApi = new ResponseApi();
+		
 		int actorId = Integer.parseInt(cusId);
 		List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(actorId);
+		
+		if (parkingActorDtos.size() < 1) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+			errorDto.setMessage("");
+			responseApi.setError(errorDto);
+			responseApi.setData(null);
+			return responseApi;
+		}
 		// lay cappId
 		long carpp_id = parkingActorDtos.get(0).getCppId();
 		String cppId = new Long(carpp_id).toString();
