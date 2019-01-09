@@ -30,7 +30,9 @@ import net.cis.common.util.MessageUtil;
 import net.cis.common.util.TicketUtil;
 import net.cis.common.util.Utils;
 import net.cis.common.util.constant.TicketConstants;
+import net.cis.common.util.constant.UserConstant;
 import net.cis.common.web.BaseEndpoint;
+import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.MonthlyTicketDto;
 import net.cis.dto.ParkingDto;
@@ -278,69 +280,104 @@ public class TicketEndpoint extends BaseEndpoint {
 		try {
 			if (StringUtils.isEmpty(customerPhone)) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage("Số điện thoại khách hàng sai định dạng");
+				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
 				return responseDto;
 			}
 
 			if (!Utils.validateVNPhoneNumber(customerPhone)) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage("Số điện thoại khách hàng sai định dạng");
+				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
 				return responseDto;
 			}
 
 			if (!Utils.validateNumberPlate(carNumberPlate)) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage("Biển số xe sai định dạng");
+				responseDto.setMessage(MessageUtil.MESSAGE_NUMBER_PLATE_WRONG_FORMAT);
 				return responseDto;
 			}
 			// lay thong tin customer
 			CustomerDto objCustomerDto = customerService.findByPhone2(customerPhone);
-
-			// kiem tra verify OTP
-			if (!StringUtils.isEmpty(otp) && !otp.equals(objCustomerDto.getOtp())) {
-				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage("Nhập OTP không đúng");
-				return responseDto;
-			}
-
-			boolean sendOtp = Boolean.TRUE;
 			long customerId = 0l;
-			if (objCustomerDto != null) {
-				customerId = objCustomerDto.getOldId();
-			} else {
-				// thuc hien tao customer bên db shard
-				Map<String, Object> resultCreateCustomer = customerService.saveCustomerInPoseidonDb(customerPhone);
-				if (resultCreateCustomer == null
-						|| !HttpStatus.OK.toString().equals(resultCreateCustomer.get("Code"))) {
+			// kiem tra verify OTP
+			if (!StringUtils.isEmpty(otp)) {
+				if (!otp.equals(objCustomerDto.getOtp())) {
 					responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-					responseDto.setMessage("Lỗi tạo Customer In PoseidonDb");
+					responseDto.setMessage(MessageUtil.MESSAGE_INPUT_OTP_WRONG);
 					return responseDto;
-				}
-				customerId = (long) resultCreateCustomer.get("cus_id");
-				// thuc hien tao customer ben db iparking_center
-				CustomerDto objCustomerDtoSave = new CustomerDto();
-				objCustomerDtoSave.setPhone((String) resultCreateCustomer.get("Phone"));
-				objCustomerDtoSave.setPhone2((String) resultCreateCustomer.get("Phone2"));
-				objCustomerDtoSave.setTelco((String) resultCreateCustomer.get("Telco"));
-				// TODO câp nhât khi Trường xong service
-				String password = (String) resultCreateCustomer.get("Password");
-				objCustomerDtoSave.setPassword("test".getBytes());
-				objCustomerDtoSave.setOldId(customerId);
-				objCustomerDtoSave.setCheckSum((String) resultCreateCustomer.get("Checksum"));
-				objCustomerDtoSave.setStatus((int) resultCreateCustomer.get("Status"));
-				objCustomerDtoSave.setCreatedAt(DateTimeUtil.getCurrentDateTime());
-				objCustomerDtoSave.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
-				objCustomerDto = customerService.saveCustomerInIparkingCenter(objCustomerDtoSave);
-			}
+				} else {
+					// thuc hien tim kiem customer car
+					CustomerCarDto objCustomerCarDto = customerService
+							.findCustomerCarByNumberPlateAndCusId(carNumberPlate, objCustomerDto.getOldId());
+					if (objCustomerCarDto != null) {
+						// thuc hien set customer_car khac verified =0
+						customerService.updateCustomerCarListByNumberPlate(carNumberPlate,
+								UserConstant.STATUS_NOT_VERIFIED);
+						// thuc hien cap nhat ve verified =1
+						objCustomerCarDto.setVerified(UserConstant.STATUS_VERIFIED);
+						customerService.saveCustomerCarEntity(objCustomerCarDto);
 
-			// check sendOTP by customerId and numberPlate
-			sendOtp = customerService.checkCustomerCarSendOtp(carNumberPlate, customerId);
-			if (sendOtp) {
-				// thuc hien gui OTP cho khách hàng
-				String codeOtp = Utils.createRandomNumber(6);
-				boolean resultSendOtp = smsService.sendSms(customerPhone,
-						String.format(MessageUtil.MESSAGE_SEND_OTP, codeOtp));
-				if (resultSendOtp) {
+					} else {
+						// thuc hien tao moi customer_car với verified = 1
+						Map<String, Object> resultCreateCustomerCar = customerService
+								.saveCustomerCarInPoseidonDb(objCustomerDto.getOldId(), carNumberPlate, carType);
+						if (resultCreateCustomerCar == null
+								|| !HttpStatus.OK.toString().equals(resultCreateCustomerCar.get("Code"))) {
+							responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+							responseDto.setMessage("Lỗi tạo Customer Car In PoseidonDb");
+							return responseDto;
+						}
+						objCustomerCarDto = new CustomerCarDto();
+						objCustomerCarDto.setId((long) resultCreateCustomerCar.get("cus_car_id"));
+						objCustomerCarDto.setNumberPlate((String) resultCreateCustomerCar.get("number_plate"));
+						objCustomerCarDto.setCustomer((long) resultCreateCustomerCar.get("cus_id"));
+						objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+						objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+						objCustomerCarDto.setVerified(UserConstant.STATUS_VERIFIED);
+						customerService.saveCustomerCarEntity(objCustomerCarDto);
+					}
+				}
+			} else {
+				// thuc hien check và them moi customer
+				if (objCustomerDto != null) {
+					customerId = objCustomerDto.getOldId();
+				} else {
+					// thuc hien tao customer bên db shard
+					Map<String, Object> resultCreateCustomer = customerService.saveCustomerInPoseidonDb(customerPhone);
+					if (resultCreateCustomer == null
+							|| !HttpStatus.OK.toString().equals(resultCreateCustomer.get("Code"))) {
+						responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+						responseDto.setMessage("Lỗi tạo Customer In PoseidonDb");
+						return responseDto;
+					}
+					customerId = (long) resultCreateCustomer.get("cus_id");
+					// thuc hien tao customer ben db iparking_center
+					CustomerDto objCustomerDtoSave = new CustomerDto();
+					objCustomerDtoSave.setPhone((String) resultCreateCustomer.get("Phone"));
+					objCustomerDtoSave.setPhone2((String) resultCreateCustomer.get("Phone2"));
+					objCustomerDtoSave.setTelco((String) resultCreateCustomer.get("Telco"));
+					String password = (String) resultCreateCustomer.get("Password");
+					objCustomerDtoSave.setPassword(password.getBytes());
+					objCustomerDtoSave.setOldId(customerId);
+					objCustomerDtoSave.setCheckSum((String) resultCreateCustomer.get("Checksum"));
+					objCustomerDtoSave.setStatus((int) resultCreateCustomer.get("Status"));
+					objCustomerDtoSave.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+					objCustomerDtoSave.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+					objCustomerDto = customerService.saveCustomerInIparkingCenter(objCustomerDtoSave);
+				}
+				// kiem tra send OTP
+				boolean sendOtp = Boolean.FALSE;
+				// check sendOTP by customerId and numberPlate
+				sendOtp = customerService.checkCustomerCarSendOtp(carNumberPlate, customerId);
+				if (sendOtp) {
+					// thuc hien gui OTP cho khách hàng
+					String codeOtp = Utils.createRandomNumber(6);
+					boolean resultSendOtp = smsService.sendSms(customerPhone,
+							String.format(MessageUtil.MESSAGE_SEND_OTP, codeOtp));
+					if (!resultSendOtp) {
+						responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+						responseDto.setMessage(MessageUtil.MESSAGE_SEND_OTP_ERROR);
+						return responseDto;
+					}
 					objCustomerDto.setOtp(codeOtp);
 					customerService.saveCustomerInIparkingCenter(objCustomerDto);
 					responseDto.setCode(HttpStatus.OK.toString());
@@ -349,14 +386,11 @@ public class TicketEndpoint extends BaseEndpoint {
 					};
 					responseDto.setData(dataObject);
 					return responseDto;
-				} else {
-					responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-					responseDto.setMessage(MessageUtil.MESSAGE_SEND_OTP_ERROR);
-					return responseDto;
 				}
 			}
 			// thuc hiện kiểm tra email verfify
 			if (!StringUtils.isEmpty(email)) {
+				customerId = objCustomerDto.getOldId();
 				emailService.checkAndsendMailActiveASynchronous(customerId, customerPhone, email);
 			}
 			// thuc hien tao ve
