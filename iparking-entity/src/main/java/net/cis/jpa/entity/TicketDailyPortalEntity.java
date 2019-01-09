@@ -74,6 +74,11 @@ public class TicketDailyPortalEntity {
 	@Column(name ="duration")
 	private Integer duration;
 	
+	@Column(name ="address")
+	private String address;
+	
+	
+	
 
 	public long getId() {
 		return id;
@@ -253,6 +258,16 @@ public class TicketDailyPortalEntity {
 	public void setDuration(Integer duration) {
 		this.duration = duration;
 	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	
+	
 	
 
 }

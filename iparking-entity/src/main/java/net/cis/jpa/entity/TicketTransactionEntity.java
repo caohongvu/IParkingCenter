@@ -69,6 +69,19 @@ public class TicketTransactionEntity {
 	@Column(name="auto_extend")
 	private int autoExtend;
 	
+	@Column(name="invoice_code")
+	private String invoiceCode;
+	
+	
+	
+	public String getInvoiceCode() {
+		return invoiceCode;
+	}
+
+	public void setInvoiceCode(String invoiceCode) {
+		this.invoiceCode = invoiceCode;
+	}
+
 	public String getId() {
 		return id;
 	}

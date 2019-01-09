@@ -247,7 +247,7 @@ public class ReportEndpoint {
 		ticketDailyCriteria.setTo_time(formatTime.format(endDate));
 		
 		Pageable pageable = new PageRequest(page, size);
-		ResponseApi enpoint = ticketDailyPortalService.getAllTicketDailyPortal(ticketDailyCriteria, pageable);
+		ResponseApi enpoint = ticketDailyPortalService.getAllTicketDailyFooterPortal(ticketDailyCriteria, pageable);
 
 		return enpoint;
 		

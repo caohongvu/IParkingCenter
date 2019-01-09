@@ -11,16 +11,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import net.cis.constants.ResponseErrorCodeConstants;
-import net.cis.dto.DailyTicketPaymentDto;
 import net.cis.dto.ErrorDto;
-import net.cis.dto.ParkingDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketDailyPortalDto;
-import net.cis.dto.TicketTransactionDto;
+import net.cis.dto.TicketDailyPortalEndPointDto;
 import net.cis.jpa.criteria.TicketDailyCriteria;
-import net.cis.jpa.entity.DailyTicketPaymentEntity;
 import net.cis.jpa.entity.TicketDailyPortalEntity;
-import net.cis.jpa.entity.TicketTransactionEntity;
+import net.cis.jpa.entity.TicketDailyPortalFooterEntity;
+import net.cis.repository.TicketDailyPortalFooterRepository;
 import net.cis.repository.TicketDailyPortalRepository;
 import net.cis.service.TicketDailyPortalService;
 
@@ -29,6 +27,9 @@ public class TicketDailyPortalServiceImpl implements TicketDailyPortalService{
 	
 	@Autowired
 	TicketDailyPortalRepository ticketDailyPortalRepository;
+	
+	@Autowired
+	TicketDailyPortalFooterRepository ticketDailyPortalFooterRepository;
 	
 	ModelMapper mapper;
 	private List<TicketDailyPortalDto> map(List<TicketDailyPortalEntity> source) {
@@ -51,8 +52,9 @@ public class TicketDailyPortalServiceImpl implements TicketDailyPortalService{
 	}
 
 	@Override
-	public ResponseApi getAllTicketDailyPortal(TicketDailyCriteria ticketCriteria, Pageable pageable) {
+	public ResponseApi getAllTicketDailyFooterPortal(TicketDailyCriteria ticketCriteria, Pageable pageable) {
 		// TODO Auto-generated method stub
+		TicketDailyPortalEndPointDto ticketEndPointDtos = new TicketDailyPortalEndPointDto();
 		List<TicketDailyPortalEntity> ticketPortalEntity = null;
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
@@ -65,13 +67,25 @@ public class TicketDailyPortalServiceImpl implements TicketDailyPortalService{
 				responseApi.setError(errorDto);
 				return responseApi;
 			}
+			
 			List<TicketDailyPortalDto> ticketDtos = this.map(ticketPortalEntity);
 			
-			errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
-			errorDto.setMessage("");
-			responseApi.setError(errorDto);
-			responseApi.setData(ticketDtos);
-			return responseApi;
+			TicketDailyPortalFooterEntity ticketFooterEntity = null;
+			try {
+				ticketFooterEntity = ticketDailyPortalFooterRepository.getAllTicketDailyFooterPortal(ticketCriteria.getCppCode(), ticketCriteria.getNumberplate(), ticketCriteria.getPhone2(), ticketCriteria.getStart_time(), ticketCriteria.getTo_time());
+				mapper.map(ticketFooterEntity, ticketEndPointDtos);
+				errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+				ticketEndPointDtos.setTicketDaily(ticketDtos);
+				errorDto.setMessage("");
+				responseApi.setError(errorDto);
+				responseApi.setData(ticketEndPointDtos);
+				return responseApi;
+			}catch(Exception e) {
+				System.out.println(e.getMessage());
+				
+			}
+						
+			
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 			
