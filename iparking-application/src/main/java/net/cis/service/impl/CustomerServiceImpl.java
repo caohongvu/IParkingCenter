@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
-import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.constant.URLConstants;
 import net.cis.common.util.constant.UserConstant;
 import net.cis.dto.CustomerCarDto;
@@ -116,9 +115,10 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<CustomerCarDto> findCustomerCarByNumberPlate(String numberPlate, Integer verified) throws Exception {
-		List<CustomerCarEntity> lstCustomerCarEntity = customerCarRepository.findCustomerCarByNumberPlate(numberPlate,
-				verified);
+	public List<CustomerCarDto> findCustomerCarByNumberPlateAndVerified(String numberPlate, Integer verified)
+			throws Exception {
+		List<CustomerCarEntity> lstCustomerCarEntity = customerCarRepository
+				.findCustomerCarByNumberPlateAndVerified(numberPlate, verified);
 		return this.map(lstCustomerCarEntity);
 	}
 
@@ -206,13 +206,6 @@ public class CustomerServiceImpl implements CustomerService {
 	public boolean checkCustomerCarSendOtp(String numberPlate, long cusId) throws Exception {
 		CustomerCarDto objCustomerCarDto = findCustomerCarByNumberPlateAndCusId(numberPlate, cusId);
 		if (objCustomerCarDto == null) {
-			// thuc hien tao customer_car với verified = 0
-			objCustomerCarDto = new CustomerCarDto();
-			objCustomerCarDto.setNumberPlate(numberPlate);
-			objCustomerCarDto.setCustomer(cusId);
-			objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
-			objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
-			saveCustomerCarEntity(objCustomerCarDto);
 			return Boolean.TRUE;
 		} else {
 			if (UserConstant.STATUS_VERIFIED == objCustomerCarDto.getVerified()) {
@@ -221,6 +214,76 @@ public class CustomerServiceImpl implements CustomerService {
 				return Boolean.TRUE;
 			}
 		}
-
 	}
+
+	@Override
+	public CustomerCarDto findCustomerCarById(long id) throws Exception {
+		CustomerCarDto objCustomerCarDto = new CustomerCarDto();
+		CustomerCarEntity objCustomerCarEntity = customerCarRepository.findOne(id);
+		if (objCustomerCarEntity == null)
+			return null;
+		mapper.map(objCustomerCarEntity, objCustomerCarDto);
+		return objCustomerCarDto;
+	}
+
+	@Override
+	public void deleteCustomerCar(long id) throws Exception {
+		customerCarRepository.delete(id);
+	}
+
+	@Override
+	public Map<String, Object> saveCustomerCarInPoseidonDb(long cusId, String numberPlate, int carType)
+			throws Exception {
+		// TODO Auto-generated method stub
+		String finalURL = URLConstants.URL_CREATE_CUSTOMER_CAR;
+		List<NameValuePair> formParams = new ArrayList<>();
+		formParams.add(new BasicNameValuePair("customerID", String.valueOf(cusId)));
+		formParams.add(new BasicNameValuePair("number_plate", numberPlate));
+		formParams.add(new BasicNameValuePair("car_type", String.valueOf(carType)));
+		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		LOGGER.info("createCustomerInPoseidonDb Response: " + responseContent);
+		return parseJSonToSaveCustomerCarPoseidonResponseObject(responseContent);
+	}
+
+	private Map<String, Object> parseJSonToSaveCustomerCarPoseidonResponseObject(String dataResult)
+			throws JSONException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		JSONObject ticketJSon = new JSONObject(dataResult);
+		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
+		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
+		if (ticketErrorJSon.has("Code")) {
+			result.put("Code", ticketErrorJSon.getString("Code"));
+		}
+		if (ticketErrorJSon.has("Message")) {
+			result.put("Message", ticketErrorJSon.getString("Message"));
+		}
+		if (ticketDataJSon.has("Id")) {
+			result.put("cus_car_id", ticketDataJSon.getLong("Id"));
+		}
+		if (ticketDataJSon.has("Cus_id")) {
+			result.put("cus_id", ticketDataJSon.getLong("Cus_id"));
+		}
+		if (ticketDataJSon.has("Number_plate")) {
+			result.put("number_plate", ticketDataJSon.getString("Number_plate"));
+		}
+		if (ticketDataJSon.has("Type_id")) {
+			result.put("type_id", ticketDataJSon.getInt("Type_id"));
+		}
+		if (ticketDataJSon.has("Status")) {
+			result.put("status", ticketDataJSon.getInt("Status"));
+		}
+		return result;
+	}
+
+	@Override
+	public void updateCustomerCarListByNumberPlate(String numberPlate, Integer verified) throws Exception {
+		// TODO Auto-generated method stub
+		List<CustomerCarEntity> lstCustomerCarEntity = customerCarRepository.findCustomerCarByNumberPlate(numberPlate);
+		for (CustomerCarEntity entity : lstCustomerCarEntity) {
+			entity.setVerified(verified);
+			customerCarRepository.save(entity);
+		}
+	}
+
 }
