@@ -23,12 +23,12 @@ public class ParkingServiceImpl implements ParkingService {
 
 	@Autowired
 	private ParkingRepository parkingRepository;
-	
+
 	@Autowired
 	private ParkingPlaceCache parkingPlaceCache;
 
 	ModelMapper mapper;
-	
+
 	@Override
 	public ParkingDto save(ParkingDto ticketDto) {
 		ModelMapper mapper = new ModelMapper();
@@ -37,19 +37,18 @@ public class ParkingServiceImpl implements ParkingService {
 		mapper.map(parkingRepository.save(entity), ticketDto);
 		return ticketDto;
 	}
-	
+
 	@Override
 	public ParkingDto findById(long id) {
 		ModelMapper mapper = new ModelMapper();
 		ParkingEntity entity = parkingRepository.findOne(id);
-		if(entity == null) {
+		if (entity == null) {
 			return null;
 		}
 		ParkingDto parkingDto = new ParkingDto();
 		mapper.map(entity, parkingDto);
 		return parkingDto;
 	}
-
 
 	@Override
 	public List<ParkingDto> findAll() {
@@ -58,9 +57,8 @@ public class ParkingServiceImpl implements ParkingService {
 		return parkingDtos;
 	}
 
-	
 	private List<ParkingDto> map(List<ParkingEntity> source) {
-		
+
 		ArrayList<ParkingDto> rtn = new ArrayList<>();
 		source.stream().map((entity) -> {
 			ParkingDto dto = new ParkingDto();
@@ -72,22 +70,19 @@ public class ParkingServiceImpl implements ParkingService {
 		return rtn;
 	}
 
-	
-
 	@PostConstruct
 	public void initialize() {
 		mapper = new ModelMapper();
 		List<ParkingDto> dtos = this.findAll();
-		for(ParkingDto dto : dtos) {
+		for (ParkingDto dto : dtos) {
 			this.parkingPlaceCache.put(dto.getOldId(), dto);
 			this.parkingPlaceCache.put(dto.getParkingCode(), dto);
 		}
 	}
 
-
 	@Override
 	public void delete(ParkingDto parkingDto) {
-		if(parkingDto != null && parkingDto.getId() > 0) {
+		if (parkingDto != null && parkingDto.getId() > 0) {
 			parkingRepository.delete(parkingDto.getId());
 		}
 	}
@@ -96,7 +91,7 @@ public class ParkingServiceImpl implements ParkingService {
 	public ParkingDto findByOldId(String oldId) {
 		ModelMapper mapper = new ModelMapper();
 		ParkingEntity entity = parkingRepository.findByOldId(oldId);
-		if(entity == null) {
+		if (entity == null) {
 			return null;
 		}
 		ParkingDto parkingDto = new ParkingDto();
@@ -104,5 +99,16 @@ public class ParkingServiceImpl implements ParkingService {
 		return parkingDto;
 	}
 
+	@Override
+	public ParkingDto findByParkingCode(String parkingCode) {
+		ModelMapper mapper = new ModelMapper();
+		ParkingEntity entity = parkingRepository.findByParkingCode(parkingCode);
+		if (entity == null) {
+			return null;
+		}
+		ParkingDto parkingDto = new ParkingDto();
+		mapper.map(entity, parkingDto);
+		return parkingDto;
+	}
 
 }

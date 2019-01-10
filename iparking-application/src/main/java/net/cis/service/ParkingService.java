@@ -18,5 +18,7 @@ public interface ParkingService {
     List<ParkingDto> findAll();
     
     ParkingDto findByOldId(String oldId);
+    
+    ParkingDto findByParkingCode(String parkingCode);
 }
  
