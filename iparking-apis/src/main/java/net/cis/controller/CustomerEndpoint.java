@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.DateTimeUtil;
+import net.cis.common.util.MessageUtil;
 import net.cis.common.util.Utils;
 import net.cis.common.util.constant.UserConstant;
 import net.cis.dto.CustomerCarDto;
@@ -40,7 +41,7 @@ public class CustomerEndpoint {
 	CustomerInfoRepository customerInfoRepository;
 
 	@RequestMapping(value = "/find-by-numberplate", method = RequestMethod.GET)
-	@ApiOperation("Fetch details of ticket")
+	@ApiOperation("Get detail customer by numberplate")
 	public @ResponseBody ResponseDto getById(@RequestParam(name = "numberPlate") String numberPlate) {
 		ResponseDto responseDto = new ResponseDto();
 		responseDto.setCode(HttpStatus.OK.toString());
@@ -51,8 +52,8 @@ public class CustomerEndpoint {
 				return responseDto;
 			}
 			// thuc hien lay thong tin customer tu bien so xe
-			List<CustomerCarDto> lstCustomerCarDto = customerService.findCustomerCarByNumberPlate(numberPlate,
-					UserConstant.STATUS_VERIFIED);
+			List<CustomerCarDto> lstCustomerCarDto = customerService
+					.findCustomerCarByNumberPlateAndVerified(numberPlate, UserConstant.STATUS_VERIFIED);
 			if (lstCustomerCarDto != null && lstCustomerCarDto.size() == 1) {
 				CustomerCarDto objCustomerCarDto = lstCustomerCarDto.get(0);
 				CustomerInfoDto objCustomerInfoDto = customerService
@@ -79,7 +80,7 @@ public class CustomerEndpoint {
 	}
 
 	@RequestMapping(value = "/customer-info-update", method = RequestMethod.POST)
-	@ApiOperation("Fetch details of ticket")
+	@ApiOperation("Create or update customer info")
 	public @ResponseBody ResponseDto updateCustomerInfo(@RequestParam(name = "cus_id") long cusId,
 			@RequestParam(name = "email") String email,
 			@RequestParam(name = "verification_code", required = false) String verificationCode,
@@ -110,6 +111,68 @@ public class CustomerEndpoint {
 			objCustomerInfoDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 			customerService.saveCustomerInfoEntity(objCustomerInfoDto);
 			return responseDto;
+		} catch (Exception ex) {
+			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			return responseDto;
+		}
+	}
+
+	@RequestMapping(value = "/customer-car-update", method = RequestMethod.POST)
+	@ApiOperation("create or update customer car")
+	public @ResponseBody ResponseDto updateCustomerInfo(@RequestParam(name = "id") long id,
+			@RequestParam(name = "cus_id") long cusId, @RequestParam(name = "number_plate") String numberPlate) {
+		ResponseDto responseDto = new ResponseDto();
+		try {
+			// tim kiem customer
+			CustomerDto objCustomerDto = customerService.findCustomerByOldId(cusId);
+			// tim kiem CustomerInfo from db
+			if (objCustomerDto == null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Không tồn tại customer");
+			}
+			CustomerCarDto objCustomerCarDto = customerService.findCustomerCarByNumberPlateAndCusId(numberPlate, cusId);
+			if (objCustomerCarDto == null) {
+				objCustomerCarDto = new CustomerCarDto();
+				objCustomerCarDto.setCustomer(cusId);
+				objCustomerCarDto.setNumberPlate(numberPlate);
+				objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+				objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+				customerService.saveCustomerCarEntity(objCustomerCarDto);
+				responseDto.setCode(HttpStatus.OK.toString());
+				return responseDto;
+			}
+			responseDto.setCode(HttpStatus.OK.toString());
+			return responseDto;
+		} catch (Exception ex) {
+			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			return responseDto;
+		}
+	}
+
+	@RequestMapping(value = "/customer-car-delete", method = RequestMethod.POST)
+	@ApiOperation("delete customer car")
+	public @ResponseBody ResponseDto updateCustomerInfo(@RequestParam(name = "id") long id,
+			@RequestParam(name = "cus_id") long cusId) {
+		ResponseDto responseDto = new ResponseDto();
+		try {
+			// tim kiem theo id
+			CustomerCarDto objCustomerCarDto = customerService.findCustomerCarById(id);
+			if (objCustomerCarDto == null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_CAR_NOT_EXITS);
+				return responseDto;
+			}
+			if (objCustomerCarDto.getCustomer() == cusId) {
+				customerService.deleteCustomerCar(id);
+				responseDto.setCode(HttpStatus.OK.toString());
+				return responseDto;
+			} else {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_NOT_EXITS);
+				return responseDto;
+			}
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
 			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());

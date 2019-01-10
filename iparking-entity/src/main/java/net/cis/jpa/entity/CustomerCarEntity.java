@@ -20,7 +20,6 @@ public class CustomerCarEntity implements Serializable {
 
 	@Id
 	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Column(name = "number_plate")

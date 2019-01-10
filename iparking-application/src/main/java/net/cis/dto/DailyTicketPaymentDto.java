@@ -21,6 +21,7 @@ public class DailyTicketPaymentDto {
 	private String end_time;
 	private Long phone;
 	private String card_number;
+	private String invoice_code;
 	
 	public long getTicket_id() {
 		return ticket_id;
@@ -118,6 +119,13 @@ public class DailyTicketPaymentDto {
 	public void setCppCode(String cppCode) {
 		this.cppCode = cppCode;
 	}
+	public String getInvoice_code() {
+		return invoice_code;
+	}
+	public void setInvoice_code(String invoice_code) {
+		this.invoice_code = invoice_code;
+	}
+	
 	
 	
 	

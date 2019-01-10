@@ -17,6 +17,8 @@ public interface TicketTransactionRepository  extends JpaRepository<TicketTransa
 	List<TicketTransactionEntity> findByTicketId(Long ticketId);
 	
 	TicketTransactionPortalEntity getDetailPortalById(String id);
-
+	
+	
+	TicketTransactionEntity findByIdAndTicketId(String id, Long ticketId);
 	
 }
