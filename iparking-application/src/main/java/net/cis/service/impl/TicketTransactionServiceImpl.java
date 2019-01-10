@@ -14,6 +14,7 @@ import net.cis.dto.ErrorDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketTransactionDto;
 import net.cis.dto.TicketTransactionPortalDto;
+import net.cis.dto.UpdateInvoiceDto;
 import net.cis.jpa.entity.TicketTransactionEntity;
 import net.cis.jpa.entity.TicketTransactionPortalEntity;
 import net.cis.repository.TicketTransactionPortalReponsitory;
@@ -168,6 +169,28 @@ public class TicketTransactionServiceImpl implements TicketTransactionService {
 		}
 		
 		return responseApi;
+	}
+
+	@Override
+	public ResponseApi updateInvoice(UpdateInvoiceDto dto) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		TicketTransactionEntity entity = ticketTransactionRepository.findByIdAndTicketId(dto.getTransactionId(), dto.getTicketId());
+		
+		if (entity != null) {
+			// Update invoice code
+			entity.setInvoiceCode(dto.getInvoiceCode());
+			ticketTransactionRepository.save(entity);
+			
+			
+			errorDto.setCode(200);
+			errorDto.setMessage("");
+			responseApi.setError(errorDto);
+			responseApi.setData(entity);
+			
+			return responseApi;
+		}
+		return null;
 	}
 
 }

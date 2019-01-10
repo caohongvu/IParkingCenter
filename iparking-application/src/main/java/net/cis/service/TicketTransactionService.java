@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketTransactionDto;
+import net.cis.dto.UpdateInvoiceDto;
 
 /**
  * Created by Vincent 15/11/2018
@@ -24,6 +25,8 @@ public interface TicketTransactionService {
 	ResponseApi findByTicketId(Long ticketId);
 	
 	ResponseApi getDetailPortal(String id);
+	
+	ResponseApi updateInvoice(UpdateInvoiceDto dto);
 
 }
  

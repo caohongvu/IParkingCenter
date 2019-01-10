@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import net.cis.common.web.BaseEndpoint;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketTransactionDto;
+import net.cis.dto.UpdateInvoiceDto;
 import net.cis.service.TicketTransactionService;
 
 /**
@@ -82,6 +83,13 @@ public class TicketTransactionEndpoint extends BaseEndpoint {
 	public @ResponseBody Object getTicketTransactionDetailPortal(@PathVariable("id") String id) throws Exception {
 			ResponseApi enpoint = ticketTransactionService.getDetailPortal(id);
 			return enpoint;
+	}
+	
+	@RequestMapping(value = "/update_invoice", method = RequestMethod.POST)
+	@ApiOperation("Update invoice code for ticket transaction")
+	public @ResponseBody Object updateInvoiceForTran(@RequestBody UpdateInvoiceDto dto) throws Exception {
+		ResponseApi enpoint = ticketTransactionService.updateInvoice(dto);
+		return enpoint;
 	}
 	
 	
