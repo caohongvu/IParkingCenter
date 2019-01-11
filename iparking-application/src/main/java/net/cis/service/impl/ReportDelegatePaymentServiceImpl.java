@@ -58,10 +58,21 @@ public class ReportDelegatePaymentServiceImpl implements ReportDelegatePaymentSe
 	}
 
 	@Override
-	public List<ProportionPaymentDto> getProportionPayment(List<Long> cppId, String fromDate, String toDate) {
-		List<ProportionPaymentEntity> entities = proportionPaymentRepository.findByProportionPaymentEntity(cppId,
+	public List<ProportionPaymentDto> getProportionPayment(List<Long> lstCppId, String fromDate, String toDate) {
+		List<ProportionPaymentEntity> entities = proportionPaymentRepository.findByProportionPaymentEntity(lstCppId,
 				fromDate, toDate);
 		return this.map2(entities);
+	}
+
+	@Override
+	public ProportionPaymentDto getProportionPayment(long cppId, String fromDate, String toDate) {
+		ProportionPaymentDto objProportionPaymentDto = new ProportionPaymentDto();
+		ProportionPaymentEntity entities = proportionPaymentRepository.findByProportionPaymentEntity(cppId, fromDate,
+				toDate);
+		if (entities == null)
+			return null;
+		mapper.map(entities, objProportionPaymentDto);
+		return objProportionPaymentDto;
 	}
 
 	private List<ProportionPaymentDto> map2(List<ProportionPaymentEntity> source) {

@@ -13,8 +13,8 @@ import net.cis.jpa.entity.MonthlyTicketEntity;
  * Created by Vincent 02/10/2018
  */
 
-public interface MonthlyTicketRepository  extends JpaRepository<MonthlyTicketEntity, Long> {
-	
+public interface MonthlyTicketRepository extends JpaRepository<MonthlyTicketEntity, Long> {
+
 	@Query(value = "Select ticket from MonthlyTicketEntity ticket where (parkingPlace =:cppCode OR :cppCode is NULL) AND (UNIX_TIMESTAMP() >= validFrom AND UNIX_TIMESTAMP() <= validEnd ) order by createdAt DESC")
 	public List<MonthlyTicketEntity> findAll(@Param("cppCode") String cppCode, Pageable pageable);
 }

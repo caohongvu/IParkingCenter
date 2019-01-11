@@ -192,7 +192,6 @@ public class TicketEndpoint extends BaseEndpoint {
 			@RequestParam("cppCode") String cppCode,
 			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
 			@RequestParam(name = "size", required = false, defaultValue = "500") int size) throws Exception {
-
 		page = page - 1;
 		if (page < 0) {
 			page = 0;
@@ -201,10 +200,13 @@ public class TicketEndpoint extends BaseEndpoint {
 
 		MonthlyTicketCriteria ticketCriteria = new MonthlyTicketCriteria();
 		ticketCriteria.setCppCode(cppCode);
+
 		List<MonthlyTicketDto> tickets = monthlyTicketService.findAll(ticketCriteria, pageable);
 
 		return tickets;
 	}
+
+
 
 	@RequestMapping(value = "/session-out/", method = RequestMethod.POST)
 	@ApiOperation("Update ticket for session out")
