@@ -5,11 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,24 +21,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lowagie.text.pdf.AcroFields.Item;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.cis.common.util.DateDto;
 import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.StatusUtil;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingActorDto;
+import net.cis.dto.ParkingContractDto;
 import net.cis.dto.ParkingDto;
+import net.cis.dto.ParkingInfoDto;
+import net.cis.dto.PerformanceExtractionDto;
 import net.cis.dto.ProportionPaymentDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.DailyTicketPaymentCriteria;
 import net.cis.jpa.criteria.MonthlyTicketPaymentCriteria;
+import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.jpa.criteria.TicketDailyCriteria;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.DailyTicketPaymentService;
 import net.cis.service.MonthlyTicketPaymentService;
 import net.cis.service.ParkingActorService;
+import net.cis.service.ParkingContractService;
+import net.cis.service.ParkingInfoService;
 import net.cis.service.ParkingService;
 import net.cis.service.ReportDelegatePaymentService;
 import net.cis.service.TicketDailyPortalService;
@@ -45,7 +52,7 @@ import net.cis.service.TicketDailyPortalService;
 @RequestMapping("/report")
 @Api(value = "report Endpoint", description = "The URL to handle report endpoint")
 public class ReportEndpoint {
-
+	protected final Logger LOGGER = Logger.getLogger(getClass());
 	@Autowired
 	private DailyTicketPaymentService dailyTicketPaymentService;
 
@@ -63,6 +70,12 @@ public class ReportEndpoint {
 
 	@Autowired
 	private ParkingService parkingService;
+
+	@Autowired
+	private ParkingInfoService parkingInfoService;
+
+	@Autowired
+	private ParkingContractService parkingContractService;
 
 	@RequestMapping(value = "/daily/ticket/payment", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
@@ -267,11 +280,12 @@ public class ReportEndpoint {
 	@ApiOperation("Hieu xuat khai thac")
 	public @ResponseBody ResponseApi fetchPerformanceExtraction(HttpServletRequest request,
 			@RequestParam(name = "cpp_code", required = false) String cppCode,
-			@RequestParam(name = "from_time") String fromDate, @RequestParam(name = "to_time") String toDate)
+			@RequestParam(name = "from_date") String fromDate, @RequestParam(name = "to_date") String toDate)
 			throws ParseException {
 		ResponseApi response = new ResponseApi();
 		ErrorDto error = new ErrorDto();
 		SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat simpleDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		if (simpleDate.parse(fromDate).compareTo(DateTimeUtil.getCurrentDateTime()) > 0) {
 			error.setCode(StatusUtil.FAIL_STATUS);
 			error.setMessage(StatusUtil.FAIL_MESSAGE);
@@ -287,13 +301,77 @@ public class ReportEndpoint {
 		String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
 		int actorId = Integer.parseInt(supervisorId);
 		List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(actorId);
-		List<Long> lstCppCode = new ArrayList<>();
-		parkingActorDtos.stream().forEach(item -> lstCppCode.add(item.getCppId()));
+		List<Long> lstCppId = new ArrayList<>();
+		parkingActorDtos.stream().forEach(item -> lstCppId.add(item.getCppId()));
+		if (!StringUtils.isEmpty(cppCode)) {
+			// thuc hien kiem tra parkingCode co nam trong quyen cua user super
+			ParkingDto objParkingDto = parkingService.findByParkingCode(cppCode);
+			if (objParkingDto != null && lstCppId.contains(Long.parseLong(objParkingDto.getOldId()))) {
+				lstCppId.clear();
+				lstCppId.add(Long.parseLong(objParkingDto.getOldId()));
+			}
+		}
+		Date date1 = simpleDate.parse(fromDate);
+		Date date2 = simpleDate.parse(toDate);
+		long timediff = (TimeUnit.DAYS.convert(date2.getTime() - date1.getTime(), TimeUnit.MILLISECONDS) + 1);
+		List<DateDto> lstDateDto = DateTimeUtil.getDayOfMonths(date1, date2);
+		List<PerformanceExtractionDto> result = new ArrayList<>();
+		// thuc hien tinh toan doanh thu ve luot va ve thang
+		for (Long cppId : lstCppId) {
+			ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(cppId));
+			ParkingInfoDto objParkingInfoDto = parkingInfoService.findByCppId(cppId);
+			double mauthuc = objParkingDto.getCapacity() * objParkingInfoDto.getTimeAvg()
+					* Long.valueOf(timediff).doubleValue() * 25000;
+			LOGGER.info("capacity: " + objParkingDto.getCapacity());
+			LOGGER.info("timeAvg: " + objParkingInfoDto.getTimeAvg());
+			LOGGER.info("timediff: " + Long.valueOf(timediff).doubleValue());
+			double revenuVeluot = 0d;
+			double revenuVeThang = 0d;
+			LOGGER.info("MauThuc: " + Double.toString(mauthuc));
+
+			PerformanceExtractionDto objPerformance = new PerformanceExtractionDto();
+			objPerformance.setCppId(cppId);
+			objPerformance.setParkingCode(objParkingDto.getParkingCode());
+			objPerformance.setAddress(objParkingDto.getAddress());
+
+			if (objParkingDto != null) {
+				// thuc hien lay doanh thu ve luot
+				LOGGER.info("veluot: " + simpleDateTime.format(DateTimeUtil.getCurrentDateTime()));
+				ProportionPaymentDto objProportionPaymentDto = reportDelegatePaymentService.getProportionPayment(cppId,
+						fromDate, toDate);
+				LOGGER.info("veluot: " + simpleDateTime.format(DateTimeUtil.getCurrentDateTime()));
+				revenuVeluot = objProportionPaymentDto.getRevenue();
+				// tinh toan doanh thu ve thang
+				ParkingContractCriteria ticketCriteria = new ParkingContractCriteria();
+				ticketCriteria.setCppCode(cppCode);
+				ticketCriteria.setFromDate(simpleDate.parse(fromDate));
+				ticketCriteria.setToDate(simpleDate.parse(toDate));
+				LOGGER.info("vethang: " + simpleDateTime.format(DateTimeUtil.getCurrentDateTime()));
+				List<ParkingContractDto> lstParkingContract = parkingContractService.findAll(ticketCriteria);
+				LOGGER.info("vethang: " + simpleDateTime.format(DateTimeUtil.getCurrentDateTime()));
+				double totalRevenu = 0d;
+				if (lstParkingContract != null) {
+					for (ParkingContractDto objParkingContractDto : lstParkingContract) {
+						totalRevenu += objParkingContractDto.getMonthlyUnitPrice();
+					}
+				}
+				for (DateDto objDateDto : lstDateDto) {
+					revenuVeThang += (objDateDto.getDay() * totalRevenu) / objDateDto.getDayOfMonth();
+				}
+
+				LOGGER.info("revenuVeluot: " + Double.toString(revenuVeluot));
+				LOGGER.info("revenuVeThang: " + Double.toString(revenuVeThang));
+				LOGGER.info("performance: " + Double.toString((revenuVeluot + revenuVeThang) / mauthuc));
+				objPerformance.setPerformance(((revenuVeluot + revenuVeThang) / mauthuc));
+			}
+			result.add(objPerformance);
+		}
 		error.setCode(StatusUtil.SUCCESS_STATUS);
 		error.setMessage(StatusUtil.SUCCESS_MESSAGE);
 		response.setError(error);
+		response.setData(result);
 		return response;
-	} 
+	}
 
 	@RequestMapping(value = "/supervisor/proportion/payment", method = RequestMethod.GET)
 	@ApiOperation("Ty trong thanh toan")
@@ -322,25 +400,39 @@ public class ReportEndpoint {
 		List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(actorId);
 		List<Long> lstCppCode = new ArrayList<>();
 		parkingActorDtos.stream().forEach(item -> lstCppCode.add(item.getCppId()));
-
 		List<ProportionPaymentDto> result = new ArrayList<>();
 		if (!StringUtils.isEmpty(cppCode)) {
-			// thuc hien kiem tra parkingCode
+			// thuc hien kiem tra parkingCode co nam trong quyen cua user super
 			ParkingDto objParkingDto = parkingService.findByParkingCode(cppCode);
 			if (objParkingDto != null && lstCppCode.contains(Long.parseLong(objParkingDto.getOldId()))) {
-				List<Long> lstCppCode2 = new ArrayList<>();
-				lstCppCode2.add(Long.parseLong(objParkingDto.getOldId()));
-				result = reportDelegatePaymentService.getProportionPayment(lstCppCode2, fromDate, toDate);
+				lstCppCode.clear();
+				lstCppCode.add(Long.parseLong(objParkingDto.getOldId()));
 			}
-		} else {
-			result.addAll(reportDelegatePaymentService.getProportionPayment(lstCppCode, fromDate, toDate));
 		}
+		result = reportDelegatePaymentService.getProportionPayment(lstCppCode, fromDate, toDate);
 		error.setCode(StatusUtil.SUCCESS_STATUS);
 		error.setMessage(StatusUtil.SUCCESS_MESSAGE);
 		response.setError(error);
 		response.setData(calculateProportionPayment(result));
 		return response;
 
+	}
+
+	@RequestMapping(value = "/monthly2", method = RequestMethod.POST)
+	@ApiOperation("Get all valid monthly ticket belong parking place")
+	public @ResponseBody List<ParkingContractDto> fecthMonthlyTicket2(HttpServletRequest request,
+			@RequestParam(name = "cppCode", required = false) String cppCode, @RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate) throws Exception {
+		SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd");
+
+		ParkingContractCriteria ticketCriteria = new ParkingContractCriteria();
+		ticketCriteria.setCppCode(cppCode);
+		ticketCriteria.setFromDate(simple.parse(fromDate));
+		ticketCriteria.setToDate(simple.parse(toDate));
+
+		List<ParkingContractDto> tickets = parkingContractService.findAll(ticketCriteria);
+
+		return tickets;
 	}
 
 	private List<ProportionPaymentDto> calculateProportionPayment(List<ProportionPaymentDto> lstProportionPaymentDto) {
