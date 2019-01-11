@@ -10,13 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.cis.dto.CompanyDto;
+import net.cis.dto.InvoiceCodeDto;
 import net.cis.dto.ParkingContractDto;
 import net.cis.dto.ParkingDto;
 import net.cis.jpa.entity.ParkingContractEntity;
 import net.cis.repository.ParkingContractRepository;
+import net.cis.service.InvoiceCenterService;
 import net.cis.service.ParkingContractService;
 import net.cis.service.cache.CompanyCache;
 import net.cis.service.cache.ParkingPlaceCache;
+import net.cis.utils.InvoiceCenterConstants;
 
 /**
  * Created by Vincent on 02/10/2018
@@ -35,6 +38,9 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 	ParkingPlaceCache parkingPlaceCache;
 	
 	@Autowired
+	InvoiceCenterService invoiceCenterService;
+	
+	@Autowired
 	private CompanyCache companyCache;
 	
 	@Override
@@ -42,6 +48,19 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 		ParkingContractEntity entity = parkingContractRepository.findOne(id);
 		ParkingContractDto dto = new ParkingContractDto();
 		mapper.map(entity, dto);
+		
+		try {
+			List<String> codes = invoiceCenterService.getInvoiceCode(id);
+			InvoiceCodeDto invoiceCodeDto  = new InvoiceCodeDto();
+			invoiceCodeDto.setInvoiceCodes(codes);
+			invoiceCodeDto.setUrl(InvoiceCenterConstants.DOWNLOAD_INVOICE_URL);
+			
+			dto.setInvoiceCodeDto(invoiceCodeDto);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		return dto;
 	}
