@@ -1,5 +1,7 @@
 package net.cis.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import net.cis.common.util.TicketUtil;
 
 /**
@@ -26,6 +28,10 @@ public class ParkingContractDto {
 	private String metadata;
 	private long monthlyUnitPrice;
 	private boolean status;
+	
+	@JsonProperty("Invoice")
+	private InvoiceCodeDto invoiceCodeDto;
+	
 	public long getId() {
 		return id;
 	}
@@ -147,6 +153,12 @@ public class ParkingContractDto {
 	}
 	public String getSessionTo() {
 		return TicketUtil.getMonthlyTicketSessionTo(this.metadata);
+	}
+	public InvoiceCodeDto getInvoiceCodeDto() {
+		return invoiceCodeDto;
+	}
+	public void setInvoiceCodeDto(InvoiceCodeDto invoiceCodeDto) {
+		this.invoiceCodeDto = invoiceCodeDto;
 	}
 	
 	
