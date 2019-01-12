@@ -8,58 +8,60 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="daily_ticket_payment_view")
+@Table(name = "daily_ticket_payment_view")
 public class DailyTicketPaymentEntity {
 
-	@Column(name="ticket_id")
+	@Column(name = "ticket_id")
 	private long ticket_id;
 
 	@Id
-	@Column(name="transaction_id")
+	@Column(name = "transaction_id")
 	private String transaction_id;
-	
-	@Column(name="parking_code")
+
+	@Column(name = "parking_code")
 	private String parking_code;
-	
-	@Column(name="payment_order_no")
+
+	@Column(name = "company_code")
+	private String company_code;
+
+	@Column(name = "payment_order_no")
 	private String payment_order_no;
-	
-	@Column(name="payment_trans_no")
+
+	@Column(name = "payment_trans_no")
 	private String payment_trans_no;
-	
-	@Column(name="payment_method")
+
+	@Column(name = "payment_method")
 	private String payment_method;
-	
-	@Column(name="car_number_plate")
+
+	@Column(name = "car_number_plate")
 	private String car_number_plate;
-	
-	@Column(name="payment_amount")
+
+	@Column(name = "payment_amount")
 	private double payment_amount;
-	
-	@Column(name="is_delegate")
+
+	@Column(name = "is_delegate")
 	private boolean is_delegate;
-	
-	@Column(name="transaction_type")
+
+	@Column(name = "transaction_type")
 	private String transaction_type;
-	
-	@Column(name="created_at")
+
+	@Column(name = "created_at")
 	private Date created_at;
-	
-	@Column(name="start_time")
+
+	@Column(name = "start_time")
 	private String start_time;
-	
-	@Column(name="end_time")
+
+	@Column(name = "end_time")
 	private String end_time;
-	
-	@Column(name="phone2")
+
+	@Column(name = "phone2")
 	private Long phone;
-	
-	@Column(name="card_number")
+
+	@Column(name = "card_number")
 	private String card_number;
-	
-	@Column(name="invoice_code")
+
+	@Column(name = "invoice_code")
 	private String invoice_code;
-	
 
 	public long getTicket_id() {
 		return ticket_id;
@@ -188,8 +190,13 @@ public class DailyTicketPaymentEntity {
 	public void setInvoice_code(String invoice_code) {
 		this.invoice_code = invoice_code;
 	}
-	
-	
 
+	public String getCompany_code() {
+		return company_code;
+	}
+
+	public void setCompany_code(String company_code) {
+		this.company_code = company_code;
+	}
 
 }
