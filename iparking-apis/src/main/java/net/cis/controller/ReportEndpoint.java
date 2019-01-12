@@ -457,4 +457,36 @@ public class ReportEndpoint {
 		});
 		return result;
 	}
+
+	/**
+	 * Laays doanh thu ve luot theo diem do hoac cong ty
+	 * 
+	 * @param cppCode
+	 * @param start_time
+	 * @param end_time
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/daily/ticket/revenue", method = RequestMethod.GET)
+	@ApiOperation("Fetch all ticket payment")
+	public @ResponseBody Object fetchTicketsRevenueGroupByParking(
+			@RequestParam(name = "cpp_code", required = false) String cppCode,
+			@RequestParam(name = "from_time", required = false) Long start_time,
+			@RequestParam(name = "end_time", required = false) Long end_time,
+			@RequestParam(name = "type", required = false) int type) throws Exception {
+
+		DailyTicketPaymentCriteria ticketCriteria = new DailyTicketPaymentCriteria();
+		SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date toDate = new Date(end_time * 1000L);
+		Date fromDate = new Date(start_time * 1000L);
+		ticketCriteria.setStart_time(formatTime.format(fromDate));
+		ticketCriteria.setEnd_time(formatTime.format(toDate));
+		ticketCriteria.setCppCode(cppCode);
+
+		if (type == 1) {
+			return dailyTicketPaymentService.getRevenueGroupByParkingCode(ticketCriteria);
+		} else {
+			return dailyTicketPaymentService.getRevenueGroupByCompanyCode(ticketCriteria);
+		}
+	}
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.DailyTicketPaymentDto;
 import net.cis.dto.DailyTicketPaymentEndPointDto;
+import net.cis.dto.DailyTicketRevenueDto;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingDto;
 import net.cis.dto.ResponseApi;
@@ -109,6 +110,34 @@ public class DailyTicketPaymentServiceImpl implements DailyTicketPaymentService 
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
+	}
+
+	@Override
+	public ResponseApi getRevenueGroupByParkingCode(DailyTicketPaymentCriteria ticketCriteria) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		List<DailyTicketRevenueDto> result = ticketRepository.getRevenueByParkingCode(ticketCriteria.getCppCode(),
+				ticketCriteria.getStart_time(), ticketCriteria.getEnd_time());
+
+		responseApi.setData(result);
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		errorDto.setMessage("");
+		responseApi.setError(errorDto);
+		return responseApi;
+	}
+
+	@Override
+	public ResponseApi getRevenueGroupByCompanyCode(DailyTicketPaymentCriteria ticketCriteria) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		List<DailyTicketRevenueDto> result = ticketRepository.getRevenueByCompanyCode(ticketCriteria.getCppCode(),
+				ticketCriteria.getStart_time(), ticketCriteria.getEnd_time());
+
+		responseApi.setData(result);
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		errorDto.setMessage("");
+		responseApi.setError(errorDto);
+		return responseApi;
 	}
 
 }
