@@ -470,7 +470,7 @@ public class ReportEndpoint {
 	@RequestMapping(value = "/daily/ticket/revenue", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
 	public @ResponseBody Object fetchTicketsRevenueGroupByParking(
-			@RequestParam(name = "cpp_code", required = false) String cppCode,
+			@RequestParam(name = "code", required = false) String cppCode,
 			@RequestParam(name = "from_time", required = false) Long start_time,
 			@RequestParam(name = "end_time", required = false) Long end_time,
 			@RequestParam(name = "type", required = false) int type) throws Exception {
