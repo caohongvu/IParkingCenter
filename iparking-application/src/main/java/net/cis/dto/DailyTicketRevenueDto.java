@@ -2,8 +2,11 @@ package net.cis.dto;
 
 public class DailyTicketRevenueDto {
 	private String code;
-
 	private double revenue;
+
+	public DailyTicketRevenueDto() {
+		super();
+	}
 
 	public String getCode() {
 		return code;

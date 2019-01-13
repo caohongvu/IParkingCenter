@@ -484,7 +484,7 @@ public class ReportEndpoint {
 		ticketCriteria.setCppCode(cppCode);
 
 		if (type == 1) {
-			return dailyTicketPaymentService.getRevenueGroupByParkingCode(ticketCriteria);
+			return dailyTicketPaymentService.getRevenueGroupByParkingCodeSP(ticketCriteria);
 		} else {
 			return dailyTicketPaymentService.getRevenueGroupByCompanyCode(ticketCriteria);
 		}
