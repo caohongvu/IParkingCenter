@@ -16,63 +16,87 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import net.cis.common.util.StatusUtil;
+import net.cis.constants.ResponseErrorCodeConstants;
+import net.cis.dto.CompanyDto;
+import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingDto;
+import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.criteria.TicketCriteria;
+import net.cis.service.CompanyService;
 import net.cis.service.ParkingService;
 import net.cis.service.TicketService;
 
 @RestController
 @RequestMapping("/parking")
-@Api(value="parking Endpoint", description="The URL to handle parking endpoint")
+@Api(value = "parking Endpoint", description = "The URL to handle parking endpoint")
 public class ParkingPlaceEndpoint {
-	
+
 	@Autowired
 	ParkingService parkingService;
-	
+
+	@Autowired
+	CompanyService companyService;
+
 	@Autowired
 	TicketService ticketService;
-	
-	@RequestMapping(value="/{id}/getByOldId", method= RequestMethod.GET)
-	public @ResponseBody ParkingDto getByOldId(@PathVariable("id") String oldId) throws Exception{
+
+	@RequestMapping(value = "/{id}/getByOldId", method = RequestMethod.GET)
+	public @ResponseBody ParkingDto getByOldId(@PathVariable("id") String oldId) throws Exception {
 		ParkingDto parkingDto = parkingService.findByOldId(oldId);
 		TicketCriteria ticketCriteria = new TicketCriteria();
 		ticketCriteria.setCppId(parkingDto.getId());
 		ticketCriteria.setInSession(1);
-		
+
 		Pageable pageable = new PageRequest(0, 1000);
 		List<TicketDto> ticketsInsession = ticketService.findAll(ticketCriteria, pageable);
 		parkingDto.setCurrentTicketInSession(ticketsInsession.size());
 		return parkingDto;
 	}
-	
-	@RequestMapping(value="/update_cap_adjust", method= RequestMethod.POST)
-	public @ResponseBody ParkingDto manualAdjust(HttpServletRequest request, 
-			@RequestParam("cppId") long cppId,
-			@RequestParam("adjust")int adjust,
-			@RequestParam("current_ticket_count") int currentTicketCount) throws Exception{
+
+	@RequestMapping(value = "/update_cap_adjust", method = RequestMethod.POST)
+	public @ResponseBody ParkingDto manualAdjust(HttpServletRequest request, @RequestParam("cppId") long cppId,
+			@RequestParam("adjust") int adjust, @RequestParam("current_ticket_count") int currentTicketCount)
+			throws Exception {
 		ParkingDto parkingDto = parkingService.findById(cppId);
 		TicketCriteria ticketCriteria = new TicketCriteria();
 		ticketCriteria.setCppId(parkingDto.getId());
 		ticketCriteria.setInSession(StatusUtil.SUCCESS_STATUS);
-		
+
 		Pageable pageable = new PageRequest(0, 1000);
 		List<TicketDto> ticketsInsession = ticketService.findAll(ticketCriteria, pageable);
 		int currentTicketInssessionFromDatabase = ticketsInsession.size();
 		int newAdjust = adjust;
-		if(currentTicketInssessionFromDatabase != currentTicketCount) {
+		if (currentTicketInssessionFromDatabase != currentTicketCount) {
 			newAdjust = adjust - (currentTicketCount - currentTicketInssessionFromDatabase);
 		}
 		parkingDto.setAdjust(newAdjust);
 		parkingDto.setCurrentTicketInSession(currentTicketInssessionFromDatabase);
-		if(parkingDto.getRemain() <= 0) {
+		if (parkingDto.getRemain() <= 0) {
 			newAdjust = currentTicketInssessionFromDatabase - parkingDto.getCapacity();
-		} else if(parkingDto.getRemain() >= parkingDto.getCapacity()) {
+		} else if (parkingDto.getRemain() >= parkingDto.getCapacity()) {
 			newAdjust = currentTicketInssessionFromDatabase;
 		}
 		parkingDto.setAdjust(newAdjust);
 		parkingDto = parkingService.save(parkingDto);
-		
+
 		return parkingDto;
+	}
+
+	@RequestMapping(value = "/getParkingPlace", method = RequestMethod.GET)
+	public @ResponseBody ResponseApi getParkingPlace(HttpServletRequest request,
+			@RequestParam("company") String company) throws Exception {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		responseApi.setError(errorDto);
+		CompanyDto objCompanyDto = companyService.findByCompanyCode(company);
+
+		if (objCompanyDto == null) {
+			return responseApi;
+		}
+		List<ParkingDto> lstParkingDto = parkingService.findByCompany(objCompanyDto.getId());
+		responseApi.setData(lstParkingDto);
+		return responseApi;
 	}
 }

@@ -11,4 +11,6 @@ public interface ReportDelegatePaymentService {
 
 	List<ProportionPaymentDto> getProportionPayment(List<Long> cppId, String fromDate, String toDate);
 
+	ProportionPaymentDto getProportionPayment(long cppId, String fromDate, String toDate);
+
 }

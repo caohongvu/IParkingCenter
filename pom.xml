@@ -23,8 +23,8 @@
 	</properties>
 	
 	<modules>
-        <module>../../payment_center/PaymentCenter/cis-common</module>
-        <module>../../payment_center/PaymentCenter/cis-thirdparty</module>
+        <module>../PaymentCenter/cis-common</module>
+        <module>../PaymentCenter/cis-thirdparty</module>
         <module>iparking-entity</module>
         <module>iparking-application</module>
         <module>iparking-apis</module>

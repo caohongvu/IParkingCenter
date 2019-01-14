@@ -9,16 +9,17 @@ import net.cis.dto.ParkingDto;
  */
 public interface ParkingService {
 
-    ParkingDto save(ParkingDto parkingDto);
-    
-    ParkingDto findById(long id);
+	ParkingDto save(ParkingDto parkingDto);
 
-    void delete(ParkingDto parkingDto);
-    
-    List<ParkingDto> findAll();
-    
-    ParkingDto findByOldId(String oldId);
-    
-    ParkingDto findByParkingCode(String parkingCode);
+	ParkingDto findById(long id);
+
+	void delete(ParkingDto parkingDto);
+
+	List<ParkingDto> findAll();
+
+	ParkingDto findByOldId(String oldId);
+
+	ParkingDto findByParkingCode(String parkingCode);
+
+	List<ParkingDto> findByCompany(long company);
 }
- 
