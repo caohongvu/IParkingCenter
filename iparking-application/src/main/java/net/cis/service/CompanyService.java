@@ -9,13 +9,14 @@ import net.cis.dto.CompanyDto;
  */
 public interface CompanyService {
 
-    CompanyDto save(CompanyDto companyDto);
-    
-    CompanyDto findById(long id);
+	CompanyDto save(CompanyDto companyDto);
 
-    void delete(CompanyDto parkingDto);
-    
-    List<CompanyDto> findAll();
-    
+	CompanyDto findById(long id);
+
+	void delete(CompanyDto parkingDto);
+
+	List<CompanyDto> findAll();
+
+	CompanyDto findByCompanyCode(String companyCode);
+
 }
- 

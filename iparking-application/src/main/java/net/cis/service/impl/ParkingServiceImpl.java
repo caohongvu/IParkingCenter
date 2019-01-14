@@ -102,13 +102,20 @@ public class ParkingServiceImpl implements ParkingService {
 	@Override
 	public ParkingDto findByParkingCode(String parkingCode) {
 		ModelMapper mapper = new ModelMapper();
-		ParkingEntity entity = parkingRepository.findByParkingCode(parkingCode);
+		ParkingEntity entity = parkingRepository.findByParkingCodeIgnoreCase(parkingCode);
 		if (entity == null) {
 			return null;
 		}
 		ParkingDto parkingDto = new ParkingDto();
 		mapper.map(entity, parkingDto);
 		return parkingDto;
+	}
+
+	@Override
+	public List<ParkingDto> findByCompany(long company) {
+		List<ParkingEntity> parkingEntities = parkingRepository.findByCompany(company);
+		List<ParkingDto> parkingDtos = this.map(parkingEntities);
+		return parkingDtos;
 	}
 
 }

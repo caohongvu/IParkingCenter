@@ -453,10 +453,10 @@ public class ReportEndpoint {
 	@RequestMapping(value = "/daily/ticket/revenue", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
 	public @ResponseBody Object fetchDailyTicketsRevenueGroupByParking(
-			@RequestParam(name = "code", required = false) String cppCode,
-			@RequestParam(name = "from_time", required = false) Long start_time,
-			@RequestParam(name = "end_time", required = false) Long end_time,
-			@RequestParam(name = "type", required = false) int type) throws Exception {
+			@RequestParam(name = "code") String cppCode,
+			@RequestParam(name = "from_time") Long start_time,
+			@RequestParam(name = "end_time") Long end_time,
+			@RequestParam(name = "type") int type) throws Exception {
 
 		DailyTicketPaymentCriteria ticketCriteria = new DailyTicketPaymentCriteria();
 		SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -474,7 +474,7 @@ public class ReportEndpoint {
 	}
 
 	/**
-	 * Laays doanh thu ve luot theo diem do hoac cong ty
+	 * Laays doanh thu tháng theo diem do hoac cong ty
 	 * 
 	 * @param cppCode
 	 * @param start_time
@@ -485,10 +485,10 @@ public class ReportEndpoint {
 	@RequestMapping(value = "/monthly/ticket/revenue", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
 	public @ResponseBody Object fetchMonthlyTicketsRevenueGroupByParking(
-			@RequestParam(name = "code", required = false) String cppCode,
-			@RequestParam(name = "from_time", required = false) Long start_time,
-			@RequestParam(name = "end_time", required = false) Long end_time,
-			@RequestParam(name = "type", required = false) int type) throws Exception {
+			@RequestParam(name = "code") String cppCode,
+			@RequestParam(name = "from_time") Long start_time,
+			@RequestParam(name = "end_time") Long end_time,
+			@RequestParam(name = "type") int type) throws Exception {
 
 		MonthlyTicketPaymentCriteria ticketCriteria = new MonthlyTicketPaymentCriteria();
 		SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
