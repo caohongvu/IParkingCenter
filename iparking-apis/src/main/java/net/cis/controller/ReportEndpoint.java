@@ -418,23 +418,6 @@ public class ReportEndpoint {
 
 	}
 
-	@RequestMapping(value = "/monthly2", method = RequestMethod.POST)
-	@ApiOperation("Get all valid monthly ticket belong parking place")
-	public @ResponseBody List<ParkingContractDto> fecthMonthlyTicket2(HttpServletRequest request,
-			@RequestParam(name = "cppCode", required = false) String cppCode, @RequestParam("fromDate") String fromDate,
-			@RequestParam("toDate") String toDate) throws Exception {
-		SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd");
-
-		ParkingContractCriteria ticketCriteria = new ParkingContractCriteria();
-		ticketCriteria.setCppCode(cppCode);
-		ticketCriteria.setFromDate(simple.parse(fromDate));
-		ticketCriteria.setToDate(simple.parse(toDate));
-
-		List<ParkingContractDto> tickets = parkingContractService.findAll(ticketCriteria);
-
-		return tickets;
-	}
-
 	private List<ProportionPaymentDto> calculateProportionPayment(List<ProportionPaymentDto> lstProportionPaymentDto) {
 		List<ProportionPaymentDto> result = new ArrayList<>();
 		lstProportionPaymentDto.stream().forEach(item -> {
@@ -469,7 +452,7 @@ public class ReportEndpoint {
 	 */
 	@RequestMapping(value = "/daily/ticket/revenue", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
-	public @ResponseBody Object fetchTicketsRevenueGroupByParking(
+	public @ResponseBody Object fetchDailyTicketsRevenueGroupByParking(
 			@RequestParam(name = "code", required = false) String cppCode,
 			@RequestParam(name = "from_time", required = false) Long start_time,
 			@RequestParam(name = "end_time", required = false) Long end_time,
@@ -486,7 +469,39 @@ public class ReportEndpoint {
 		if (type == 1) {
 			return dailyTicketPaymentService.getRevenueGroupByParkingCodeSP(ticketCriteria);
 		} else {
-			return dailyTicketPaymentService.getRevenueGroupByCompanyCode(ticketCriteria);
+			return dailyTicketPaymentService.getRevenueGroupByCompanyCodeSP(ticketCriteria);
+		}
+	}
+
+	/**
+	 * Laays doanh thu ve luot theo diem do hoac cong ty
+	 * 
+	 * @param cppCode
+	 * @param start_time
+	 * @param end_time
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/monthly/ticket/revenue", method = RequestMethod.GET)
+	@ApiOperation("Fetch all ticket payment")
+	public @ResponseBody Object fetchMonthlyTicketsRevenueGroupByParking(
+			@RequestParam(name = "code", required = false) String cppCode,
+			@RequestParam(name = "from_time", required = false) Long start_time,
+			@RequestParam(name = "end_time", required = false) Long end_time,
+			@RequestParam(name = "type", required = false) int type) throws Exception {
+
+		MonthlyTicketPaymentCriteria ticketCriteria = new MonthlyTicketPaymentCriteria();
+		SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date toDate = new Date(end_time * 1000L);
+		Date fromDate = new Date(start_time * 1000L);
+		ticketCriteria.setStart_time(formatTime.format(fromDate));
+		ticketCriteria.setEnd_time(formatTime.format(toDate));
+		ticketCriteria.setCppCode(cppCode);
+
+		if (type == 1) {
+			return monthlyTicketPaymentService.getRevenueGroupByParkingCodeSP(ticketCriteria);
+		} else {
+			return monthlyTicketPaymentService.getRevenueGroupByCompanyCodeSP(ticketCriteria);
 		}
 	}
 }

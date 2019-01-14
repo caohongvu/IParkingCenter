@@ -177,4 +177,35 @@ public class DailyTicketPaymentServiceImpl implements DailyTicketPaymentService 
 		return responseApi;
 	}
 
+	@Override
+	public ResponseApi getRevenueGroupByCompanyCodeSP(DailyTicketPaymentCriteria ticketCriteria) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		StoredProcedureQuery storedProcedureQuery = entityManager
+				.createStoredProcedureQuery("daily_ticket_payment_group_by_company");
+		storedProcedureQuery.registerStoredProcedureParameter("cpp_code", String.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("from_time", String.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("to_time", String.class, ParameterMode.IN);
+		storedProcedureQuery.setParameter("cpp_code", ticketCriteria.getCppCode());
+		storedProcedureQuery.setParameter("from_time", ticketCriteria.getStart_time());
+		storedProcedureQuery.setParameter("to_time", ticketCriteria.getEnd_time());
+		storedProcedureQuery.execute();
+		List<DailyTicketRevenueDto> result = new ArrayList<>();
+		List<Object[]> lst = storedProcedureQuery.getResultList();
+		for (Object[] value : lst) {
+			DailyTicketRevenueDto obDailyTicketRevenueDto = new DailyTicketRevenueDto();
+			if (value[0] != null)
+				obDailyTicketRevenueDto.setCode(value[0].toString());
+
+			if (value[1] != null)
+				obDailyTicketRevenueDto.setRevenue((double) value[1]);
+
+			result.add(obDailyTicketRevenueDto);
+		}
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		responseApi.setData(result);
+		responseApi.setError(errorDto);
+		return responseApi;
+	}
+
 }
