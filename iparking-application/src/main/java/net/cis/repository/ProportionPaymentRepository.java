@@ -15,4 +15,8 @@ public interface ProportionPaymentRepository extends JpaRepository<ProportionPay
 	List<ProportionPaymentEntity> findByProportionPaymentEntity(@Param("cppId") List<Long> cppId,
 			@Param("fromDate") String fromDate, @Param("toDate") String toDate);
 
+	@Query(value = "Select ticket from ProportionPaymentEntity ticket where (cppId =:cppId) AND ( day >= :fromDate AND day <= :toDate ) GROUP BY code")
+	ProportionPaymentEntity findByProportionPaymentEntity(@Param("cppId") Long cppId,
+			@Param("fromDate") String fromDate, @Param("toDate") String toDate);
+
 }

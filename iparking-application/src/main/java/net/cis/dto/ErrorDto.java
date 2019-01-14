@@ -19,5 +19,14 @@ public class ErrorDto {
 	public void setMessage(String message) {
 		Message = message;
 	}
+	public ErrorDto() {
+		
+	}
+	public ErrorDto(int code, String message) {
+		Code = code;
+		Message = message;
+	}
+	
+	
 	
 }

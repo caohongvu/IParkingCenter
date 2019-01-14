@@ -1,4 +1,4 @@
- package net.cis.service.impl;
+package net.cis.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,50 +25,45 @@ public class MonthlyTicketServiceImpl implements MonthlyTicketService {
 
 	@Autowired
 	private MonthlyTicketRepository monthlyTicketRepository;
-	
-	
 
 	@Autowired
 	private MonthlyTicketCache monthlyTicketCache;
 
 	ModelMapper mapper;
-	
-	
+
 	@Override
 	public MonthlyTicketDto findOne(long id) {
 		MonthlyTicketEntity entity = monthlyTicketRepository.findOne(id);
 		MonthlyTicketDto dto = new MonthlyTicketDto();
 		mapper.map(entity, dto);
 		Long relatedTicket = monthlyTicketCache.get(entity.getId());
-		if(relatedTicket != null) {
+		if (relatedTicket != null) {
 			dto.setInSession(true);
 			dto.setInSessionTicketId(relatedTicket);
 		}
-		
+
 		return dto;
 	}
-	
 
 	@Override
 	public List<MonthlyTicketDto> findAll(MonthlyTicketCriteria ticketCriteria, Pageable pageable) {
-		
+
 		List<MonthlyTicketEntity> ticketEntities = null;
-		
+
 		ticketEntities = monthlyTicketRepository.findAll(ticketCriteria.getCppCode(), pageable);
-		
+
 		List<MonthlyTicketDto> ticketDtos = this.map(ticketEntities);
 		return ticketDtos;
 	}
 
-	
 	private List<MonthlyTicketDto> map(List<MonthlyTicketEntity> source) {
-		
+
 		ArrayList<MonthlyTicketDto> rtn = new ArrayList<>();
 		source.stream().map((entity) -> {
 			MonthlyTicketDto dto = new MonthlyTicketDto();
 			mapper.map(entity, dto);
 			Long relatedTicket = monthlyTicketCache.get(entity.getId());
-			if(relatedTicket != null) {
+			if (relatedTicket != null) {
 				dto.setInSession(true);
 				dto.setInSessionTicketId(relatedTicket);
 			}
@@ -79,16 +74,9 @@ public class MonthlyTicketServiceImpl implements MonthlyTicketService {
 		return rtn;
 	}
 
-	
-
 	@PostConstruct
 	public void initialize() {
 		mapper = new ModelMapper();
 	}
-
-
-	
-
-
 
 }

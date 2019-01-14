@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureQuery;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.MonthlyTicketPaymentDto;
 import net.cis.dto.MonthlyTicketPaymentEndPointDto;
+import net.cis.dto.MonthlyTicketRevenueDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.MonthlyTicketPaymentCriteria;
 import net.cis.jpa.entity.MonthlyTicketPaymentEntity;
@@ -28,8 +32,6 @@ public class MonthlyTicketPaymentServiceImpl implements MonthlyTicketPaymentServ
 
 	@Autowired
 	MonthlyTicketPaymentRepository monthlyTicketPaymentRepository;
-
-
 
 	ModelMapper mapper;
 
@@ -50,18 +52,18 @@ public class MonthlyTicketPaymentServiceImpl implements MonthlyTicketPaymentServ
 			Phone.add(entity.getPhone());
 			MonthlyTicketPaymentDto dto = new MonthlyTicketPaymentDto();
 			mapper.map(entity, dto);
-			SimpleDateFormat formatTimeParse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");	
+			SimpleDateFormat formatTimeParse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			SimpleDateFormat formatTime = new SimpleDateFormat("dd-MM-yyyy");
 			try {
-			Date applyFr = formatTimeParse.parse(dto.getApply_from_time());
-			Date applyTo = formatTimeParse.parse(dto.getApply_to_time());
+				Date applyFr = formatTimeParse.parse(dto.getApply_from_time());
+				Date applyTo = formatTimeParse.parse(dto.getApply_to_time());
 
-			String peroid_payment = formatTime.format(applyFr)+" - "+formatTime.format(applyTo);
-			dto.setPeriodPayment(peroid_payment);
+				String peroid_payment = formatTime.format(applyFr) + " - " + formatTime.format(applyTo);
+				dto.setPeriodPayment(peroid_payment);
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-			
+
 			rtn.add(dto);
 		}
 
@@ -135,6 +137,71 @@ public class MonthlyTicketPaymentServiceImpl implements MonthlyTicketPaymentServ
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
+	}
+
+	@Autowired
+	private EntityManager entityManager;
+
+	@Override
+	public ResponseApi getRevenueGroupByParkingCodeSP(MonthlyTicketPaymentCriteria monthlyTicketPaymentCriteria) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		StoredProcedureQuery storedProcedureQuery = entityManager
+				.createStoredProcedureQuery("monthly_ticket_payment_group_by_parking_code");
+		storedProcedureQuery.registerStoredProcedureParameter("cpp_code", String.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("from_time", String.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("to_time", String.class, ParameterMode.IN);
+		storedProcedureQuery.setParameter("cpp_code", monthlyTicketPaymentCriteria.getCppCode());
+		storedProcedureQuery.setParameter("from_time", monthlyTicketPaymentCriteria.getStart_time());
+		storedProcedureQuery.setParameter("to_time", monthlyTicketPaymentCriteria.getEnd_time());
+		storedProcedureQuery.execute();
+		List<MonthlyTicketRevenueDto> result = new ArrayList<>();
+		List<Object[]> lst = storedProcedureQuery.getResultList();
+		for (Object[] value : lst) {
+			MonthlyTicketRevenueDto obDailyTicketRevenueDto = new MonthlyTicketRevenueDto();
+			if (value[0] != null)
+				obDailyTicketRevenueDto.setCode(value[0].toString());
+
+			if (value[1] != null)
+				obDailyTicketRevenueDto.setRevenue((double) value[1]);
+
+			result.add(obDailyTicketRevenueDto);
+		}
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		responseApi.setData(result);
+		responseApi.setError(errorDto);
+		return responseApi;
+	}
+
+	@Override
+	public ResponseApi getRevenueGroupByCompanyCodeSP(MonthlyTicketPaymentCriteria monthlyTicketPaymentCriteria) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		StoredProcedureQuery storedProcedureQuery = entityManager
+				.createStoredProcedureQuery("monthly_ticket_payment_group_by_company");
+		storedProcedureQuery.registerStoredProcedureParameter("cpp_code", String.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("from_time", String.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("to_time", String.class, ParameterMode.IN);
+		storedProcedureQuery.setParameter("cpp_code", monthlyTicketPaymentCriteria.getCppCode());
+		storedProcedureQuery.setParameter("from_time", monthlyTicketPaymentCriteria.getStart_time());
+		storedProcedureQuery.setParameter("to_time", monthlyTicketPaymentCriteria.getEnd_time());
+		storedProcedureQuery.execute();
+		List<MonthlyTicketRevenueDto> result = new ArrayList<>();
+		List<Object[]> lst = storedProcedureQuery.getResultList();
+		for (Object[] value : lst) {
+			MonthlyTicketRevenueDto obDailyTicketRevenueDto = new MonthlyTicketRevenueDto();
+			if (value[0] != null)
+				obDailyTicketRevenueDto.setCode(value[0].toString());
+
+			if (value[1] != null)
+				obDailyTicketRevenueDto.setRevenue((double) value[1]);
+
+			result.add(obDailyTicketRevenueDto);
+		}
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		responseApi.setData(result);
+		responseApi.setError(errorDto);
+		return responseApi;
 	}
 
 }

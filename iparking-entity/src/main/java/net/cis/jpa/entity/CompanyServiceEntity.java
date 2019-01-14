@@ -13,10 +13,10 @@ public class CompanyServiceEntity {
 	private int id;
 	
 	 @Column(name="company_id")
-		private int companyId;
+	private int companyId;
 	 
 	 @Column(name="service_id")
-		private int serviceId;
+	private int serviceId;
 
 	public int getId() {
 		return id;

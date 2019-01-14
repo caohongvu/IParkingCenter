@@ -12,10 +12,8 @@ import net.cis.jpa.criteria.MonthlyTicketCriteria;
  */
 public interface MonthlyTicketService {
 
-   
-    List<MonthlyTicketDto> findAll(MonthlyTicketCriteria ticketCriteria, Pageable pageable);
-    
-    MonthlyTicketDto findOne(long id);
+	List<MonthlyTicketDto> findAll(MonthlyTicketCriteria ticketCriteria, Pageable pageable);
+
+	MonthlyTicketDto findOne(long id);
 
 }
- 
