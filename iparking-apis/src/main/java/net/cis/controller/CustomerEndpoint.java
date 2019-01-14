@@ -40,6 +40,12 @@ public class CustomerEndpoint {
 	@Autowired
 	CustomerInfoRepository customerInfoRepository;
 
+	/**
+	 * liemnh
+	 * 
+	 * @param numberPlate
+	 * @return
+	 */
 	@RequestMapping(value = "/find-by-numberplate", method = RequestMethod.GET)
 	@ApiOperation("Get detail customer by numberplate")
 	public @ResponseBody ResponseDto getById(@RequestParam(name = "numberPlate") String numberPlate) {
@@ -79,6 +85,15 @@ public class CustomerEndpoint {
 
 	}
 
+	/**
+	 * liemnh
+	 * 
+	 * @param cusId
+	 * @param email
+	 * @param verificationCode
+	 * @param status
+	 * @return
+	 */
 	@RequestMapping(value = "/customer-info-update", method = RequestMethod.POST)
 	@ApiOperation("Create or update customer info")
 	public @ResponseBody ResponseDto updateCustomerInfo(@RequestParam(name = "cus_id") long cusId,
@@ -118,6 +133,14 @@ public class CustomerEndpoint {
 		}
 	}
 
+	/**
+	 * liemnh
+	 * 
+	 * @param id
+	 * @param cusId
+	 * @param numberPlate
+	 * @return
+	 */
 	@RequestMapping(value = "/customer-car-update", method = RequestMethod.POST)
 	@ApiOperation("create or update customer car")
 	public @ResponseBody ResponseDto updateCustomerInfo(@RequestParam(name = "id") long id,
@@ -151,6 +174,13 @@ public class CustomerEndpoint {
 		}
 	}
 
+	/**
+	 * liemnh
+	 * 
+	 * @param id
+	 * @param cusId
+	 * @return
+	 */
 	@RequestMapping(value = "/customer-car-delete", method = RequestMethod.POST)
 	@ApiOperation("delete customer car")
 	public @ResponseBody ResponseDto updateCustomerInfo(@RequestParam(name = "id") long id,

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingContractDto;
@@ -64,7 +65,14 @@ public class ParkingContractEndpoint {
 		return parkingContractService.update(parkingContractDto);
 	}
 
+	/**
+	 * liemnh
+	 * 
+	 * @param parkingCode
+	 * @return
+	 */
 	@RequestMapping(value = "/getParkingContractOutOfDate", method = RequestMethod.GET)
+	@ApiOperation("Dach sach ve thang qua han")
 	public @ResponseBody ResponseApi getParkingContractOutOfDate(@RequestParam("parking_code") String parkingCode) {
 		ResponseApi response = new ResponseApi();
 		ErrorDto error = new ErrorDto();
