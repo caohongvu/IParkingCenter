@@ -18,7 +18,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     @Autowired
     RolePermissionRepository rolePermissionRepository;
 
-    ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @PostConstruct
     public void initialize() {

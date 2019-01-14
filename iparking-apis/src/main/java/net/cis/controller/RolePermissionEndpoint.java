@@ -8,10 +8,7 @@ import net.cis.service.RolePermissionService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,10 +21,28 @@ public class RolePermissionEndpoint {
     @Autowired
     RolePermissionService rolePermissionService;
 
-    @RequestMapping(value = "/filter")
+    @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ApiOperation("get role permissions by conditions")
     @ResponseBody
     public ResponseDto filter(@RequestParam(value = "role") Long role) {
+        ResponseDto responseDto = new ResponseDto();
+        try {
+            List<RolePermissionDto> dtos = rolePermissionService.findAll();
+
+            responseDto.setCode(HttpStatus.OK.toString());
+            responseDto.setData(dtos);
+            return responseDto;
+        } catch (Exception ex) {
+            LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
+            responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+            return responseDto;
+        }
+    }
+
+    @RequestMapping(value = "/assign", method = RequestMethod.POST)
+    @ApiOperation("get role permissions by conditions")
+    @ResponseBody
+    public ResponseDto update(@RequestParam(value = "role") Long role) {
         ResponseDto responseDto = new ResponseDto();
         try {
             List<RolePermissionDto> dtos = rolePermissionService.findAll();
