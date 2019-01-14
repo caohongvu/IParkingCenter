@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,7 @@ import net.cis.service.TicketService;
 @RequestMapping("/parking")
 @Api(value = "parking Endpoint", description = "The URL to handle parking endpoint")
 public class ParkingPlaceEndpoint {
-
+	protected final Logger LOGGER = Logger.getLogger(getClass());
 	@Autowired
 	ParkingService parkingService;
 
@@ -85,18 +86,25 @@ public class ParkingPlaceEndpoint {
 
 	@RequestMapping(value = "/getParkingPlace", method = RequestMethod.GET)
 	public @ResponseBody ResponseApi getParkingPlace(HttpServletRequest request,
-			@RequestParam("company") String company) throws Exception {
+			@RequestParam("company") String company) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		responseApi.setError(errorDto);
-		CompanyDto objCompanyDto = companyService.findByCompanyCode(company);
-
-		if (objCompanyDto == null) {
+		try {
+			CompanyDto objCompanyDto = companyService.findByCompanyCode(company);
+			if (objCompanyDto == null) {
+				return responseApi;
+			}
+			List<ParkingDto> lstParkingDto = parkingService.findByCompany(objCompanyDto.getId());
+			responseApi.setData(lstParkingDto);
+			return responseApi;
+		} catch (Exception ex) {
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			responseApi.setError(errorDto);
 			return responseApi;
 		}
-		List<ParkingDto> lstParkingDto = parkingService.findByCompany(objCompanyDto.getId());
-		responseApi.setData(lstParkingDto);
-		return responseApi;
+
 	}
 }
