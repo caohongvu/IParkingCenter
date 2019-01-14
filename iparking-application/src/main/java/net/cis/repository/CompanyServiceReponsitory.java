@@ -8,4 +8,6 @@ import net.cis.jpa.entity.CompanyServiceEntity;
 
 public interface CompanyServiceReponsitory extends JpaRepository<CompanyServiceEntity, Integer>{
 	List<CompanyServiceEntity> findConfigByCompanyId(int id);
+	
+	List<CompanyServiceEntity> findByServiceId(int serviceId);
 }
