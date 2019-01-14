@@ -19,5 +19,7 @@ public interface ParkingContractService {
 	ParkingContractDto update(ParkingContractDto parkingContractDto);
 
 	List<ParkingContractDto> findAll(ParkingContractCriteria ticketCriteria);
+	
+	List<ParkingContractDto> findParkingContractOutOfDate(ParkingContractCriteria ticketCriteria);
 
 }

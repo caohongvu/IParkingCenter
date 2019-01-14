@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.DateDto;
 import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.StatusUtil;
+import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingActorDto;
 import net.cis.dto.ParkingContractDto;
@@ -452,25 +453,34 @@ public class ReportEndpoint {
 	 */
 	@RequestMapping(value = "/daily/ticket/revenue", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
-	public @ResponseBody Object fetchDailyTicketsRevenueGroupByParking(
-			@RequestParam(name = "code") String cppCode,
-			@RequestParam(name = "from_time") Long start_time,
-			@RequestParam(name = "end_time") Long end_time,
+	public @ResponseBody Object fetchDailyTicketsRevenueGroupByParking(@RequestParam(name = "code") String cppCode,
+			@RequestParam(name = "from_time") Long start_time, @RequestParam(name = "end_time") Long end_time,
 			@RequestParam(name = "type") int type) throws Exception {
 
-		DailyTicketPaymentCriteria ticketCriteria = new DailyTicketPaymentCriteria();
-		SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date toDate = new Date(end_time * 1000L);
-		Date fromDate = new Date(start_time * 1000L);
-		ticketCriteria.setStart_time(formatTime.format(fromDate));
-		ticketCriteria.setEnd_time(formatTime.format(toDate));
-		ticketCriteria.setCppCode(cppCode);
+		try {
+			DailyTicketPaymentCriteria ticketCriteria = new DailyTicketPaymentCriteria();
+			SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date toDate = new Date(end_time * 1000L);
+			Date fromDate = new Date(start_time * 1000L);
+			ticketCriteria.setStart_time(formatTime.format(fromDate));
+			ticketCriteria.setEnd_time(formatTime.format(toDate));
+			ticketCriteria.setCppCode(cppCode);
 
-		if (type == 1) {
-			return dailyTicketPaymentService.getRevenueGroupByParkingCodeSP(ticketCriteria);
-		} else {
-			return dailyTicketPaymentService.getRevenueGroupByCompanyCodeSP(ticketCriteria);
+			if (type == 1) {
+				return dailyTicketPaymentService.getRevenueGroupByParkingCodeSP(ticketCriteria);
+			} else {
+				return dailyTicketPaymentService.getRevenueGroupByCompanyCodeSP(ticketCriteria);
+			}
+		} catch (Exception ex) {
+			LOGGER.error(ex.getMessage());
+			ResponseApi responseApi = new ResponseApi();
+			ErrorDto errorDto = new ErrorDto();
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
 		}
+
 	}
 
 	/**
@@ -484,24 +494,31 @@ public class ReportEndpoint {
 	 */
 	@RequestMapping(value = "/monthly/ticket/revenue", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
-	public @ResponseBody Object fetchMonthlyTicketsRevenueGroupByParking(
-			@RequestParam(name = "code") String cppCode,
-			@RequestParam(name = "from_time") Long start_time,
-			@RequestParam(name = "end_time") Long end_time,
+	public @ResponseBody Object fetchMonthlyTicketsRevenueGroupByParking(@RequestParam(name = "code") String cppCode,
+			@RequestParam(name = "from_time") Long start_time, @RequestParam(name = "end_time") Long end_time,
 			@RequestParam(name = "type") int type) throws Exception {
-
-		MonthlyTicketPaymentCriteria ticketCriteria = new MonthlyTicketPaymentCriteria();
-		SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date toDate = new Date(end_time * 1000L);
-		Date fromDate = new Date(start_time * 1000L);
-		ticketCriteria.setStart_time(formatTime.format(fromDate));
-		ticketCriteria.setEnd_time(formatTime.format(toDate));
-		ticketCriteria.setCppCode(cppCode);
-
-		if (type == 1) {
-			return monthlyTicketPaymentService.getRevenueGroupByParkingCodeSP(ticketCriteria);
-		} else {
-			return monthlyTicketPaymentService.getRevenueGroupByCompanyCodeSP(ticketCriteria);
+		try {
+			MonthlyTicketPaymentCriteria ticketCriteria = new MonthlyTicketPaymentCriteria();
+			SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date toDate = new Date(end_time * 1000L);
+			Date fromDate = new Date(start_time * 1000L);
+			ticketCriteria.setStart_time(formatTime.format(fromDate));
+			ticketCriteria.setEnd_time(formatTime.format(toDate));
+			ticketCriteria.setCppCode(cppCode);
+			if (type == 1) {
+				return monthlyTicketPaymentService.getRevenueGroupByParkingCodeSP(ticketCriteria);
+			} else {
+				return monthlyTicketPaymentService.getRevenueGroupByCompanyCodeSP(ticketCriteria);
+			}
+		} catch (Exception ex) {
+			LOGGER.error(ex.getMessage());
+			ResponseApi responseApi = new ResponseApi();
+			ErrorDto errorDto = new ErrorDto();
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
 		}
+
 	}
 }

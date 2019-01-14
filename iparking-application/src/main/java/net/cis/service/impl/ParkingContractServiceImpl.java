@@ -38,7 +38,7 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 
 	@Autowired
 	InvoiceCenterService invoiceCenterService;
-	
+
 	@Autowired
 	private CompanyCache companyCache;
 
@@ -47,20 +47,19 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 		ParkingContractEntity entity = parkingContractRepository.findOne(id);
 		ParkingContractDto dto = new ParkingContractDto();
 		mapper.map(entity, dto);
-		
+
 		try {
 			List<String> codes = invoiceCenterService.getInvoiceCode(id);
-			InvoiceCodeDto invoiceCodeDto  = new InvoiceCodeDto();
+			InvoiceCodeDto invoiceCodeDto = new InvoiceCodeDto();
 			invoiceCodeDto.setInvoiceCodes(codes);
 			invoiceCodeDto.setUrl(InvoiceCenterConstants.DOWNLOAD_INVOICE_URL);
-			
+
 			dto.setInvoiceCodeDto(invoiceCodeDto);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 		return dto;
 	}
 
@@ -118,6 +117,14 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 			ticketEntities = parkingContractRepository.findAll(ticketCriteria.getCppCode(),
 					ticketCriteria.getFromDate().getTime(), ticketCriteria.getToDate().getTime());
 
+		List<ParkingContractDto> ticketDtos = this.map(ticketEntities);
+		return ticketDtos;
+	}
+
+	@Override
+	public List<ParkingContractDto> findParkingContractOutOfDate(ParkingContractCriteria ticketCriteria) {
+		List<ParkingContractEntity> ticketEntities = null;
+		ticketEntities = parkingContractRepository.findParkingContractOutOfDate(ticketCriteria.getCppCode());
 		List<ParkingContractDto> ticketDtos = this.map(ticketEntities);
 		return ticketDtos;
 	}
