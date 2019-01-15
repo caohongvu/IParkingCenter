@@ -116,4 +116,22 @@ public class ParkingPlaceEndpoint {
 		}
 
 	}
+	
+	@RequestMapping(value = "/by_company_id", method = RequestMethod.GET)
+	@ApiOperation("Get PP by Company Id")
+	public ResponseApi getParkingPlace(HttpServletRequest request, @RequestParam("id") Long id) {
+		ResponseApi responseApi = new ResponseApi();
+		try {
+			List<ParkingDto> lstParkingDto = parkingService.findByCompany(id);
+			responseApi.setData(lstParkingDto);
+			responseApi.setError(new ErrorDto(ResponseErrorCodeConstants.StatusOK, ""));
+			return responseApi;
+		} catch (Exception ex) {
+			LOGGER.error(ex.getMessage());
+			responseApi.setData(null);
+			responseApi.setError(new ErrorDto(ResponseErrorCodeConstants.StatusBadRequest, ""));
+			return responseApi;
+		}
+
+	}
 }
