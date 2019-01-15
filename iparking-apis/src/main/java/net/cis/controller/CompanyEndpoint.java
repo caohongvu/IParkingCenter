@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.CompanyDto;
 import net.cis.dto.ErrorDto;
@@ -26,6 +27,7 @@ public class CompanyEndpoint {
 	CompanyService companyService;
 
 	@RequestMapping(value = "/getCompanyDetail", method = RequestMethod.GET)
+	@ApiOperation("Chi tiet cong ty")
 	public @ResponseBody ResponseApi getCompany(HttpServletRequest request) throws Exception {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();

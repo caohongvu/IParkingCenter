@@ -277,6 +277,16 @@ public class ReportEndpoint {
 
 	}
 
+	/**
+	 * liemnh
+	 * 
+	 * @param request
+	 * @param cppCode
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 * @throws ParseException
+	 */
 	@RequestMapping(value = "/supervisor/performance/extraction", method = RequestMethod.GET)
 	@ApiOperation("Hieu xuat khai thac")
 	public @ResponseBody ResponseApi fetchPerformanceExtraction(HttpServletRequest request,
@@ -374,6 +384,16 @@ public class ReportEndpoint {
 		return response;
 	}
 
+	/**
+	 * liemnh
+	 * 
+	 * @param request
+	 * @param cppCode
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 * @throws ParseException
+	 */
 	@RequestMapping(value = "/supervisor/proportion/payment", method = RequestMethod.GET)
 	@ApiOperation("Ty trong thanh toan")
 	public @ResponseBody ResponseApi fetchProportionPayment(HttpServletRequest request,
@@ -443,7 +463,7 @@ public class ReportEndpoint {
 	}
 
 	/**
-	 * Laays doanh thu ve luot theo diem do hoac cong ty
+	 * liemnh Laays doanh thu ve luot theo diem do hoac cong ty
 	 * 
 	 * @param cppCode
 	 * @param start_time
@@ -452,7 +472,7 @@ public class ReportEndpoint {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/daily/ticket/revenue", method = RequestMethod.GET)
-	@ApiOperation("Fetch all ticket payment")
+	@ApiOperation("Doanh thu ve luot theo diem do hoac cong ty")
 	public @ResponseBody Object fetchDailyTicketsRevenueGroupByParking(@RequestParam(name = "code") String cppCode,
 			@RequestParam(name = "from_time") Long start_time, @RequestParam(name = "end_time") Long end_time,
 			@RequestParam(name = "type") int type) throws Exception {
@@ -484,7 +504,7 @@ public class ReportEndpoint {
 	}
 
 	/**
-	 * Laays doanh thu tháng theo diem do hoac cong ty
+	 * liemnh Laays doanh thu tháng theo diem do hoac cong ty
 	 * 
 	 * @param cppCode
 	 * @param start_time
@@ -493,7 +513,7 @@ public class ReportEndpoint {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/monthly/ticket/revenue", method = RequestMethod.GET)
-	@ApiOperation("Fetch all ticket payment")
+	@ApiOperation("Doanh thu ve thang theo diem do hoac cong ty")
 	public @ResponseBody Object fetchMonthlyTicketsRevenueGroupByParking(@RequestParam(name = "code") String cppCode,
 			@RequestParam(name = "from_time") Long start_time, @RequestParam(name = "end_time") Long end_time,
 			@RequestParam(name = "type") int type) throws Exception {

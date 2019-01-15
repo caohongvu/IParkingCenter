@@ -23,4 +23,7 @@ public interface ParkingContractRepository  extends JpaRepository<ParkingContrac
 	
 	@Query(value = "Select ticket from ParkingContractEntity ticket where (parkingPlace =:cppCode OR :cppCode is NULL) AND (validEnd < CURRENT_TIMESTAMP() )  order by createdAt DESC")
 	public List<ParkingContractEntity> findParkingContractOutOfDate(@Param("cppCode") String cppCode);
+	
+	@Query(value = "SELECT ticket FROM ParkingContractEntity ticket WHERE status = 1 AND parkingPlace = :code AND validFrom <= unix_timestamp(CURRENT_TIMESTAMP()) AND unix_timestamp(CURRENT_TIMESTAMP()) <= validEnd")
+	List<ParkingContractEntity> findParkingContractForInvoice(@Param("code") String code);
 }
