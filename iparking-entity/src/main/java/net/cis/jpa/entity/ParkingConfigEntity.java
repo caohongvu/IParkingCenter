@@ -1,5 +1,7 @@
 package net.cis.jpa.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "parking_config")
-public class ParkingConfig {
+public class ParkingConfigEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +25,9 @@ public class ParkingConfig {
 
 	@Column(name = "config_description")
 	private String configDescription;
+
+	@Column(name = "last_date_run")
+	private Date lastDateRun;
 
 	public long getId() {
 		return id;
@@ -55,4 +60,13 @@ public class ParkingConfig {
 	public void setConfigDescription(String configDescription) {
 		this.configDescription = configDescription;
 	}
+
+	public Date getLastDateRun() {
+		return lastDateRun;
+	}
+
+	public void setLastDateRun(Date lastDateRun) {
+		this.lastDateRun = lastDateRun;
+	}
+
 }

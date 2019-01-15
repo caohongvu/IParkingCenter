@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 
+import net.cis.service.JobService;
 import net.cis.service.VerifyUserService;
 import net.cis.utils.ParkingCenterConstants;
 import net.cis.utils.PropertiesUtils;
@@ -30,6 +31,9 @@ public class SchedulerConfig implements SchedulingConfigurer {
 
 	@Autowired
 	VerifyUserService verifyUserService;
+	
+	@Autowired
+	JobService jobService;
 
 	private String cronJobEmailConfig() {
 		String cronTabExpression = PropertiesUtils.getProperty("JOB_EMAIL");
@@ -68,6 +72,14 @@ public class SchedulerConfig implements SchedulingConfigurer {
 		}
 		return Boolean.FALSE;
 	}
+	
+	private String cronJobGetDailyRevenueConfig() {
+		String cronTabExpression = PropertiesUtils.getProperty("JOB_DAILY_REVENUE");
+		if (StringUtils.isEmpty(cronTabExpression))
+			cronTabExpression = "0/5 * * * * *";
+		LOGGER.info("Cron job get daily revenue partten:" + cronTabExpression);
+		return cronTabExpression;
+	}
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
@@ -98,6 +110,21 @@ public class SchedulerConfig implements SchedulingConfigurer {
 			@Override
 			public Date nextExecutionTime(TriggerContext triggerContext) {
 				CronTrigger trigger = new CronTrigger(cronJobPushNotificationConfig());
+				Date nextExec = trigger.nextExecutionTime(triggerContext);
+				return nextExec;
+			}
+		});
+
+		// job get daily revenue 
+		taskRegistrar.addTriggerTask(new Runnable() {
+			@Override
+			public void run() {
+				jobService.getDalyRevenue();
+			}
+		}, new Trigger() {
+			@Override
+			public Date nextExecutionTime(TriggerContext triggerContext) {
+				CronTrigger trigger = new CronTrigger(cronJobGetDailyRevenueConfig());
 				Date nextExec = trigger.nextExecutionTime(triggerContext);
 				return nextExec;
 			}

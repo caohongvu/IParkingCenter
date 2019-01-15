@@ -2,8 +2,8 @@ package net.cis.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import net.cis.jpa.entity.ParkingConfig;
+import net.cis.jpa.entity.ParkingConfigEntity;
 
-public interface ParkingConfigRepository extends JpaRepository<ParkingConfig, Long> {
-	ParkingConfig findByConfigKey(String configKey);
+public interface ParkingConfigRepository extends JpaRepository<ParkingConfigEntity, Long> {
+	ParkingConfigEntity findByConfigKey(String configKey);
 }
