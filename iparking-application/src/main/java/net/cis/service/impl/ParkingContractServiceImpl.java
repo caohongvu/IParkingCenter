@@ -12,9 +12,15 @@ import org.springframework.stereotype.Service;
 import net.cis.dto.CompanyDto;
 import net.cis.dto.InvoiceCodeDto;
 import net.cis.dto.ParkingContractDto;
+import net.cis.dto.ParkingContractInfoDto;
+import net.cis.dto.ParkingContractOutOfDateDto;
 import net.cis.dto.ParkingDto;
 import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.jpa.entity.ParkingContractEntity;
+import net.cis.jpa.entity.ParkingContractInfoEntity;
+import net.cis.jpa.entity.ParkingContractOutOfDateEntity;
+import net.cis.repository.ParkingContractInfoRepository;
+import net.cis.repository.ParkingContractOutOfDateRepository;
 import net.cis.repository.ParkingContractRepository;
 import net.cis.service.InvoiceCenterService;
 import net.cis.service.ParkingContractService;
@@ -29,6 +35,12 @@ import net.cis.utils.InvoiceCenterConstants;
 public class ParkingContractServiceImpl implements ParkingContractService {
 
 	ModelMapper mapper;
+
+	@Autowired
+	ParkingContractOutOfDateRepository parkingContractOutOfDateRepository;
+
+	@Autowired
+	ParkingContractInfoRepository parkingContractInfoRepository;
 
 	@Autowired
 	ParkingContractRepository parkingContractRepository;
@@ -122,11 +134,45 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 	}
 
 	@Override
-	public List<ParkingContractDto> findParkingContractOutOfDate(ParkingContractCriteria ticketCriteria) {
-		List<ParkingContractEntity> ticketEntities = null;
-		ticketEntities = parkingContractRepository.findParkingContractOutOfDate(ticketCriteria.getCppCode());
-		List<ParkingContractDto> ticketDtos = this.map(ticketEntities);
+	public List<ParkingContractOutOfDateDto> findParkingContractOutOfDate(ParkingContractCriteria ticketCriteria) {
+		List<ParkingContractOutOfDateEntity> ticketEntities = null;
+		ticketEntities = parkingContractOutOfDateRepository.findParkingContractOutOfDate(ticketCriteria.getCppCode());
+		List<ParkingContractOutOfDateDto> ticketDtos = this.map2(ticketEntities);
 		return ticketDtos;
+	}
+
+	public List<ParkingContractOutOfDateDto> map2(List<ParkingContractOutOfDateEntity> source) {
+
+		ArrayList<ParkingContractOutOfDateDto> rtn = new ArrayList<>();
+		source.stream().map((entity) -> {
+			ParkingContractOutOfDateDto dto = new ParkingContractOutOfDateDto();
+			mapper.map(entity, dto);
+			return dto;
+		}).forEachOrdered((dto) -> {
+			rtn.add(dto);
+		});
+		return rtn;
+	}
+
+	@Override
+	public List<ParkingContractInfoDto> findParkingContractInfo(ParkingContractCriteria ticketCriteria) {
+		List<ParkingContractInfoEntity> ticketEntities = null;
+		ticketEntities = parkingContractInfoRepository.findParkingContractInfo(ticketCriteria.getCppCode());
+		List<ParkingContractInfoDto> ticketDtos = this.map3(ticketEntities);
+		return ticketDtos;
+	}
+
+	public List<ParkingContractInfoDto> map3(List<ParkingContractInfoEntity> source) {
+
+		ArrayList<ParkingContractInfoDto> rtn = new ArrayList<>();
+		source.stream().map((entity) -> {
+			ParkingContractInfoDto dto = new ParkingContractInfoDto();
+			mapper.map(entity, dto);
+			return dto;
+		}).forEachOrdered((dto) -> {
+			rtn.add(dto);
+		});
+		return rtn;
 	}
 
 }
