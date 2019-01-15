@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.StatusUtil;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.CompanyDto;
@@ -84,7 +85,15 @@ public class ParkingPlaceEndpoint {
 		return parkingDto;
 	}
 
+	/**
+	 * liemnh
+	 * 
+	 * @param request
+	 * @param company
+	 * @return
+	 */
 	@RequestMapping(value = "/getParkingPlace", method = RequestMethod.GET)
+	@ApiOperation("Danh sach diem do theo cong ty")
 	public @ResponseBody ResponseApi getParkingPlace(HttpServletRequest request,
 			@RequestParam("company") String company) {
 		ResponseApi responseApi = new ResponseApi();
@@ -103,6 +112,24 @@ public class ParkingPlaceEndpoint {
 			LOGGER.error(ex.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			responseApi.setError(errorDto);
+			return responseApi;
+		}
+
+	}
+	
+	@RequestMapping(value = "/by_company_id", method = RequestMethod.GET)
+	@ApiOperation("Get PP by Company Id")
+	public ResponseApi getParkingPlace(HttpServletRequest request, @RequestParam("id") Long id) {
+		ResponseApi responseApi = new ResponseApi();
+		try {
+			List<ParkingDto> lstParkingDto = parkingService.findByCompany(id);
+			responseApi.setData(lstParkingDto);
+			responseApi.setError(new ErrorDto(ResponseErrorCodeConstants.StatusOK, ""));
+			return responseApi;
+		} catch (Exception ex) {
+			LOGGER.error(ex.getMessage());
+			responseApi.setData(null);
+			responseApi.setError(new ErrorDto(ResponseErrorCodeConstants.StatusBadRequest, ""));
 			return responseApi;
 		}
 

@@ -13,6 +13,7 @@ import net.cis.dto.ResponseApi;
 import net.cis.jpa.entity.CompanyServiceEntity;
 import net.cis.repository.CompanyServiceReponsitory;
 import net.cis.service.ConfigService;
+import net.cis.utils.ParkingCenterConstants;
 
 @Service
 public class ConfigServiceImpl implements ConfigService{
@@ -58,6 +59,17 @@ public class ConfigServiceImpl implements ConfigService{
 		errorDto.setMessage("");
 		responseApi.setError(errorDto);
 		responseApi.setData(companyServiceDto);
+		return responseApi;
+	}
+
+	@Override
+	public ResponseApi findCompanyNeedMonthlyInvoice() {
+		ResponseApi responseApi = new ResponseApi();
+		List<CompanyServiceEntity> companies = companyServiceReponsitory.findByServiceId(ParkingCenterConstants.MONTHLY_INVOICE);
+		
+		responseApi.setData(companies);
+		responseApi.setError(new ErrorDto(ResponseErrorCodeConstants.StatusOK, ""));
+		
 		return responseApi;
 	}
 

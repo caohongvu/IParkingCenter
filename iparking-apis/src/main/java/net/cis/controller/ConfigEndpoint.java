@@ -7,10 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +17,6 @@ import io.swagger.annotations.ApiOperation;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingActorDto;
-import net.cis.dto.ParkingContractDto;
 import net.cis.dto.ParkingDto;
 import net.cis.dto.ResponseApi;
 import net.cis.security.filter.TokenAuthenticationService;
@@ -75,6 +72,13 @@ public class ConfigEndpoint {
 		ResponseApi enpoint = configService.findAllConfigOfCompany(companyId);
 		return enpoint;		
 		
+	}
+	
+	@RequestMapping(value = "/for_invoice", method = RequestMethod.GET) 
+	public @ResponseBody ResponseApi getCompanyForInvoice(HttpServletRequest request) throws Exception {
+		ResponseApi responseApi = configService.findCompanyNeedMonthlyInvoice();
+		
+		return responseApi;
 	}
 
 }

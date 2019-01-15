@@ -129,4 +129,9 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 		return ticketDtos;
 	}
 
+	@Override
+	public List<ParkingContractEntity> findByParkingPlace(String code) {
+		return parkingContractRepository.findParkingContractForInvoice(code);
+	}
+
 }

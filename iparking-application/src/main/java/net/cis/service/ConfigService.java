@@ -4,4 +4,6 @@ import net.cis.dto.ResponseApi;
 
 public interface ConfigService {
 	 ResponseApi findAllConfigOfCompany(int id);
+	 
+	 ResponseApi findCompanyNeedMonthlyInvoice();
 }
