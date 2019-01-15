@@ -14,5 +14,5 @@ public class ParkingCenterConstants {
 	public static final String URL_ACTIVE = "https://api.iparking.vn/p/active_info?";
 
 	public static final int DAILY_INVOICE = 1;
-	public static final int MONTHLY_INVOICE = 2;
+	public static final int MONTHLY_INVOICE = 1;
 }
