@@ -141,6 +141,40 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 		return ticketDtos;
 	}
 
+	public List<ParkingContractOutOfDateDto> map2(List<ParkingContractOutOfDateEntity> source) {
+
+		ArrayList<ParkingContractOutOfDateDto> rtn = new ArrayList<>();
+		source.stream().map((entity) -> {
+			ParkingContractOutOfDateDto dto = new ParkingContractOutOfDateDto();
+			mapper.map(entity, dto);
+			return dto;
+		}).forEachOrdered((dto) -> {
+			rtn.add(dto);
+		});
+		return rtn;
+	}
+
+	@Override
+	public List<ParkingContractInfoDto> findParkingContractInfo(ParkingContractCriteria ticketCriteria) {
+		List<ParkingContractInfoEntity> ticketEntities = null;
+		ticketEntities = parkingContractInfoRepository.findParkingContractInfo(ticketCriteria.getCppCode());
+		List<ParkingContractInfoDto> ticketDtos = this.map3(ticketEntities);
+		return ticketDtos;
+	}
+
+	public List<ParkingContractInfoDto> map3(List<ParkingContractInfoEntity> source) {
+
+		ArrayList<ParkingContractInfoDto> rtn = new ArrayList<>();
+		source.stream().map((entity) -> {
+			ParkingContractInfoDto dto = new ParkingContractInfoDto();
+			mapper.map(entity, dto);
+			return dto;
+		}).forEachOrdered((dto) -> {
+			rtn.add(dto);
+		});
+		return rtn;
+	}
+
 	@Override
 	public List<ParkingContractEntity> findByParkingPlace(String code) {
 		return parkingContractRepository.findParkingContractForInvoice(code);
