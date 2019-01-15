@@ -171,4 +171,9 @@ public class TicketServiceImpl implements TicketService {
 		
 	}
 
+	@Override
+	public List<TicketEntity> getByParkingPlace(Long parkingPlace) {
+		return ticketRepository.findByParkingPlace(parkingPlace);
+	}
+
 }
