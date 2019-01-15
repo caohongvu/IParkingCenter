@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingContractDto;
+import net.cis.dto.ParkingContractOutOfDateDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.jpa.entity.ParkingContractEntity;
@@ -82,7 +83,7 @@ public class ParkingContractEndpoint {
 		try {
 			ParkingContractCriteria objParkingContractCriteria = new ParkingContractCriteria();
 			objParkingContractCriteria.setCppCode(parkingCode);
-			List<ParkingContractDto> lstParkingContractDto = parkingContractService
+			List<ParkingContractOutOfDateDto> lstParkingContractDto = parkingContractService
 					.findParkingContractOutOfDate(objParkingContractCriteria);
 			response.setData(lstParkingContractDto);
 			response.setError(error);
