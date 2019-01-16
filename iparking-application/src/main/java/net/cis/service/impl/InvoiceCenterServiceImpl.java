@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ import net.cis.utils.RestfulUtil;
 @Service
 public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 
+	protected final Logger LOGGER = Logger.getLogger(getClass());
+	
 	@Autowired
 	CompanyInforService companyInforService;
 	
@@ -66,8 +69,9 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 		return codes;
 	}
 	
-	@Scheduled(fixedDelay=5*60*1000)
+	
 	private void sendMonthlyInvoice() throws Exception {
+		int i = 0;
 		// Get List of Company
 		List<CompanyInforEntity> entities = companyInforService.findCompanyNeedMonthlyInvoice();
 		
@@ -85,16 +89,25 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 					
 					ObjectMapper mapper = new ObjectMapper();
 					String requestStr = mapper.writeValueAsString(monthlyInvoiceDto);
-					JSONObject requestObject = new JSONObject(monthlyInvoiceDto);
-					System.out.println(requestStr);
-					System.out.println(requestObject);
+					JSONObject requestObject = new JSONObject(requestStr);
 					
 					// Trigger INVOICE CENTER to create Monthly Invoice
-					String responseStr = RestfulUtil.post(InvoiceCenterConstants.CREATE_MONTHLY_INVOICE, requestObject, InvoiceCenterConstants.INVOICE_CENTER_MEDIA_TYPE);
+					String responseStr = RestfulUtil.postWithOutAccessToken(InvoiceCenterConstants.CREATE_MONTHLY_INVOICE, requestObject, "application/json");
 					JSONObject responseObject = new JSONObject(responseStr);
 					
-					System.out.println(responseObject);
+					// Handle response
+					int errorCode = responseObject.getJSONObject("Error").getInt("Code");
+					String invoiceCode = responseObject.getString("Data");
 					
+					if (errorCode != 200 && !invoiceCode.equals("")){
+						LOGGER.error("Invoice Error: " + monthlyInvoiceDto.getTicketId() + monthlyInvoiceDto.getTransactionId());
+						return;
+					} else {
+						System.out.println("Create Invoice Success: " + monthlyInvoiceDto.getTicketId() + monthlyInvoiceDto.getTransactionId());
+						System.out.println(i);
+						i++;
+					}
+				
 				}
 				
 			}
@@ -143,12 +156,12 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 		dto.setBuyerAddress("");
 		dto.setBuyerBankAccount("");
 		dto.setReceiverAddress("");
-		dto.setTicketId(entity.getId());
+		dto.setTicketId(Long.toString(entity.getId()));
 		dto.setCppCode(entity.getParkingPlace());
 		dto.setTransactionId(dto.getTicketId() + "_" + month + "_" + year);
 		dto.setTransactionAmount(entity.getMonthlyUnitPrice());
 		dto.setIsMonthly(1);
-		
+		dto.setPartnerInvoiceStringId("");
 		List<PaymentConfigDto> list = new ArrayList<>();
 		
 		PaymentConfigDto paymentConfigDto = new PaymentConfigDto();
@@ -156,7 +169,9 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 		itemName = itemName.replace("{0}", entity.getParkingPlace());
 		itemName = itemName.replace("{1}", month.toString());
 		itemName = itemName.replace("{2}", year.toString());
-		paymentConfigDto.setItemName(itemName);
+		
+		String res = new String(itemName.getBytes(), "UTF-8");
+		paymentConfigDto.setItemName(res);
 		paymentConfigDto.setPrice(entity.getMonthlyUnitPrice());
 		list.add(paymentConfigDto);
 		

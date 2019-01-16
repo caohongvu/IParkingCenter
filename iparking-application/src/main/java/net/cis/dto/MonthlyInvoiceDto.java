@@ -2,11 +2,13 @@ package net.cis.dto;
 
 import java.util.List;
 
+import javax.persistence.Column;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MonthlyInvoiceDto {
 	@JsonProperty("TicketID")
-	private long ticketId;
+	private String ticketId;
 	
 	@JsonProperty("TransactionAmount")
 	private double transactionAmount;
@@ -55,6 +57,10 @@ public class MonthlyInvoiceDto {
 	
 	@JsonProperty("PaymentConfiguration")
 	private List<PaymentConfigDto> paymentConfiguration;
+	
+	@JsonProperty("PartnerInvoiceStringId")
+	@Column(name = "partner_invoice_string_id")
+	private String partnerInvoiceStringId;
 	
 	public String getBuyerName() {
 		return buyerName;
@@ -110,10 +116,10 @@ public class MonthlyInvoiceDto {
 	public void setReceiverName(String receiverName) {
 		this.receiverName = receiverName;
 	}
-	public long getTicketId() {
+	public String getTicketId() {
 		return ticketId;
 	}
-	public void setTicketId(long ticketId) {
+	public void setTicketId(String ticketId) {
 		this.ticketId = ticketId;
 	}
 	public double getTransactionAmount() {
@@ -158,4 +164,11 @@ public class MonthlyInvoiceDto {
 	public void setIsMonthly(int isMonthly) {
 		this.isMonthly = isMonthly;
 	}
+	public String getPartnerInvoiceStringId() {
+		return partnerInvoiceStringId;
+	}
+	public void setPartnerInvoiceStringId(String partnerInvoiceStringId) {
+		this.partnerInvoiceStringId = partnerInvoiceStringId;
+	}
+	
 }
