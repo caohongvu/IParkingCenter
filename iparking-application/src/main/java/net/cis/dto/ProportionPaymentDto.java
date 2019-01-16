@@ -3,7 +3,7 @@ package net.cis.dto;
 public class ProportionPaymentDto {
 	private String id;
 	private String code;
-	private long cpp_id;
+	private long cppId;
 	private String address;
 	private String capacity;
 	private double revenue;
@@ -16,12 +16,12 @@ public class ProportionPaymentDto {
 	private double cash;
 	private int provider_id;
 
-	public long getCpp_id() {
-		return cpp_id;
+	public long getCppId() {
+		return cppId;
 	}
 
-	public void setCpp_id(long cpp_id) {
-		this.cpp_id = cpp_id;
+	public void setCppId(long cppId) {
+		this.cppId = cppId;
 	}
 
 	public String getId() {
