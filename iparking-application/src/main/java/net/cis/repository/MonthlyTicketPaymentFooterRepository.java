@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import net.cis.jpa.entity.MonthlyTicketPaymentFooterEntity;
 
 public interface MonthlyTicketPaymentFooterRepository extends JpaRepository<MonthlyTicketPaymentFooterEntity, String> {
-	@Query("SELECT DISTINCT(ticket.transaction_id) transaction_id, ticket.total_row, ticket.countCpp_code, ticket.countContractNo, ticket.countContracCode, ticket.countPhone, ticket.totalPayment_amount FROM MonthlyTicketPaymentFooterEntity ticket WHERE (ticket.transaction_id LIKE CONCAT('%',:transID,'%') "
+	@Query("SELECT DISTINCT(ticket.transaction_id), ticket.total_row, ticket.countCpp_code, ticket.countContractNo, ticket.countContracCode, ticket.countPhone, ticket.totalPayment_amount FROM MonthlyTicketPaymentFooterEntity ticket WHERE (ticket.transaction_id LIKE CONCAT('%',:transID,'%') "
 			+ "OR :transID is NULL) "
 			+ "AND (ticket.parking_place LIKE CONCAT('%',:cpp_code,'%') OR :cpp_code is NULL) "
 			+ "AND (ticket.contract_code LIKE CONCAT('%',:contract_code,'%') OR :contract_code is NULL) "
