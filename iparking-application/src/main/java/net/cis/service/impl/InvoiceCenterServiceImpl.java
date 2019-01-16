@@ -18,10 +18,8 @@ import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
 import net.cis.dto.MonthlyInvoiceDto;
 import net.cis.dto.ParkingDto;
-import net.cis.dto.PaymentConfigDto;
 import net.cis.jpa.entity.CompanyInforEntity;
 import net.cis.jpa.entity.ParkingContractEntity;
-import net.cis.jpa.entity.ParkingEntity;
 import net.cis.service.CompanyInforService;
 import net.cis.service.CompanyService;
 import net.cis.service.CustomerService;
@@ -71,20 +69,18 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 	
 
 	private void sendMonthlyInvoice() throws Exception {
-		int i = 0;
+		int i = 1;
 		// Get List of Company
 		List<CompanyInforEntity> entities = companyInforService.findCompanyNeedMonthlyInvoice();
 		
 		for (CompanyInforEntity entity : entities) {
-			// Get List Parking Place of company
-			List<ParkingEntity> parkingEntities = parkingService.findByCompanyId(entity.getCompanyId());
-			
-			// Get List ticket of Parking Place
-			for (ParkingEntity parkingEntity : parkingEntities) {
-				List<ParkingContractEntity> parkingContractEntities = parkingContractService.findByParkingPlace(parkingEntity.getParkingCode());
-				
-				// Send Month Invoice for Parking Contract
+			// Get Company by Id
+			CompanyDto companyDto = companyService.findById(entity.getCompanyId());
+			if (companyDto != null) {
+				// Get List Parking Contract By Company
+				List<ParkingContractEntity> parkingContractEntities = parkingContractService.findByCompany(companyDto.getCompanyCode());
 				for (ParkingContractEntity parkingContractEntity : parkingContractEntities) {
+					
 					MonthlyInvoiceDto monthlyInvoiceDto = initializeMonthInvoiceData(parkingContractEntity);
 					
 					ObjectMapper mapper = new ObjectMapper();
@@ -110,9 +106,7 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 					}
 				
 				}
-				
 			}
-			
 		}
 	}
 	

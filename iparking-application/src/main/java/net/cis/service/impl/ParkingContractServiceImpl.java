@@ -182,8 +182,7 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 
 	@Override
 	public List<ParkingContractEntity> findByCompany(String company) {
-		// TODO Auto-generated method stub
-		return null;
+		return parkingContractRepository.findParkingContractByCompany(company);
 	}
 
 }
