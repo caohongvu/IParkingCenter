@@ -3,6 +3,8 @@ package net.cis.service;
 import java.util.List;
 
 import net.cis.dto.ParkingContractDto;
+import net.cis.dto.ParkingContractInfoDto;
+import net.cis.dto.ParkingContractOutOfDateDto;
 import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.jpa.entity.ParkingContractEntity;
 
@@ -20,8 +22,12 @@ public interface ParkingContractService {
 	ParkingContractDto update(ParkingContractDto parkingContractDto);
 
 	List<ParkingContractDto> findAll(ParkingContractCriteria ticketCriteria);
-	
-	List<ParkingContractDto> findParkingContractOutOfDate(ParkingContractCriteria ticketCriteria);
+
+	List<ParkingContractOutOfDateDto> findParkingContractOutOfDate(ParkingContractCriteria ticketCriteria);
+
+	List<ParkingContractInfoDto> findParkingContractInfo(ParkingContractCriteria ticketCriteria);
 
 	List<ParkingContractEntity> findByParkingPlace(String code);
+	
+	List<ParkingContractEntity> findByCompany(String company);
 }

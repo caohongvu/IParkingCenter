@@ -4,7 +4,7 @@ public class ParkingInfoDto {
 	private long id;
 	private long cppId;
 	private String paymentRule;
-	private int timeAvg;
+	private Integer timeAvg;
 
 	public long getId() {
 		return id;
@@ -30,11 +30,11 @@ public class ParkingInfoDto {
 		this.paymentRule = paymentRule;
 	}
 
-	public int getTimeAvg() {
+	public Integer getTimeAvg() {
 		return timeAvg;
 	}
 
-	public void setTimeAvg(int timeAvg) {
+	public void setTimeAvg(Integer timeAvg) {
 		this.timeAvg = timeAvg;
 	}
 
