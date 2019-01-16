@@ -286,11 +286,7 @@ public class ReportEndpoint {
 		} else if (role == 2) {
 			Long userId = Long.parseLong(TokenAuthenticationService.getAuthenticationInfo(request));
 			List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(userId);
-<<<<<<< .mine
-			ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));		
-=======
 			ParkingDto objParkingDto = parkingService.findById(parkingActorDtos.get(0).getId());
->>>>>>> .theirs
 			ticketDailyCriteria.setCppCode(objParkingDto.getParkingCode());
 		}
 		Pageable pageable = new PageRequest(page, size);
