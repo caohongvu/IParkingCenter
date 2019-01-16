@@ -286,4 +286,14 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 	}
 
+	@Override
+	public CustomerDto findById(long cusId) throws Exception {
+		CustomerDto objCustomerDto = new CustomerDto();
+		CustomerEntity objCustomerEntity = customerRepository.findById(cusId);
+		if (objCustomerEntity == null)
+			return null;
+		mapper.map(objCustomerEntity, objCustomerDto);
+		return objCustomerDto;
+	}
+
 }
