@@ -69,7 +69,7 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 		return codes;
 	}
 	
-	
+
 	private void sendMonthlyInvoice() throws Exception {
 		int i = 0;
 		// Get List of Company
@@ -90,6 +90,7 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 					ObjectMapper mapper = new ObjectMapper();
 					String requestStr = mapper.writeValueAsString(monthlyInvoiceDto);
 					JSONObject requestObject = new JSONObject(requestStr);
+					System.out.println(requestObject);
 					
 					// Trigger INVOICE CENTER to create Monthly Invoice
 					String responseStr = RestfulUtil.postWithOutAccessToken(InvoiceCenterConstants.CREATE_MONTHLY_INVOICE, requestObject, "application/json");
@@ -162,21 +163,8 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 		dto.setTransactionAmount(entity.getMonthlyUnitPrice());
 		dto.setIsMonthly(1);
 		dto.setPartnerInvoiceStringId("");
-		List<PaymentConfigDto> list = new ArrayList<>();
-		
-		PaymentConfigDto paymentConfigDto = new PaymentConfigDto();
-		String itemName = "Dịch vụ trông giữ ô tô tại điểm đỗ {0} tháng {1} năm {2}";
-		itemName = itemName.replace("{0}", entity.getParkingPlace());
-		itemName = itemName.replace("{1}", month.toString());
-		itemName = itemName.replace("{2}", year.toString());
-		
-		String res = new String(itemName.getBytes(), "UTF-8");
-		paymentConfigDto.setItemName(res);
-		paymentConfigDto.setPrice(entity.getMonthlyUnitPrice());
-		list.add(paymentConfigDto);
-		
-		dto.setPaymentConfiguration(list);
-		
+		dto.setType("MONTHLY_AUTO");
+
 		
 		return dto;
 	}

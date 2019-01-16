@@ -180,4 +180,10 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 		return parkingContractRepository.findParkingContractForInvoice(code);
 	}
 
+	@Override
+	public List<ParkingContractEntity> findByCompany(String company) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -10,6 +10,9 @@ public class MonthlyInvoiceDto {
 	@JsonProperty("TicketID")
 	private String ticketId;
 	
+	@JsonProperty("Type")
+	private String type;
+	
 	@JsonProperty("TransactionAmount")
 	private double transactionAmount;
 	
@@ -170,5 +173,10 @@ public class MonthlyInvoiceDto {
 	public void setPartnerInvoiceStringId(String partnerInvoiceStringId) {
 		this.partnerInvoiceStringId = partnerInvoiceStringId;
 	}
-	
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 }
