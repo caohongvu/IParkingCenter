@@ -32,18 +32,14 @@ import net.cis.common.util.Utils;
 import net.cis.common.util.constant.TicketConstants;
 import net.cis.common.util.constant.UserConstant;
 import net.cis.common.web.BaseEndpoint;
-import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
-import net.cis.dto.ErrorDto;
 import net.cis.dto.MonthlyTicketDto;
 import net.cis.dto.ParkingDto;
-import net.cis.dto.ResponseApi;
 import net.cis.dto.ResponseDto;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.criteria.MonthlyTicketCriteria;
 import net.cis.jpa.criteria.TicketCriteria;
-import net.cis.jpa.entity.TicketEntity;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CustomerService;
 import net.cis.service.EmailService;
@@ -164,12 +160,16 @@ public class TicketEndpoint extends BaseEndpoint {
 		long customer = Long.parseLong(TokenAuthenticationService.getAuthenticationInfo(request));
 		Pageable pageable = new PageRequest(page, size);
 
-		Date fromDate = new Date(from);
-
 		if (to == null) {
 			to = Calendar.getInstance().getTimeInMillis();
 		}
 		Date toDate = new Date(to);
+		if(from == null) {
+			Calendar currentTime = Calendar.getInstance();
+			currentTime.set(Calendar.MONTH, -1);
+			from = currentTime.getTimeInMillis();
+		}
+		Date fromDate = new Date(from);
 
 		ticketCriteria.setFromDate(fromDate);
 		ticketCriteria.setToDate(toDate);
