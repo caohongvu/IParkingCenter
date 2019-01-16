@@ -19,7 +19,7 @@ public class ParkingInfoEntity {
 	private String paymentRule;
 
 	@Column(name = "time_avg")
-	private int timeAvg;
+	private Integer timeAvg;
 
 	public long getId() {
 		return id;
@@ -45,11 +45,11 @@ public class ParkingInfoEntity {
 		this.paymentRule = paymentRule;
 	}
 
-	public int getTimeAvg() {
+	public Integer getTimeAvg() {
 		return timeAvg;
 	}
 
-	public void setTimeAvg(int timeAvg) {
+	public void setTimeAvg(Integer timeAvg) {
 		this.timeAvg = timeAvg;
 	}
 
