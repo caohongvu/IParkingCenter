@@ -236,7 +236,7 @@ public class ReportEndpoint {
 
 	@RequestMapping(value = "/daily/ticket", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket daily")
-	public @ResponseBody Object fetchDailyTicket(@RequestParam(name = "cpp_code", required = false) String cppCode,
+	public @ResponseBody Object fetchDailyTicket(HttpServletRequest request, @RequestParam(name = "cpp_code", required = false) String cppCode,
 			@RequestParam(name = "number_plate", required = false) String numberPlate,
 			@RequestParam(name = "phone", required = false) Long phone,
 			@RequestParam(name = "start_time", required = false) Long start_time,
@@ -257,9 +257,7 @@ public class ReportEndpoint {
 
 		TicketDailyCriteria ticketDailyCriteria = new TicketDailyCriteria();
 
-		if (cppCode != null && cppCode != "") {
-			ticketDailyCriteria.setCppCode(cppCode.toUpperCase());
-		}
+		
 		if (phone != null && phone != 0) {
 			ticketDailyCriteria.setPhone2(phone);
 		}
@@ -269,13 +267,26 @@ public class ReportEndpoint {
 		}
 		ticketDailyCriteria.setStart_time(formatTime.format(fromDate));
 		ticketDailyCriteria.setTo_time(formatTime.format(endDate));
+		int role = Integer.parseInt(TokenAuthenticationService.getAuthenticationRole(request));
+		
 
+		if (role==1) {
+			if (cppCode != null && cppCode != "") {
+				ticketDailyCriteria.setCppCode(cppCode.toUpperCase());
+			}
+		} else if (role == 2) {
+			Long userId = Long.parseLong(TokenAuthenticationService.getAuthenticationInfo(request));
+			List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(userId);
+			ParkingDto objParkingDto = parkingService.findById(parkingActorDtos.get(0).getId());		
+			ticketDailyCriteria.setCppCode(objParkingDto.getParkingCode());
+		}
 		Pageable pageable = new PageRequest(page, size);
-		ResponseApi enpoint = ticketDailyPortalService.getAllTicketDailyFooterPortal(ticketDailyCriteria, pageable);
+		ResponseApi enpoint =  ticketDailyPortalService.getAllTicketDailyFooterPortal(ticketDailyCriteria, pageable);
 
 		return enpoint;
 
 	}
+	
 
 	/**
 	 * liemnh
