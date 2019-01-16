@@ -31,7 +31,7 @@ public class SchedulerConfig implements SchedulingConfigurer {
 
 	@Autowired
 	VerifyUserService verifyUserService;
-	
+
 	@Autowired
 	JobService jobService;
 
@@ -45,6 +45,7 @@ public class SchedulerConfig implements SchedulingConfigurer {
 
 	private boolean cronJobEmailEnableConfig() {
 		String strEnable = PropertiesUtils.getProperty("JOB_EMAIL_ENABLE");
+		LOGGER.info("cronJobEmailEnableConfig: " + strEnable);
 		if (StringUtils.isEmpty(strEnable)) {
 			return Boolean.FALSE;
 		}
@@ -64,6 +65,7 @@ public class SchedulerConfig implements SchedulingConfigurer {
 
 	private boolean cronJobPushNotificationEnableConfig() {
 		String strEnable = PropertiesUtils.getProperty("JOB_PUSH_NOTIFICATION_ENABLE");
+		LOGGER.info("cronJobPushNotificationEnableConfig: " + strEnable);
 		if (StringUtils.isEmpty(strEnable)) {
 			return Boolean.FALSE;
 		}
@@ -72,13 +74,25 @@ public class SchedulerConfig implements SchedulingConfigurer {
 		}
 		return Boolean.FALSE;
 	}
-	
+
 	private String cronJobGetDailyRevenueConfig() {
 		String cronTabExpression = PropertiesUtils.getProperty("JOB_DAILY_REVENUE");
 		if (StringUtils.isEmpty(cronTabExpression))
 			cronTabExpression = "0/5 * * * * *";
 		LOGGER.info("Cron job get daily revenue partten:" + cronTabExpression);
 		return cronTabExpression;
+	}
+
+	private boolean cronJobGetDailyRevenueEnableConfig() {
+		String strEnable = PropertiesUtils.getProperty("JOB_DAILY_REVENUE_ENABLE");
+		LOGGER.info("cronJobGetDailyRevenueEnableConfig: " + strEnable);
+		if (StringUtils.isEmpty(strEnable)) {
+			return Boolean.FALSE;
+		}
+		if (ParkingCenterConstants.JOB_ENABLE.equals(strEnable)) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
 	}
 
 	@Override
@@ -115,11 +129,12 @@ public class SchedulerConfig implements SchedulingConfigurer {
 			}
 		});
 
-		// job get daily revenue 
+		// job get daily revenue
 		taskRegistrar.addTriggerTask(new Runnable() {
 			@Override
 			public void run() {
-				jobService.getDalyRevenue();
+				if (cronJobGetDailyRevenueEnableConfig())
+					jobService.getDalyRevenue();
 			}
 		}, new Trigger() {
 			@Override
