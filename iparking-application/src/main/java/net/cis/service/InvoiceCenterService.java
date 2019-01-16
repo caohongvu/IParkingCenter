@@ -8,5 +8,7 @@ import java.util.List;
 public interface InvoiceCenterService {
 
 	List<String> getInvoiceCode(Long ticketId) throws Exception;
+	
+	
 
 }

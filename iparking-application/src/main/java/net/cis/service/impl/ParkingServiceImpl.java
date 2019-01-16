@@ -117,5 +117,11 @@ public class ParkingServiceImpl implements ParkingService {
 		List<ParkingDto> parkingDtos = this.map(parkingEntities);
 		return parkingDtos;
 	}
+	
+	@Override
+	public List<ParkingEntity> findByCompanyId(int companyId) {
+		List<ParkingEntity> parkingEntities = parkingRepository.findByCompany(companyId);
+		return parkingEntities;
+	}
 
 }

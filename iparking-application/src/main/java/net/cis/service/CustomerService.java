@@ -37,5 +37,7 @@ public interface CustomerService {
 	CustomerCarDto findCustomerCarById(long id) throws Exception;
 
 	void deleteCustomerCar(long id) throws Exception;
+	
+	CustomerDto findById(long cusId) throws Exception;
 
 }
