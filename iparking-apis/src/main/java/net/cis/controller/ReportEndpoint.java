@@ -342,7 +342,8 @@ public class ReportEndpoint {
 		for (Long cppId : lstCppId) {
 			ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(cppId));
 			ParkingInfoDto objParkingInfoDto = parkingInfoService.findByCppId(cppId);
-			double mauthuc = objParkingDto.getCapacity() * objParkingInfoDto.getTimeAvg()
+			double mauthuc = objParkingDto.getCapacity()
+					* (objParkingInfoDto.getTimeAvg() == null ? 24 : objParkingInfoDto.getTimeAvg())
 					* Long.valueOf(timediff).doubleValue() * 25000;
 			LOGGER.info("capacity: " + objParkingDto.getCapacity());
 			LOGGER.info("timeAvg: " + objParkingInfoDto.getTimeAvg());
@@ -456,7 +457,7 @@ public class ReportEndpoint {
 			ProportionPaymentDto objResult = new ProportionPaymentDto();
 			objResult.setId(item.getId());
 			objResult.setCode(item.getCode());
-			objResult.setCpp_id(item.getCpp_id());
+			objResult.setCppId(item.getCppId());
 			objResult.setAddress(item.getAddress());
 			objResult.setCapacity(item.getCapacity());
 			objResult.setProvider_id(item.getProvider_id());
@@ -551,5 +552,73 @@ public class ReportEndpoint {
 			return responseApi;
 		}
 
+	}
+
+	/**
+	 * liemnh Laays tong hop doanh thu ve luot
+	 * 
+	 * @param cppCode
+	 * @param start_time
+	 * @param end_time
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/daily/summary-ticket/revenue", method = RequestMethod.GET)
+	@ApiOperation("Tong hop Doanh thu ve luot theo diem do")
+	public @ResponseBody Object fetchDailySummaryTicketsRevenue(@RequestParam(name = "code") String cppCode,
+			@RequestParam(name = "from_time") Long start_time, @RequestParam(name = "end_time") Long end_time) {
+
+		try {
+			DailyTicketPaymentCriteria ticketCriteria = new DailyTicketPaymentCriteria();
+			SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date toDate = new Date(end_time * 1000L);
+			Date fromDate = new Date(start_time * 1000L);
+			ticketCriteria.setStart_time(formatTime.format(fromDate));
+			ticketCriteria.setEnd_time(formatTime.format(toDate));
+			ticketCriteria.setCppCode(cppCode);
+			return null;
+		} catch (Exception ex) {
+			LOGGER.error(ex.getMessage());
+			ResponseApi responseApi = new ResponseApi();
+			ErrorDto errorDto = new ErrorDto();
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
+
+	/**
+	 * liemnh Laays tong hop doanh thu ve luot
+	 * 
+	 * @param cppCode
+	 * @param start_time
+	 * @param end_time
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/daily/summary-monthly/revenue", method = RequestMethod.GET)
+	@ApiOperation("Tong hop Doanh thu ve luot theo diem do")
+	public @ResponseBody Object fetchDailySummaryMonthlyRevenue(@RequestParam(name = "code") String cppCode,
+			@RequestParam(name = "from_time") Long start_time, @RequestParam(name = "end_time") Long end_time) {
+
+		try {
+			DailyTicketPaymentCriteria ticketCriteria = new DailyTicketPaymentCriteria();
+			SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date toDate = new Date(end_time * 1000L);
+			Date fromDate = new Date(start_time * 1000L);
+			ticketCriteria.setStart_time(formatTime.format(fromDate));
+			ticketCriteria.setEnd_time(formatTime.format(toDate));
+			ticketCriteria.setCppCode(cppCode);
+			return null;
+		} catch (Exception ex) {
+			LOGGER.error(ex.getMessage());
+			ResponseApi responseApi = new ResponseApi();
+			ErrorDto errorDto = new ErrorDto();
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
 	}
 }
