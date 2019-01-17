@@ -42,7 +42,9 @@ public class RolePermissionEndpoint {
     @RequestMapping(value = "/assign", method = RequestMethod.POST)
     @ApiOperation("get role permissions by conditions")
     @ResponseBody
-    public ResponseDto update(@RequestParam(value = "role") Long role) {
+    public ResponseDto update(@RequestParam(value = "role") Long role,
+                              @RequestParam(value = "func") Long func,
+                              @RequestParam(value = "status") Boolean status) {
         ResponseDto responseDto = new ResponseDto();
         try {
             List<RolePermissionDto> dtos = rolePermissionService.findAll();

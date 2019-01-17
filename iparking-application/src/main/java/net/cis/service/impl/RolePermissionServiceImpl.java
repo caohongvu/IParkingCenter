@@ -2,7 +2,9 @@ package net.cis.service.impl;
 
 import net.cis.dto.RolePermissionDto;
 import net.cis.jpa.entity.RolePermissionEntity;
+import net.cis.repository.FuncRepository;
 import net.cis.repository.RolePermissionRepository;
+import net.cis.repository.RoleRepository;
 import net.cis.service.RolePermissionService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -17,6 +19,12 @@ import java.util.List;
 public class RolePermissionServiceImpl implements RolePermissionService {
     @Autowired
     RolePermissionRepository rolePermissionRepository;
+
+    @Autowired
+    FuncRepository funcRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     private ModelMapper modelMapper;
 
@@ -34,6 +42,15 @@ public class RolePermissionServiceImpl implements RolePermissionService {
                 map().setRoleDesc(source.getRole().getDesc());
             }
         });
+
+        modelMapper.addMappings(new PropertyMap<RolePermissionDto, RolePermissionEntity>() {
+            @Override
+            protected void configure() {
+                map().setId(source.getId());
+                map().setFunc(funcRepository.findOne(source.getFuncId()));
+                map().setRole(roleRepository.findOne(source.getRole()));
+            }
+        });
     }
 
     @Override
@@ -49,6 +66,22 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     @Override
     public RolePermissionDto findOne(Long id) {
         return modelMapper.map(rolePermissionRepository.findOne(id), RolePermissionDto.class);
+    }
+
+    @Override
+    public RolePermissionDto create(RolePermissionDto dto) {
+        RolePermissionEntity entity = modelMapper.map(dto, RolePermissionEntity.class);
+        if (entity.getId() != null) {
+            entity.setId(null);
+        }
+
+        return modelMapper.map(rolePermissionRepository.save(entity), RolePermissionDto.class);
+    }
+
+    @Override
+    public RolePermissionDto update(RolePermissionDto dto) {
+        RolePermissionEntity entity = modelMapper.map(dto, RolePermissionEntity.class);
+        return modelMapper.map(rolePermissionRepository.save(entity), RolePermissionDto.class);
     }
 
     private List<RolePermissionDto> map(List<RolePermissionEntity> entities) {
