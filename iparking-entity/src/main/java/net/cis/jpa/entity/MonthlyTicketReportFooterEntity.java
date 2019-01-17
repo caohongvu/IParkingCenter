@@ -1,5 +1,7 @@
 package net.cis.jpa.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -65,6 +67,9 @@ public class MonthlyTicketReportFooterEntity {
 	
 	@Column(name = "is_liquidated")
 	private boolean is_liquidated;
+	
+	@Column(name = "created_at")
+	private Date created_at;
 	
 	@Formula("COUNT(*)")
 	private long total_row;
@@ -222,6 +227,12 @@ public class MonthlyTicketReportFooterEntity {
 	}
 	public void setIs_liquidated(boolean is_liquidated) {
 		this.is_liquidated = is_liquidated;
+	}
+	public Date getCreated_at() {
+		return created_at;
+	}
+	public void setCreated_at(Date created_at) {
+		this.created_at = created_at;
 	}
 	
 	

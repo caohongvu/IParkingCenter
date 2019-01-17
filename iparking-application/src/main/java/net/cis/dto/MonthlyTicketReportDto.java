@@ -1,6 +1,8 @@
 package net.cis.dto;
 
+import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class MonthlyTicketReportDto {
 	private Long ticket_id;
@@ -21,6 +23,9 @@ public class MonthlyTicketReportDto {
 	private String fullName;
 	private int status;
 	private boolean is_liquidated;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern="yyyy-MM-dd@HH:mm:ss.SSSZ")
+	private Date created_at;
 	public Long getTicket_id() {
 		return ticket_id;
 	}
@@ -128,6 +133,12 @@ public class MonthlyTicketReportDto {
 	}
 	public void setCpp_id(Long cpp_id) {
 		this.cpp_id = cpp_id;
+	}
+	public Date getCreated_at() {
+		return created_at;
+	}
+	public void setCreated_at(Date created_at) {
+		this.created_at = created_at;
 	}
 	
 	
