@@ -18,6 +18,8 @@ public class MonthlyTicketReportDto {
 	private Long valid_end;
 	private int expired;
 	private String fullName;
+	private int status;
+	private boolean is_liquidated;
 	public Long getTicket_id() {
 		return ticket_id;
 	}
@@ -108,6 +110,19 @@ public class MonthlyTicketReportDto {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public boolean getIs_liquidated() {
+		return is_liquidated;
+	}
+	public void setIs_liquidated(boolean is_liquidated) {
+		this.is_liquidated = is_liquidated;
+	}
+	
 	
 	
 }

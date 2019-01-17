@@ -380,6 +380,7 @@ public class ReportEndpoint {
 			@RequestParam(name = "end_time", required = true) Long end_time,
 			@RequestParam(name = "is_paid", required = true) int is_paid,
 			@RequestParam(name = "expired", required = true) int expired,
+			@RequestParam(name = "status", required = true) int status,
 			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
 			@RequestParam(name = "size", required = false, defaultValue = "500") int size) {
 
@@ -414,6 +415,7 @@ public class ReportEndpoint {
 		
 		monthlyTicketReportCriteria.setIs_paid(is_paid);
 		monthlyTicketReportCriteria.setExpired(expired);
+		monthlyTicketReportCriteria.setStatus(status);
 		monthlyTicketReportCriteria.setValid_from(start_time);
 		monthlyTicketReportCriteria.setValid_end(end_time);
 		int role = Integer.parseInt(TokenAuthenticationService.getAuthenticationRole(request));

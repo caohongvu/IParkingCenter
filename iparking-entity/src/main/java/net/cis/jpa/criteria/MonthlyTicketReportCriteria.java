@@ -11,6 +11,7 @@ public class MonthlyTicketReportCriteria {
 	private Long valid_end;
 	private int expired;
 	private int is_paid;
+	private int status;
 	public String getParking_place() {
 		return parking_place;
 	}
@@ -71,6 +72,14 @@ public class MonthlyTicketReportCriteria {
 	public void setIs_paid(int is_paid) {
 		this.is_paid = is_paid;
 	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	
+	
 	
 	
 }

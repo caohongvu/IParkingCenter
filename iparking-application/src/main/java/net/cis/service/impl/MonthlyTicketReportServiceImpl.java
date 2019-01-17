@@ -51,7 +51,7 @@ public class MonthlyTicketReportServiceImpl implements MonthlyTicketReportServic
 					monthlyTicketReportCriteria.getParking_place(), monthlyTicketReportCriteria.getExpired(),
 					monthlyTicketReportCriteria.getPhone(), monthlyTicketReportCriteria.getNumber_plate(),
 					monthlyTicketReportCriteria.getFullName(), monthlyTicketReportCriteria.getContract_code(),
-					monthlyTicketReportCriteria.getContract_no(), monthlyTicketReportCriteria.getValid_from(),
+					monthlyTicketReportCriteria.getContract_no(), monthlyTicketReportCriteria.getStatus(), monthlyTicketReportCriteria.getValid_from(),
 					monthlyTicketReportCriteria.getValid_end(), pageable);
 			List<MonthlyTicketReportDto> ticketReportDtos = this.map(monthlyTicketReportEntities);
 			MonthlyTicketReportFooterEntity monthlyTicketReportFooterEntity = null;
@@ -60,7 +60,7 @@ public class MonthlyTicketReportServiceImpl implements MonthlyTicketReportServic
 					monthlyTicketReportCriteria.getParking_place(), monthlyTicketReportCriteria.getExpired(),
 					monthlyTicketReportCriteria.getPhone(), monthlyTicketReportCriteria.getNumber_plate(),
 					monthlyTicketReportCriteria.getFullName(), monthlyTicketReportCriteria.getContract_code(),
-					monthlyTicketReportCriteria.getContract_no(), monthlyTicketReportCriteria.getValid_from(),
+					monthlyTicketReportCriteria.getContract_no(), monthlyTicketReportCriteria.getStatus(), monthlyTicketReportCriteria.getValid_from(),
 					monthlyTicketReportCriteria.getValid_end());
 				
 				if (monthlyTicketReportFooterEntity == null) {

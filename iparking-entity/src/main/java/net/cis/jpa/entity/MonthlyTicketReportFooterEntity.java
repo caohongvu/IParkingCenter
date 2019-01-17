@@ -60,6 +60,12 @@ public class MonthlyTicketReportFooterEntity {
 	@Column(name = "fullname")
 	private String fullName;
 	
+	@Column(name = "status")
+	private int status;
+	
+	@Column(name = "is_liquidated")
+	private boolean is_liquidated;
+	
 	@Formula("COUNT(*)")
 	private long total_row;
 	@Formula("COUNT(DISTINCT parking_place)")
@@ -205,6 +211,22 @@ public class MonthlyTicketReportFooterEntity {
 	public void setTotalTicket_amount(double totalTicket_amount) {
 		this.totalTicket_amount = totalTicket_amount;
 	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public boolean isIs_liquidated() {
+		return is_liquidated;
+	}
+	public void setIs_liquidated(boolean is_liquidated) {
+		this.is_liquidated = is_liquidated;
+	}
+	
+	
+	
+	
 	
 	
 }
