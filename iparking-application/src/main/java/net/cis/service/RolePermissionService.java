@@ -9,6 +9,6 @@ public interface RolePermissionService {
     List<RolePermissionDto> findAll();
     List<RolePermissionDto> findByRole(Long role);
     RolePermissionDto findOne(Long id);
-    RolePermissionDto create(RolePermissionDto entity);
-    RolePermissionDto update(RolePermissionDto entity);
+//    RolePermissionDto create(RolePermissionDto entity);
+//    RolePermissionDto update(RolePermissionDto entity);
 }
