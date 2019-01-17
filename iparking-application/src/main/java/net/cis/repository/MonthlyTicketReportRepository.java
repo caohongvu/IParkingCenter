@@ -27,7 +27,8 @@ public interface MonthlyTicketReportRepository extends JpaRepository<MonthlyTick
 			+ "AND (ticket.contract_code LIKE CONCAT('%',:contract_code,'%') OR :contract_code is NULL) "
 			+ "AND (ticket.contract_no LIKE CONCAT('%',:contract_no,'%') OR :contract_no is NULL) "
 			+ "AND (ticket.phone LIKE CONCAT('%',:phone,'%') OR :phone is NULL) "
-			+ "AND (ticket.fullName LIKE CONCAT('%',:fullName,'%') OR :fullName is NULL) ")
+			+ "AND (ticket.fullName LIKE CONCAT('%',:fullName,'%') OR :fullName is NULL) "
+			+ "GROUP BY ticket.ticket_id ")
 	public List<MonthlyTicketReportEntity> findAllReport(@Param("is_paid") int is_paid,@Param("parking_place") String parking_place,
 			@Param("expired") int expired,@Param("phone") Long phone,  
 			@Param("number_plate") String number_plate, @Param("fullName") String fullName,

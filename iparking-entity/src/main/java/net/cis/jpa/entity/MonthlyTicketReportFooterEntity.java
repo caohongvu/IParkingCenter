@@ -5,12 +5,15 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
 @Entity
 @Table(name = "report_monthly_ticket_view")
+@NamedQuery(name = "MonthlyTicketReportFooterEntity.listUniqueticketId", 
+query = "SELECT DISTINCT ticket.ticket_id FROM MonthlyTicketReportFooterEntity ticket")
 public class MonthlyTicketReportFooterEntity {
 
 	@Id
