@@ -4,6 +4,7 @@ package net.cis.dto;
 
 public class MonthlyTicketReportDto {
 	private Long ticket_id;
+	private Long cpp_id;
 	private String contract_code;
 	private String contract_no;
 	private String parking_place;
@@ -122,6 +123,13 @@ public class MonthlyTicketReportDto {
 	public void setIs_liquidated(boolean is_liquidated) {
 		this.is_liquidated = is_liquidated;
 	}
+	public Long getCpp_id() {
+		return cpp_id;
+	}
+	public void setCpp_id(Long cpp_id) {
+		this.cpp_id = cpp_id;
+	}
+	
 	
 	
 	
