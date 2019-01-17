@@ -23,7 +23,6 @@ import net.cis.dto.ParkingContractOutOfDateDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.jpa.entity.ParkingContractEntity;
-import net.cis.jpa.entity.TicketEntity;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.ParkingContractService;
 
@@ -91,6 +90,7 @@ public class ParkingContractEndpoint {
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());
 			error.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			error.setMessage(ex.getMessage());
 			response.setError(error);
 			return response;
 		}
