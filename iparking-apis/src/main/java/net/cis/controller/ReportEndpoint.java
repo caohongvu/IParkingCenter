@@ -33,7 +33,7 @@ import net.cis.dto.ParkingContractDto;
 import net.cis.dto.ParkingDto;
 import net.cis.dto.ParkingInfoDto;
 import net.cis.dto.PerformanceExtractionDto;
-import net.cis.dto.ProportionPaymentDto;
+import net.cis.dto.ReportProportionPaymentDto;
 import net.cis.dto.ReportDailyPaymentDto;
 import net.cis.dto.ReportMonthlyPaymentDto;
 import net.cis.dto.ResponseApi;
@@ -51,6 +51,7 @@ import net.cis.service.ParkingService;
 import net.cis.service.ReportDailyPaymentServic;
 import net.cis.service.ReportDelegatePaymentService;
 import net.cis.service.ReportMonthlyPaymentService;
+import net.cis.service.ReportProportionPaymentService;
 import net.cis.service.TicketDailyPortalService;
 
 @RestController
@@ -87,6 +88,9 @@ public class ReportEndpoint {
 
 	@Autowired
 	private ReportMonthlyPaymentService reportMonthlyPaymentService;
+
+	@Autowired
+	ReportProportionPaymentService reportProportionPaymentService;
 
 	@RequestMapping(value = "/daily/ticket/payment", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
@@ -368,8 +372,8 @@ public class ReportEndpoint {
 			if (objParkingDto != null) {
 				// thuc hien lay doanh thu ve luot
 				LOGGER.info("veluot: " + simpleDateTime.format(DateTimeUtil.getCurrentDateTime()));
-				ProportionPaymentDto objProportionPaymentDto = reportDelegatePaymentService.getProportionPayment(cppId,
-						fromDate, toDate);
+				ReportProportionPaymentDto objProportionPaymentDto = reportProportionPaymentService
+						.getProportionPayment(cppId, date1.getTime() / 1000, date2.getTime() / 1000);
 				LOGGER.info("veluot: " + simpleDateTime.format(DateTimeUtil.getCurrentDateTime()));
 				revenuVeluot = objProportionPaymentDto.getRevenue();
 				// tinh toan doanh thu ve thang
@@ -435,13 +439,15 @@ public class ReportEndpoint {
 			response.setError(error);
 			return response;
 		}
+		long fromTime = simpleDate.parse(fromDate).getTime() / 1000;
+		long toTime = simpleDate.parse(toDate).getTime() / 1000;
 		String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
 		// laay thoong tin diem do cuar supervisorId
 		int actorId = Integer.parseInt(supervisorId);
 		List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(actorId);
 		List<Long> lstCppCode = new ArrayList<>();
 		parkingActorDtos.stream().forEach(item -> lstCppCode.add(item.getCppId()));
-		List<ProportionPaymentDto> result = new ArrayList<>();
+		List<ReportProportionPaymentDto> result = new ArrayList<>();
 		if (!StringUtils.isEmpty(cppCode)) {
 			// thuc hien kiem tra parkingCode co nam trong quyen cua user super
 			ParkingDto objParkingDto = parkingService.findByParkingCode(cppCode);
@@ -450,7 +456,8 @@ public class ReportEndpoint {
 				lstCppCode.add(Long.parseLong(objParkingDto.getOldId()));
 			}
 		}
-		result = reportDelegatePaymentService.getProportionPayment(lstCppCode, fromDate, toDate);
+
+		result = reportProportionPaymentService.getProportionPayment(lstCppCode, fromTime, toTime);
 		error.setCode(StatusUtil.SUCCESS_STATUS);
 		error.setMessage(StatusUtil.SUCCESS_MESSAGE);
 		response.setError(error);
@@ -459,16 +466,16 @@ public class ReportEndpoint {
 
 	}
 
-	private List<ProportionPaymentDto> calculateProportionPayment(List<ProportionPaymentDto> lstProportionPaymentDto) {
-		List<ProportionPaymentDto> result = new ArrayList<>();
+	private List<ReportProportionPaymentDto> calculateProportionPayment(
+			List<ReportProportionPaymentDto> lstProportionPaymentDto) {
+		List<ReportProportionPaymentDto> result = new ArrayList<>();
 		lstProportionPaymentDto.stream().forEach(item -> {
-			ProportionPaymentDto objResult = new ProportionPaymentDto();
+			ReportProportionPaymentDto objResult = new ReportProportionPaymentDto();
 			objResult.setId(item.getId());
-			objResult.setCode(item.getCode());
-			objResult.setCppId(item.getCppId());
-			objResult.setAddress(item.getAddress());
-			objResult.setCapacity(item.getCapacity());
-			objResult.setProvider_id(item.getProvider_id());
+			objResult.setParkingCode(item.getParkingCode());
+			objResult.setCompany(item.getCompany());
+			objResult.setParkingId(item.getParkingId());
+			objResult.setCompanyId(item.getCompanyId());
 			objResult.setRevenue(item.getRevenue());
 			objResult.setAtm((item.getAtm() / item.getRevenue()) * 100);
 			objResult.setSms((item.getSms() / item.getRevenue()) * 100);
@@ -477,6 +484,8 @@ public class ReportEndpoint {
 			objResult.setVisa_master_tth((item.getVisa_master_tth() / item.getRevenue()) * 100);
 			objResult.setVisa_master_kh((item.getVisa_master_kh() / item.getRevenue()) * 100);
 			objResult.setCash((item.getCash() / item.getRevenue()) * 100);
+			objResult.setAddress(item.getAddress());
+			objResult.setCapacity(item.getCapacity());
 			result.add(objResult);
 		});
 		return result;
