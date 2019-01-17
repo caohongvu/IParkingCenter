@@ -20,7 +20,8 @@ public class ParkingDto {
 	 private String parkingPlaceData;
 	 private Date createdAt;
 	 private Date updatedAt;
-	 private Long company;
+	 private int company;
+	 private boolean isProvideEInvoice;
 	 private String lat;
 	 private String lng;
 	 private String oldId;
@@ -107,11 +108,18 @@ public class ParkingDto {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	public Long getCompany() {
+	public int getCompany() {
 		return company;
 	}
-	public void setCompany(Long company) {
+	public void setCompany(int company) {
 		this.company = company;
+	}
+	
+	public boolean getIsProvideEInvoice() {
+		return isProvideEInvoice;
+	}
+	public void setIsProvideEInvoice(boolean isProvideEInvoice) {
+		this.isProvideEInvoice = isProvideEInvoice;
 	}
 	public String getLat() {
 		return lat;
