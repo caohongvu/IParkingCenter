@@ -3,6 +3,7 @@ package net.cis.service;
 import java.util.List;
 
 import net.cis.dto.ParkingDto;
+import net.cis.jpa.entity.ParkingEntity;
 
 /**
  * Created by Vincent 15/11/2018
@@ -22,4 +23,6 @@ public interface ParkingService {
 	ParkingDto findByParkingCode(String parkingCode);
 
 	List<ParkingDto> findByCompany(long company);
+	
+	List<ParkingEntity> findByCompanyId(int companyId);
 }

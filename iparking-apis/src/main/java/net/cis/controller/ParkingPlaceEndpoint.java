@@ -25,9 +25,11 @@ import net.cis.dto.ParkingDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.criteria.TicketCriteria;
+import net.cis.jpa.entity.CompanyInforEntity;
 import net.cis.service.CompanyService;
 import net.cis.service.ParkingService;
 import net.cis.service.TicketService;
+import net.cis.service.cache.CompanyInfoCache;
 
 @RestController
 @RequestMapping("/parking")
@@ -42,6 +44,9 @@ public class ParkingPlaceEndpoint {
 
 	@Autowired
 	TicketService ticketService;
+	
+	@Autowired
+	CompanyInfoCache companyInfoCache;
 
 	@RequestMapping(value = "/{id}/getByOldId", method = RequestMethod.GET)
 	public @ResponseBody ParkingDto getByOldId(@PathVariable("id") String oldId) throws Exception {
@@ -53,6 +58,12 @@ public class ParkingPlaceEndpoint {
 		Pageable pageable = new PageRequest(0, 1000);
 		List<TicketDto> ticketsInsession = ticketService.findAll(ticketCriteria, pageable);
 		parkingDto.setCurrentTicketInSession(ticketsInsession.size());
+		CompanyInforEntity companyEntity = companyInfoCache.get(parkingDto.getCompany());
+		boolean isProvideEInvoice = false;
+		if(companyEntity != null && (companyEntity.getDailyInvoice() == 1 || companyEntity.getMonthlyInvoice() == 1)) {
+			isProvideEInvoice = true;
+		}
+		parkingDto.setIsProvideEInvoice(isProvideEInvoice);
 		return parkingDto;
 	}
 
