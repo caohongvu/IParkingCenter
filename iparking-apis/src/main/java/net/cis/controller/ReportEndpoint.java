@@ -37,11 +37,13 @@ import net.cis.dto.ProportionPaymentDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.DailyTicketPaymentCriteria;
 import net.cis.jpa.criteria.MonthlyTicketPaymentCriteria;
+import net.cis.jpa.criteria.MonthlyTicketReportCriteria;
 import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.jpa.criteria.TicketDailyCriteria;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.DailyTicketPaymentService;
 import net.cis.service.MonthlyTicketPaymentService;
+import net.cis.service.MonthlyTicketReportService;
 import net.cis.service.ParkingActorService;
 import net.cis.service.ParkingContractService;
 import net.cis.service.ParkingInfoService;
@@ -65,6 +67,9 @@ public class ReportEndpoint {
 
 	@Autowired
 	private MonthlyTicketPaymentService monthlyTicketPaymentService;
+	
+	@Autowired
+	private MonthlyTicketReportService  monthlyTicketReportService;
 
 	@Autowired
 	private ParkingActorService parkingActorService;
@@ -78,6 +83,22 @@ public class ReportEndpoint {
 	@Autowired
 	private ParkingContractService parkingContractService;
 
+	/**
+	 * 
+	 * @param orderID
+	 * @param transID
+	 * @param cppCode
+	 * @param numberPlate
+	 * @param phone
+	 * @param start_time
+	 * @param end_time
+	 * @param cardNumber
+	 * @param transType
+	 * @param page
+	 * @param size
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/daily/ticket/payment", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket payment")
 	public @ResponseBody Object fetchTicketsPayment(@RequestParam(name = "orderID", required = false) String orderID,
@@ -140,6 +161,24 @@ public class ReportEndpoint {
 
 		return enpoint;
 	}
+	
+	/**
+	 * 
+	 * @param transID
+	 * @param cppCode
+	 * @param numberPlate
+	 * @param contract_no
+	 * @param contract_code
+	 * @param phone
+	 * @param start_time
+	 * @param end_time
+	 * @param cardNumber
+	 * @param period_payment
+	 * @param page
+	 * @param size
+	 * @return
+	 * @throws Exception
+	 */
 
 	@RequestMapping(value = "/monthly/ticket/payment", method = RequestMethod.GET)
 	@ApiOperation("Fetch all monthly ticket payment")
@@ -234,6 +273,18 @@ public class ReportEndpoint {
 		return response;
 	}
 
+	/**
+	 * 
+	 * @param request
+	 * @param cppCode
+	 * @param numberPlate
+	 * @param phone
+	 * @param start_time
+	 * @param end_time
+	 * @param page
+	 * @param size
+	 * @return
+	 */
 	@RequestMapping(value = "/daily/ticket", method = RequestMethod.GET)
 	@ApiOperation("Fetch all ticket daily")
 	public @ResponseBody Object fetchDailyTicket(HttpServletRequest request, @RequestParam(name = "cpp_code", required = false) String cppCode,
@@ -282,6 +333,92 @@ public class ReportEndpoint {
 		}
 		Pageable pageable = new PageRequest(page, size);
 		ResponseApi enpoint =  ticketDailyPortalService.getAllTicketDailyFooterPortal(ticketDailyCriteria, pageable);
+
+		return enpoint;
+
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param cppCode
+	 * @param numberPlate
+	 * @param phone
+	 * @param fullName
+	 * @param contract_no
+	 * @param contract_code
+	 * @param start_time
+	 * @param end_time
+	 * @param is_paid
+	 * @param expired
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	
+	@RequestMapping(value = "/monthly/ticket", method = RequestMethod.GET)
+	@ApiOperation("Fetch all ticket daily")
+	public @ResponseBody Object fetchMonthlyTicket(HttpServletRequest request, @RequestParam(name = "cpp_code", required = false) String cppCode,
+			@RequestParam(name = "number_plate", required = false) String numberPlate,
+			@RequestParam(name = "phone", required = false) Long phone,
+			@RequestParam(name = "full_name", required = false) String fullName,
+			@RequestParam(name = "contract_no", required = false) String contract_no,
+			@RequestParam(name = "contract_code", required = false) String contract_code,
+			@RequestParam(name = "start_time", required = true) Long start_time,
+			@RequestParam(name = "end_time", required = true) Long end_time,
+			@RequestParam(name = "is_paid", required = true) int is_paid,
+			@RequestParam(name = "expired", required = true) int expired,
+			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+			@RequestParam(name = "size", required = false, defaultValue = "500") int size) {
+
+
+		page = page - 1;
+		if (page < 0) {
+			page = 0;
+		}
+
+		MonthlyTicketReportCriteria monthlyTicketReportCriteria = new MonthlyTicketReportCriteria();
+
+		
+		if (phone != null && phone != 0) {
+			monthlyTicketReportCriteria.setPhone(phone);
+		}
+
+		if (numberPlate != null && numberPlate != "") {
+			monthlyTicketReportCriteria.setNumber_plate(numberPlate.toUpperCase());
+		}
+		
+		if (fullName != null && fullName != "") {
+			monthlyTicketReportCriteria.setFullName(fullName);
+		}
+		
+		if (contract_no != null && contract_no != "") {
+			monthlyTicketReportCriteria.setContract_no(contract_no);
+		}
+		
+		if (contract_code != null && contract_code != "") {
+			monthlyTicketReportCriteria.setContract_code(contract_code);
+		}
+		
+		monthlyTicketReportCriteria.setIs_paid(is_paid);
+		monthlyTicketReportCriteria.setExpired(expired);
+		monthlyTicketReportCriteria.setValid_from(start_time);
+		monthlyTicketReportCriteria.setValid_end(end_time);
+		int role = Integer.parseInt(TokenAuthenticationService.getAuthenticationRole(request));
+		
+
+		if (role==1) {
+			if (cppCode != null && cppCode != "") {
+				monthlyTicketReportCriteria.setParking_place(cppCode.toUpperCase());
+			}
+		} else if (role == 2) {
+			Long userId = Long.parseLong(TokenAuthenticationService.getAuthenticationInfo(request));
+			List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(userId);
+			ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));		
+			monthlyTicketReportCriteria.setParking_place(objParkingDto.getParkingCode());
+		}
+		Pageable pageable = new PageRequest(page, size);
+		ResponseApi enpoint =  monthlyTicketReportService.findAll(monthlyTicketReportCriteria, pageable);
 
 		return enpoint;
 
