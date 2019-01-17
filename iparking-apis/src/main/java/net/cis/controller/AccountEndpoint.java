@@ -3,6 +3,8 @@ package net.cis.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -82,15 +84,16 @@ public class AccountEndpoint extends BaseEndpoint {
 	}
 
 	// update Account User
-	@RequestMapping(value = "/update", method = RequestMethod.GET)
+	@RequestMapping(value = "/update",headers = "Content-Type= multipart/form-data", method = RequestMethod.POST)
 	@ApiOperation(" account user")
-	public @ResponseBody Object updateAccountUser(@RequestParam(name = "username", required = true) String username,
-			@RequestParam(name = "fullname", required = true) String fullname,
-			@RequestParam(name = "email", required = true) String email,
-			@RequestParam(name = "phone", required = true) String phone,
-			@RequestParam(name = "password", required = true) String password,
-			@RequestParam(name = "role", required = true) int role, @RequestParam(name = "id", required = true) int id)
+	public @ResponseBody Object updateAccountUser(@RequestParam(name = "username", required = false) String username,
+			@RequestParam(name = "fullname", required = false) String fullname,
+			@RequestParam(name = "email", required = false) String email,
+			@RequestParam(name = "phone", required = false) String phone,
+			@RequestParam(name = "password", required = false) String password,
+			@RequestParam(name = "role", required = false) int role, @RequestParam(name = "id", required = false) int id)
 			throws Exception {
+
 
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();

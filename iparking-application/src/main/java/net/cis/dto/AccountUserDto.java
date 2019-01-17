@@ -1,7 +1,5 @@
 package net.cis.dto;
 
-import net.cis.jpa.entity.UserMetadataEntity;
-
 public class AccountUserDto {
 	private int Id;
 	private String username;
@@ -9,7 +7,16 @@ public class AccountUserDto {
 	private String fullname;
 	private int role;
 	private int gr;
+	private String phone;
 	
+	
+	
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 	private String email;
 	
 	

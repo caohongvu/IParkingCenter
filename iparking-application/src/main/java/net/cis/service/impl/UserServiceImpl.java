@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService{
 			mapper.map(entity, dto);
 			if (entity.getUserMetadata() != null) {
 				dto.setEmail(entity.getUserMetadata().getEmail());
+				dto.setPhone(entity.getUserMetadata().getPhone());
 			}
 			if(entity.getUserSecurityEntity() != null) {
 				dto.setGr(entity.getUserSecurityEntity().getGr());
