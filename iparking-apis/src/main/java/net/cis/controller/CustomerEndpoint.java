@@ -80,6 +80,7 @@ public class CustomerEndpoint {
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
 			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			responseDto.setMessage(ex.getMessage());
 			return responseDto;
 		}
 

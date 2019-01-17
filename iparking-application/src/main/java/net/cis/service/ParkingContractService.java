@@ -28,4 +28,6 @@ public interface ParkingContractService {
 	List<ParkingContractInfoDto> findParkingContractInfo(ParkingContractCriteria ticketCriteria);
 
 	List<ParkingContractEntity> findByParkingPlace(String code);
+	
+	List<ParkingContractEntity> findByCompany(String company);
 }

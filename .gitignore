@@ -25,3 +25,5 @@ iparking-apis/.settings/org.eclipse.wst.common.component
 /.settings
 /.idea
 *.iml
+.pom.xml
+*.pom.xml

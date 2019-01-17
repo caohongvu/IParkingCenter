@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,8 @@ import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
 import net.cis.dto.MonthlyInvoiceDto;
 import net.cis.dto.ParkingDto;
-import net.cis.dto.PaymentConfigDto;
 import net.cis.jpa.entity.CompanyInforEntity;
 import net.cis.jpa.entity.ParkingContractEntity;
-import net.cis.jpa.entity.ParkingEntity;
 import net.cis.service.CompanyInforService;
 import net.cis.service.CompanyService;
 import net.cis.service.CustomerService;
@@ -36,6 +35,8 @@ import net.cis.utils.RestfulUtil;
 @Service
 public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 
+	protected final Logger LOGGER = Logger.getLogger(getClass());
+	
 	@Autowired
 	CompanyInforService companyInforService;
 	
@@ -66,39 +67,46 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 		return codes;
 	}
 	
-	@Scheduled(fixedDelay=5*60*1000)
+
 	private void sendMonthlyInvoice() throws Exception {
+		int i = 1;
 		// Get List of Company
 		List<CompanyInforEntity> entities = companyInforService.findCompanyNeedMonthlyInvoice();
 		
 		for (CompanyInforEntity entity : entities) {
-			// Get List Parking Place of company
-			List<ParkingEntity> parkingEntities = parkingService.findByCompanyId(entity.getCompanyId());
-			
-			// Get List ticket of Parking Place
-			for (ParkingEntity parkingEntity : parkingEntities) {
-				List<ParkingContractEntity> parkingContractEntities = parkingContractService.findByParkingPlace(parkingEntity.getParkingCode());
-				
-				// Send Month Invoice for Parking Contract
+			// Get Company by Id
+			CompanyDto companyDto = companyService.findById(entity.getCompanyId());
+			if (companyDto != null) {
+				// Get List Parking Contract By Company
+				List<ParkingContractEntity> parkingContractEntities = parkingContractService.findByCompany(companyDto.getCompanyCode());
 				for (ParkingContractEntity parkingContractEntity : parkingContractEntities) {
+					
 					MonthlyInvoiceDto monthlyInvoiceDto = initializeMonthInvoiceData(parkingContractEntity);
 					
 					ObjectMapper mapper = new ObjectMapper();
 					String requestStr = mapper.writeValueAsString(monthlyInvoiceDto);
-					JSONObject requestObject = new JSONObject(monthlyInvoiceDto);
-					System.out.println(requestStr);
+					JSONObject requestObject = new JSONObject(requestStr);
 					System.out.println(requestObject);
 					
 					// Trigger INVOICE CENTER to create Monthly Invoice
-					String responseStr = RestfulUtil.post(InvoiceCenterConstants.CREATE_MONTHLY_INVOICE, requestObject, InvoiceCenterConstants.INVOICE_CENTER_MEDIA_TYPE);
+					String responseStr = RestfulUtil.postWithOutAccessToken(InvoiceCenterConstants.CREATE_MONTHLY_INVOICE, requestObject, "application/json");
 					JSONObject responseObject = new JSONObject(responseStr);
 					
-					System.out.println(responseObject);
+					// Handle response
+					int errorCode = responseObject.getJSONObject("Error").getInt("Code");
+					String invoiceCode = responseObject.getString("Data");
 					
-				}
+					if (errorCode != 200 && !invoiceCode.equals("")){
+						LOGGER.error("Invoice Error: " + monthlyInvoiceDto.getTicketId() + monthlyInvoiceDto.getTransactionId());
+						return;
+					} else {
+						System.out.println("Create Invoice Success: " + monthlyInvoiceDto.getTicketId() + monthlyInvoiceDto.getTransactionId());
+						System.out.println(i);
+						i++;
+					}
 				
+				}
 			}
-			
 		}
 	}
 	
@@ -143,25 +151,14 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 		dto.setBuyerAddress("");
 		dto.setBuyerBankAccount("");
 		dto.setReceiverAddress("");
-		dto.setTicketId(entity.getId());
+		dto.setTicketId(Long.toString(entity.getId()));
 		dto.setCppCode(entity.getParkingPlace());
 		dto.setTransactionId(dto.getTicketId() + "_" + month + "_" + year);
 		dto.setTransactionAmount(entity.getMonthlyUnitPrice());
 		dto.setIsMonthly(1);
-		
-		List<PaymentConfigDto> list = new ArrayList<>();
-		
-		PaymentConfigDto paymentConfigDto = new PaymentConfigDto();
-		String itemName = "Dịch vụ trông giữ ô tô tại điểm đỗ {0} tháng {1} năm {2}";
-		itemName = itemName.replace("{0}", entity.getParkingPlace());
-		itemName = itemName.replace("{1}", month.toString());
-		itemName = itemName.replace("{2}", year.toString());
-		paymentConfigDto.setItemName(itemName);
-		paymentConfigDto.setPrice(entity.getMonthlyUnitPrice());
-		list.add(paymentConfigDto);
-		
-		dto.setPaymentConfiguration(list);
-		
+		dto.setPartnerInvoiceStringId("");
+		dto.setType("MONTHLY_AUTO");
+
 		
 		return dto;
 	}

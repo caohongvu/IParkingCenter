@@ -9,11 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import net.cis.dto.ProportionPaymentDto;
 import net.cis.dto.ReportDelegatePaymentDto;
-import net.cis.jpa.entity.ProportionPaymentEntity;
 import net.cis.jpa.entity.ReportDelegatePaymentEntity;
-import net.cis.repository.ProportionPaymentRepository;
 import net.cis.repository.ReportDelegatePaymentRepository;
 import net.cis.service.ReportDelegatePaymentService;
 
@@ -25,9 +22,6 @@ public class ReportDelegatePaymentServiceImpl implements ReportDelegatePaymentSe
 
 	@Autowired
 	private ReportDelegatePaymentRepository reportDelegatePaymentRepository;
-
-	@Autowired
-	private ProportionPaymentRepository proportionPaymentRepository;
 
 	ModelMapper mapper;
 
@@ -49,36 +43,6 @@ public class ReportDelegatePaymentServiceImpl implements ReportDelegatePaymentSe
 		ArrayList<ReportDelegatePaymentDto> rtn = new ArrayList<>();
 		source.stream().map((entity) -> {
 			ReportDelegatePaymentDto dto = new ReportDelegatePaymentDto();
-			mapper.map(entity, dto);
-			return dto;
-		}).forEachOrdered((dto) -> {
-			rtn.add(dto);
-		});
-		return rtn;
-	}
-
-	@Override
-	public List<ProportionPaymentDto> getProportionPayment(List<Long> lstCppId, String fromDate, String toDate) {
-		List<ProportionPaymentEntity> entities = proportionPaymentRepository.findByProportionPaymentEntity(lstCppId,
-				fromDate, toDate);
-		return this.map2(entities);
-	}
-
-	@Override
-	public ProportionPaymentDto getProportionPayment(long cppId, String fromDate, String toDate) {
-		ProportionPaymentDto objProportionPaymentDto = new ProportionPaymentDto();
-		ProportionPaymentEntity entities = proportionPaymentRepository.findByProportionPaymentEntity(cppId, fromDate,
-				toDate);
-		if (entities == null)
-			return null;
-		mapper.map(entities, objProportionPaymentDto);
-		return objProportionPaymentDto;
-	}
-
-	private List<ProportionPaymentDto> map2(List<ProportionPaymentEntity> source) {
-		ArrayList<ProportionPaymentDto> rtn = new ArrayList<>();
-		source.stream().map((entity) -> {
-			ProportionPaymentDto dto = new ProportionPaymentDto();
 			mapper.map(entity, dto);
 			return dto;
 		}).forEachOrdered((dto) -> {

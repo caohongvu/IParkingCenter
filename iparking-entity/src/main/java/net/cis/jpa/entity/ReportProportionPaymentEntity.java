@@ -11,23 +11,17 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "proportion_payment_view")
-public class ProportionPaymentEntity {
+@Table(name = "report_proportion_payment")
+public class ReportProportionPaymentEntity {
 	@Id
-	@Column(name = "id_uuid")
+	@Column(name = "id")
 	private String id;
 
 	@Column(name = "parking_code")
-	private String code;
+	private String parkingCode;
 
-	@Column(name = "cpp_id")
-	private long cppId;
-
-	@Column(name = "address")
-	private String address;
-
-	@Column(name = "capacity")
-	private String capacity;
+	@Column(name = "company")
+	private String company;
 
 	@Column(name = "revenue")
 	private double revenue;
@@ -53,19 +47,14 @@ public class ProportionPaymentEntity {
 	@Column(name = "cash")
 	private double cash;
 
-	@Column(name = "provider_id")
-	private int provider_id;
+	@Column(name = "parking_id")
+	private long parkingId;
+
+	@Column(name = "company_id")
+	private long companyId;
 
 	@Column(name = "day")
-	private String day;
-
-	public long getCppId() {
-		return cppId;
-	}
-
-	public void setCppId(long cppId) {
-		this.cppId = cppId;
-	}
+	private long day;
 
 	public String getId() {
 		return id;
@@ -73,30 +62,6 @@ public class ProportionPaymentEntity {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getCapacity() {
-		return capacity;
-	}
-
-	public void setCapacity(String capacity) {
-		this.capacity = capacity;
 	}
 
 	public double getRevenue() {
@@ -163,20 +128,44 @@ public class ProportionPaymentEntity {
 		this.cash = cash;
 	}
 
-	public int getProvider_id() {
-		return provider_id;
+	public long getParkingId() {
+		return parkingId;
 	}
 
-	public void setProvider_id(int provider_id) {
-		this.provider_id = provider_id;
+	public void setParkingId(long parkingId) {
+		this.parkingId = parkingId;
 	}
 
-	public String getDay() {
+	public long getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(long companyId) {
+		this.companyId = companyId;
+	}
+
+	public long getDay() {
 		return day;
 	}
 
-	public void setDay(String day) {
+	public void setDay(long day) {
 		this.day = day;
+	}
+
+	public String getParkingCode() {
+		return parkingCode;
+	}
+
+	public void setParkingCode(String parkingCode) {
+		this.parkingCode = parkingCode;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
 	}
 
 }
