@@ -49,14 +49,14 @@ public class AccountEndpoint extends BaseEndpoint {
 	}
 
 	// create Account User
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	@RequestMapping(value = "/create",headers = "Content-Type= multipart/form-data", method = RequestMethod.POST)
 	@ApiOperation("Create account user")
-	public @ResponseBody Object createAccountUser(@RequestParam(name = "username", required = true) String username,
-			@RequestParam(name = "fullname", required = true) String fullname,
-			@RequestParam(name = "email", required = true) String email,
+	public @ResponseBody Object createAccountUser(@RequestParam(name = "username", required = false) String username,
+			@RequestParam(name = "fullname", required = false) String fullname,
+			@RequestParam(name = "email", required = false) String email,
 			@RequestParam(name = "phone", required = false) String phone,
-			@RequestParam(name = "password", required = true) String password,
-			@RequestParam(name = "role", required = true) int role) throws Exception {
+			@RequestParam(name = "password", required = false) String password,
+			@RequestParam(name = "role", required = false) int role) throws Exception {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
@@ -77,6 +77,7 @@ public class AccountEndpoint extends BaseEndpoint {
 		userDto.setPassword(password);
 		userDto.setPhone(phone);
 		userDto.setEmail(email);
+		userDto.setRole(role);
 		endpoint = userService.save(userDto);
 
 		return endpoint;
@@ -108,6 +109,7 @@ public class AccountEndpoint extends BaseEndpoint {
 		userDto.setPhone(phone);
 		userDto.setEmail(email);
 		userDto.setId(id);
+		userDto.setRole(role);
 		
 		ResponseApi endpoint = userService.update(userDto);
 
