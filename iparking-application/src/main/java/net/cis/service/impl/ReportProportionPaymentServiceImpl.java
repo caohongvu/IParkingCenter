@@ -16,7 +16,6 @@ import net.cis.service.ReportProportionPaymentService;
 public class ReportProportionPaymentServiceImpl implements ReportProportionPaymentService {
 	@Autowired
 	private ReportProportionPaymentRepository proportionPaymentRepository;
-
 	ModelMapper mapper;
 
 	@PostConstruct
@@ -38,4 +37,5 @@ public class ReportProportionPaymentServiceImpl implements ReportProportionPayme
 				toDate);
 		return entities;
 	}
+
 }
