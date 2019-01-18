@@ -1,6 +1,8 @@
 package net.cis.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -353,6 +355,55 @@ public class UserServiceImpl implements UserService {
 		}
 		mapper.map(objUserEntity, objUserDto);
 		return objUserDto;
+	}
+
+	@Override
+	public ResponseApi findByUsername(HashSet<Integer> listIdUser, String username, String fullname) {
+		List<UserEntity> listEntity = new ArrayList<UserEntity>();
+		List<UserEntity> listByUsername = new ArrayList<UserEntity>();
+		List<UserEntity> listByFullname = new ArrayList<UserEntity>();
+
+
+		Iterator<Integer> userId = listIdUser.iterator();
+		
+		
+		ResponseApi respointApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+
+		while (userId.hasNext()) {
+			int userIdInt = userId.next();
+			System.out.println(userIdInt);
+			UserEntity entity = userRepository.findOne(userIdInt);
+			listEntity.add(entity);
+		}
+		
+		if (username == "") {
+			listByUsername = listEntity;
+		}else {
+			for(int i = 0 ; i< listEntity.size();i++) {
+				if(listEntity.get(i).getUsername().contains(username)) {
+					listByUsername.add(listEntity.get(i));
+				}
+			}
+		}
+		
+		if (fullname == "") {
+			listByFullname = listByUsername;
+		}else {
+			for(int i = 0 ; i< listByUsername.size();i++) {
+				if(listByUsername.get(i).getFullname().contains(fullname)) {
+					listByFullname.add(listByUsername.get(i));
+				}
+			}
+		}
+		
+		List<AccountUserDto> userDto = this.map(listByFullname);
+		
+		errorDto.setCode(200);
+		errorDto.setMessage("");
+		respointApi.setData(userDto);
+		respointApi.setError(errorDto);
+		return respointApi;
 	}
 
 }

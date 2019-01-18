@@ -1,5 +1,8 @@
 package net.cis.service;
 
+import java.util.HashSet;
+import java.util.List;
+
 import org.json.JSONException;
 import org.springframework.data.domain.Pageable;
 
@@ -16,6 +19,8 @@ public interface UserService {
 	UserEntity findByUsername(String username);
 	
 	ResponseApi update(UserDto userDto) throws JSONException;
+	
+	ResponseApi findByUsername(HashSet<Integer> listIdUser, String username, String fullname);
 
 	UserDto findUserById(int Id) ;
 }
