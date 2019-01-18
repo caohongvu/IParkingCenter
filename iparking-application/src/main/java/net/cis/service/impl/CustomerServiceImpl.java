@@ -115,10 +115,8 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<CustomerCarDto> findCustomerCarByNumberPlateAndVerified(String numberPlate, Integer verified)
-			throws Exception {
-		List<CustomerCarEntity> lstCustomerCarEntity = customerCarRepository
-				.findCustomerCarByNumberPlateAndVerified(numberPlate, verified);
+	public List<CustomerCarDto> findCustomerCarByNumberPlate(String numberPlate) throws Exception {
+		List<CustomerCarEntity> lstCustomerCarEntity = customerCarRepository.findCustomerCarByNumberPlate(numberPlate);
 		return this.map(lstCustomerCarEntity);
 	}
 
