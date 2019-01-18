@@ -8,7 +8,6 @@ public class CustomerCarDto {
 	private long customer;
 	private Date createdAt;
 	private Date updatedAt;
-	private int verified;
 
 	public Date getCreatedAt() {
 		return createdAt;
@@ -48,14 +47,6 @@ public class CustomerCarDto {
 
 	public void setCustomer(long customer) {
 		this.customer = customer;
-	}
-
-	public int getVerified() {
-		return verified;
-	}
-
-	public void setVerified(int verified) {
-		this.verified = verified;
 	}
 
 }

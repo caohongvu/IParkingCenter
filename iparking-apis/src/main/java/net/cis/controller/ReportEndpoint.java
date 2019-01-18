@@ -33,9 +33,9 @@ import net.cis.dto.ParkingContractDto;
 import net.cis.dto.ParkingDto;
 import net.cis.dto.ParkingInfoDto;
 import net.cis.dto.PerformanceExtractionDto;
-import net.cis.dto.ReportProportionPaymentDto;
 import net.cis.dto.ReportDailyPaymentDto;
 import net.cis.dto.ReportMonthlyPaymentDto;
+import net.cis.dto.ReportProportionPaymentDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.DailyTicketPaymentCriteria;
 import net.cis.jpa.criteria.MonthlyTicketPaymentCriteria;
@@ -438,7 +438,7 @@ public class ReportEndpoint {
 	}
 
 	/**
-	 * liemnh
+	 * liemnh Tinh toan hieu suat khai thac
 	 * 
 	 * @param request
 	 * @param cppCode
@@ -620,13 +620,15 @@ public class ReportEndpoint {
 			objResult.setParkingId(item.getParkingId());
 			objResult.setCompanyId(item.getCompanyId());
 			objResult.setRevenue(item.getRevenue());
-			objResult.setAtm((item.getAtm() / item.getRevenue()) * 100);
+			objResult.setCard(((item.getAtm() + item.getVisa_master_kh()) / item.getRevenue()) * 100);
 			objResult.setSms((item.getSms() / item.getRevenue()) * 100);
 			objResult.setBalance((item.getBalance() / item.getRevenue()) * 100);
-			objResult.setBalance_tth((item.getBalance_tth() / item.getRevenue()) * 100);
-			objResult.setVisa_master_tth((item.getVisa_master_tth() / item.getRevenue()) * 100);
-			objResult.setVisa_master_kh((item.getVisa_master_kh() / item.getRevenue()) * 100);
-			objResult.setCash((item.getCash() / item.getRevenue()) * 100);
+			objResult.setDelegatePayment(
+					((item.getBalance_tth() + item.getVisa_master_tth()) / item.getRevenue()) * 100);
+
+			objResult.setBalance_tth(null);
+			objResult.setVisa_master_kh(null);
+			objResult.setVisa_master_tth(null);
 			objResult.setAddress(item.getAddress());
 			objResult.setCapacity(item.getCapacity());
 			result.add(objResult);
@@ -787,4 +789,5 @@ public class ReportEndpoint {
 			return responseApi;
 		}
 	}
+
 }

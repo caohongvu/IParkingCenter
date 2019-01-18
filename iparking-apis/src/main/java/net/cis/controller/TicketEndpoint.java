@@ -164,7 +164,7 @@ public class TicketEndpoint extends BaseEndpoint {
 			to = Calendar.getInstance().getTimeInMillis();
 		}
 		Date toDate = new Date(to);
-		if(from == null) {
+		if (from == null) {
 			Calendar currentTime = Calendar.getInstance();
 			currentTime.set(Calendar.MONTH, -1);
 			from = currentTime.getTimeInMillis();
@@ -209,8 +209,6 @@ public class TicketEndpoint extends BaseEndpoint {
 
 		return tickets;
 	}
-
-
 
 	@RequestMapping(value = "/session-out/", method = RequestMethod.POST)
 	@ApiOperation("Update ticket for session out")
@@ -314,15 +312,7 @@ public class TicketEndpoint extends BaseEndpoint {
 					// thuc hien tim kiem customer car
 					CustomerCarDto objCustomerCarDto = customerService
 							.findCustomerCarByNumberPlateAndCusId(carNumberPlate, objCustomerDto.getOldId());
-					if (objCustomerCarDto != null) {
-						// thuc hien set customer_car khac verified =0
-						customerService.updateCustomerCarListByNumberPlate(carNumberPlate,
-								UserConstant.STATUS_NOT_VERIFIED);
-						// thuc hien cap nhat ve verified =1
-						objCustomerCarDto.setVerified(UserConstant.STATUS_VERIFIED);
-						customerService.saveCustomerCarEntity(objCustomerCarDto);
-
-					} else {
+					if (objCustomerCarDto == null) {
 						// thuc hien tao moi customer_car với verified = 1
 						Map<String, Object> resultCreateCustomerCar = customerService
 								.saveCustomerCarInPoseidonDb(objCustomerDto.getOldId(), carNumberPlate, carType);
@@ -338,7 +328,6 @@ public class TicketEndpoint extends BaseEndpoint {
 						objCustomerCarDto.setCustomer((long) resultCreateCustomerCar.get("cus_id"));
 						objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 						objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
-						objCustomerCarDto.setVerified(UserConstant.STATUS_VERIFIED);
 						customerService.saveCustomerCarEntity(objCustomerCarDto);
 					}
 				}
@@ -368,12 +357,13 @@ public class TicketEndpoint extends BaseEndpoint {
 					objCustomerDtoSave.setStatus((int) resultCreateCustomer.get("Status"));
 					objCustomerDtoSave.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 					objCustomerDtoSave.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+					objCustomerDtoSave.setVerifyPhone(UserConstant.STATUS_NOT_VERIFIED);
 					objCustomerDto = customerService.saveCustomerInIparkingCenter(objCustomerDtoSave);
 				}
 				// kiem tra send OTP
 				boolean sendOtp = Boolean.FALSE;
 				// check sendOTP by customerId and numberPlate
-				sendOtp = customerService.checkCustomerCarSendOtp(carNumberPlate, customerId);
+				sendOtp = objCustomerDto.getVerifyPhone() == 0 ? Boolean.FALSE : Boolean.TRUE;
 				if (sendOtp) {
 					// thuc hien gui OTP cho khách hàng
 					String codeOtp = Utils.createRandomNumber(6);
