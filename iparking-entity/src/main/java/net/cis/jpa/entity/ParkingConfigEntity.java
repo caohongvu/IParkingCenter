@@ -47,6 +47,17 @@ public class ParkingConfigEntity {
 	@Column(name = "last_date_run")
 	private Date lastDateRun;
 
+	@Column(name = "parking_config_type_id")
+	private long parkingConfigTypeId;
+
+	public long getParkingConfigTypeId() {
+		return parkingConfigTypeId;
+	}
+
+	public void setParkingConfigTypeId(long parkingConfigTypeId) {
+		this.parkingConfigTypeId = parkingConfigTypeId;
+	}
+
 	public String getParkingCode() {
 		return parkingCode;
 	}
