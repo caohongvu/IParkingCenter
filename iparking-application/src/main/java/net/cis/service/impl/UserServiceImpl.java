@@ -1,6 +1,8 @@
 package net.cis.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -243,7 +245,7 @@ public class UserServiceImpl implements UserService {
 	public ResponseApi update(UserDto userDto) throws JSONException {
 
 		String updateUserURL = "https://admapi.live.iparkingstg.com/p/update/account";
-		//String updateUserURL = "http://localhost:8800/p/update/account";
+		// String updateUserURL = "http://localhost:8800/p/update/account";
 
 		List<NameValuePair> formParams = new ArrayList<>();
 
@@ -281,7 +283,6 @@ public class UserServiceImpl implements UserService {
 		String responseContent = RestfulUtil.postFormData(updateUserURL, formParams,
 				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 		JSONObject jsonObject = new JSONObject(responseContent);
-		
 
 		String error = jsonObject.getJSONObject("Error").getString("Code");
 		String message = jsonObject.getJSONObject("Error").getString("Message");
@@ -343,6 +344,55 @@ public class UserServiceImpl implements UserService {
 
 		}
 
+		return respointApi;
+	}
+
+	@Override
+	public ResponseApi findByUsername(HashSet<Integer> listIdUser, String username, String fullname) {
+		List<UserEntity> listEntity = new ArrayList<UserEntity>();
+		List<UserEntity> listByUsername = new ArrayList<UserEntity>();
+		List<UserEntity> listByFullname = new ArrayList<UserEntity>();
+
+
+		Iterator<Integer> userId = listIdUser.iterator();
+		
+		
+		ResponseApi respointApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+
+		while (userId.hasNext()) {
+			int userIdInt = userId.next();
+			System.out.println(userIdInt);
+			UserEntity entity = userRepository.findOne(userIdInt);
+			listEntity.add(entity);
+		}
+		
+		if (username == "") {
+			listByUsername = listEntity;
+		}else {
+			for(int i = 0 ; i< listEntity.size();i++) {
+				if(listEntity.get(i).getUsername().contains(username)) {
+					listByUsername.add(listEntity.get(i));
+				}
+			}
+		}
+		
+		if (fullname == "") {
+			listByFullname = listByUsername;
+		}else {
+			for(int i = 0 ; i< listByUsername.size();i++) {
+				if(listByUsername.get(i).getFullname().contains(fullname)) {
+					listByFullname.add(listByUsername.get(i));
+				}
+			}
+		}
+		
+		List<AccountUserDto> userDto = this.map(listByFullname);
+		
+		errorDto.setCode(200);
+		errorDto.setMessage("");
+		respointApi.setData(userDto);
+		respointApi.setError(errorDto);
 		return respointApi;
 	}
 

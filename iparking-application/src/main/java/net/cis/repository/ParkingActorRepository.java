@@ -12,5 +12,7 @@ import net.cis.jpa.entity.ParkingActorEntity;
 public interface ParkingActorRepository  extends JpaRepository<ParkingActorEntity, Long> {
 	
 	List<ParkingActorEntity> findByActor(long actorId);
+	List<ParkingActorEntity> findByCppId(long cppId);
+	
 
 }

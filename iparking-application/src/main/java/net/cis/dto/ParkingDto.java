@@ -140,6 +140,10 @@ public class ParkingDto {
 		this.oldId = oldId;
 	}
 	 
-	 
+	 @Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return id.hashCode();
+	}
 	
 }
