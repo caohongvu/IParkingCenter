@@ -1,29 +1,73 @@
 package net.cis.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ReportProportionPaymentDto {
 	private String id;
-	private String parkingCode;
-	private String company;
-	private double revenue;
-	private double atm;
-	private double sms;
-	private double balance;
-	private double balance_tth;
-	private double visa_master_kh;
-	private double visa_master_tth;
-	private double cash;
-	private long parkingId;
-	private long companyId;
 
+	@JsonProperty("code")
+	private String parkingCode;
+	@JsonProperty("company")
+	private String company;
+	@JsonInclude(Include.NON_NULL)
+	private Double revenue;
+	@JsonInclude(Include.NON_NULL)
+	private Double atm;
+	@JsonInclude(Include.NON_NULL)
+	private Double sms;
+	@JsonInclude(Include.NON_NULL)
+	@JsonProperty("balance")
+	private Double balance;
+	@JsonInclude(Include.NON_NULL)
+	private Double balance_tth;
+	@JsonInclude(Include.NON_NULL)
+	private Double visa_master_kh;
+	@JsonInclude(Include.NON_NULL)
+	private Double visa_master_tth;
+	@JsonInclude(Include.NON_NULL)
+	private Double cash;
+
+	// them field gui ve client
+	@JsonProperty("card")
+	@JsonInclude(Include.NON_NULL)
+	private Double card;
+	@JsonProperty("delegate_payment")
+	@JsonInclude(Include.NON_NULL)
+	private Double delegatePayment;
+
+	@JsonProperty("cpp_id")
+	private long parkingId;
+	@JsonProperty("company_id")
+	private long companyId;
+	@JsonProperty("address")
 	private String address;
+	@JsonProperty("capacity")
 	private int capacity;
+
+	public Double getCard() {
+		return card;
+	}
+
+	public void setCard(Double card) {
+		this.card = card;
+	}
+
+	public Double getDelegatePayment() {
+		return delegatePayment;
+	}
+
+	public void setDelegatePayment(Double delegatePayment) {
+		this.delegatePayment = delegatePayment;
+	}
 
 	public ReportProportionPaymentDto() {
 		super();
 	}
 
-	public ReportProportionPaymentDto(String id, String parkingCode, String company, double revenue, double atm,
-			double sms, double balance, double balance_tth, double visa_master_kh, double visa_master_tth, double cash,
+	public ReportProportionPaymentDto(String id, String parkingCode, String company, Double revenue, Double atm,
+			Double sms, Double balance, Double balance_tth, Double visa_master_kh, Double visa_master_tth, Double cash,
 			long parkingId, long companyId, String address, int capacity) {
 		super();
 		this.id = id;
@@ -67,67 +111,67 @@ public class ReportProportionPaymentDto {
 		this.id = id;
 	}
 
-	public double getRevenue() {
+	public Double getRevenue() {
 		return revenue;
 	}
 
-	public void setRevenue(double revenue) {
+	public void setRevenue(Double revenue) {
 		this.revenue = revenue;
 	}
 
-	public double getAtm() {
+	public Double getAtm() {
 		return atm;
 	}
 
-	public void setAtm(double atm) {
+	public void setAtm(Double atm) {
 		this.atm = atm;
 	}
 
-	public double getSms() {
+	public Double getSms() {
 		return sms;
 	}
 
-	public void setSms(double sms) {
+	public void setSms(Double sms) {
 		this.sms = sms;
 	}
 
-	public double getBalance() {
+	public Double getBalance() {
 		return balance;
 	}
 
-	public void setBalance(double balance) {
+	public void setBalance(Double balance) {
 		this.balance = balance;
 	}
 
-	public double getBalance_tth() {
+	public Double getBalance_tth() {
 		return balance_tth;
 	}
 
-	public void setBalance_tth(double balance_tth) {
+	public void setBalance_tth(Double balance_tth) {
 		this.balance_tth = balance_tth;
 	}
 
-	public double getVisa_master_kh() {
+	public Double getVisa_master_kh() {
 		return visa_master_kh;
 	}
 
-	public void setVisa_master_kh(double visa_master_kh) {
+	public void setVisa_master_kh(Double visa_master_kh) {
 		this.visa_master_kh = visa_master_kh;
 	}
 
-	public double getVisa_master_tth() {
+	public Double getVisa_master_tth() {
 		return visa_master_tth;
 	}
 
-	public void setVisa_master_tth(double visa_master_tth) {
+	public void setVisa_master_tth(Double visa_master_tth) {
 		this.visa_master_tth = visa_master_tth;
 	}
 
-	public double getCash() {
+	public Double getCash() {
 		return cash;
 	}
 
-	public void setCash(double cash) {
+	public void setCash(Double cash) {
 		this.cash = cash;
 	}
 
