@@ -26,8 +26,74 @@ public class ParkingConfigEntity {
 	@Column(name = "config_description")
 	private String configDescription;
 
+	@Column(name = "parking_code")
+	private String parkingCode;
+
+	@Column(name = "parking_id")
+	private long parkingId;
+
+	@Column(name = "company")
+	private String company;
+
+	@Column(name = "company_id")
+	private long companyId;
+
+	@Column(name = "created_at")
+	private Date createdAt;
+
+	@Column(name = "updated_at")
+	private Date updatedAt;
+
 	@Column(name = "last_date_run")
 	private Date lastDateRun;
+
+	public String getParkingCode() {
+		return parkingCode;
+	}
+
+	public void setParkingCode(String parkingCode) {
+		this.parkingCode = parkingCode;
+	}
+
+	public long getParkingId() {
+		return parkingId;
+	}
+
+	public void setParkingId(long parkingId) {
+		this.parkingId = parkingId;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	public long getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(long companyId) {
+		this.companyId = companyId;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 
 	public long getId() {
 		return id;

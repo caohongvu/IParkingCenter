@@ -1,5 +1,6 @@
 package net.cis.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,7 +18,6 @@ import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.MessageUtil;
 import net.cis.common.util.Utils;
-import net.cis.common.util.constant.UserConstant;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
@@ -58,10 +58,13 @@ public class CustomerEndpoint {
 				return responseDto;
 			}
 			// thuc hien lay thong tin customer tu bien so xe
-			List<CustomerCarDto> lstCustomerCarDto = customerService
-					.findCustomerCarByNumberPlateAndVerified(numberPlate, UserConstant.STATUS_VERIFIED);
-			if (lstCustomerCarDto != null && lstCustomerCarDto.size() == 1) {
-				CustomerCarDto objCustomerCarDto = lstCustomerCarDto.get(0);
+			List<CustomerCarDto> lstCustomerCarDto = customerService.findCustomerCarByNumberPlate(numberPlate);
+
+			if (lstCustomerCarDto == null || lstCustomerCarDto.size() == 0) {
+				return responseDto;
+			}
+			List<Object> lstResult = new ArrayList<Object>();
+			for (CustomerCarDto objCustomerCarDto : lstCustomerCarDto) {
 				CustomerInfoDto objCustomerInfoDto = customerService
 						.findCustomerInfoByCusId(objCustomerCarDto.getCustomer());
 				CustomerDto objCustomerDto = customerService.findCustomerByOldId(objCustomerCarDto.getCustomer());
@@ -73,9 +76,9 @@ public class CustomerEndpoint {
 					public String numberPlate = objCustomerCarDto.getNumberPlate();
 					public String email = objCustomerInfoDto.getEmail();
 				};
-				responseDto.setData(dataObject);
-				return responseDto;
+				lstResult.add(dataObject);
 			}
+			responseDto.setData(lstResult);
 			return responseDto;
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
@@ -230,13 +233,13 @@ public class CustomerEndpoint {
 		ResponseDto responseDto = new ResponseDto();
 		responseDto.setCode(HttpStatus.OK.toString());
 		try {
-			//kiem tra so dien thoai 
-			if(!Utils.validateVNPhoneNumber(phone)){
+			// kiem tra so dien thoai
+			if (!Utils.validateVNPhoneNumber(phone)) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 				responseDto.setMessage("Phone Malformed");
 				return responseDto;
 			}
-			
+
 			CustomerDto objCustomerDto = customerService.findCustomerByOldId(old_id);
 			if (objCustomerDto != null) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
