@@ -59,6 +59,7 @@ public class CustomerEndpoint {
 			if (!Utils.validateNumberPlate(numberPlate)) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage("Biển số xe sai định dạng");
+				responseDto.setError(errorDto);
 				return responseDto;
 			}
 			// thuc hien lay thong tin customer tu bien so xe
@@ -83,11 +84,13 @@ public class CustomerEndpoint {
 				lstResult.add(dataObject);
 			}
 			responseDto.setData(lstResult);
+			responseDto.setError(errorDto);
 			return responseDto;
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage(ex.getMessage());
+			responseDto.setError(errorDto);
 			return responseDto;
 		}
 

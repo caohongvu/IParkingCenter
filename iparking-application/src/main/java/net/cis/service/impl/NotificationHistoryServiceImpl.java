@@ -43,7 +43,7 @@ public class NotificationHistoryServiceImpl implements NotificationHistoryServic
 	public List<NotificationHistoryDto> findAllByCreatedBy(long createdBy) {
 		List<NotificationHistoryEntity> ticketEntities = null;
 		ticketEntities = notificationHistoryRepository.findByCreatedBy(createdBy);
-		List<NotificationHistoryDto> ticketDtos = this.map(ticketEntities,createdBy);
+		List<NotificationHistoryDto> ticketDtos = this.map(ticketEntities, createdBy);
 		return ticketDtos;
 	}
 
@@ -53,7 +53,8 @@ public class NotificationHistoryServiceImpl implements NotificationHistoryServic
 		source.stream().map((entity) -> {
 			NotificationHistoryDto dto = new NotificationHistoryDto();
 			mapper.map(entity, dto);
-			dto.setCreatedByName(objUserDto.getFullname());
+			dto.setCreatedByFullName(objUserDto.getFullname());
+			dto.setCreatedByUserName(objUserDto.getUsername());
 			return dto;
 		}).forEachOrdered((dto) -> {
 			rtn.add(dto);

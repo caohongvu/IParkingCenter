@@ -8,15 +8,24 @@ public class NotificationHistoryDto {
 	private int type;
 	private Date createdAt;
 	private long createdBy;
-	private String createdByName;
+	private String createdByUserName;
+	private String createdByFullName;
 	private String sended;
 
-	public String getCreatedByName() {
-		return createdByName;
+	public String getCreatedByFullName() {
+		return createdByFullName;
 	}
 
-	public void setCreatedByName(String createdByName) {
-		this.createdByName = createdByName;
+	public void setCreatedByFullName(String createdByFullName) {
+		this.createdByFullName = createdByFullName;
+	}
+
+	public String getCreatedByUserName() {
+		return createdByUserName;
+	}
+
+	public void setCreatedByUserName(String createdByUserName) {
+		this.createdByUserName = createdByUserName;
 	}
 
 	public String getSended() {
