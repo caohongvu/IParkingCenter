@@ -12,11 +12,12 @@ import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.cis.common.util.MessageUtil;
+import net.cis.common.util.Utils;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.AccountUserDto;
 import net.cis.dto.ErrorDto;
@@ -30,8 +31,6 @@ import net.cis.repository.UserRepository;
 import net.cis.repository.UserSecurityRepository;
 import net.cis.service.UserService;
 import net.cis.utils.RestfulUtil;
-import net.cis.common.util.MessageUtil;
-import net.cis.common.util.Utils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -243,7 +242,7 @@ public class UserServiceImpl implements UserService {
 	public ResponseApi update(UserDto userDto) throws JSONException {
 
 		String updateUserURL = "https://admapi.live.iparkingstg.com/p/update/account";
-		//String updateUserURL = "http://localhost:8800/p/update/account";
+		// String updateUserURL = "http://localhost:8800/p/update/account";
 
 		List<NameValuePair> formParams = new ArrayList<>();
 
@@ -281,7 +280,6 @@ public class UserServiceImpl implements UserService {
 		String responseContent = RestfulUtil.postFormData(updateUserURL, formParams,
 				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 		JSONObject jsonObject = new JSONObject(responseContent);
-		
 
 		String error = jsonObject.getJSONObject("Error").getString("Code");
 		String message = jsonObject.getJSONObject("Error").getString("Message");
@@ -344,6 +342,17 @@ public class UserServiceImpl implements UserService {
 		}
 
 		return respointApi;
+	}
+
+	@Override
+	public UserDto findUserById(int Id) {
+		UserDto objUserDto = new UserDto();
+		UserEntity objUserEntity = userRepository.findOne(Id);
+		if (objUserEntity == null) {
+			return null;
+		}
+		mapper.map(objUserEntity, objUserDto);
+		return objUserDto;
 	}
 
 }

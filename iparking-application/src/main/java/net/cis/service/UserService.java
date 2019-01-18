@@ -2,6 +2,7 @@ package net.cis.service;
 
 import org.json.JSONException;
 import org.springframework.data.domain.Pageable;
+
 import net.cis.dto.ResponseApi;
 import net.cis.dto.UserDto;
 import net.cis.jpa.entity.UserEntity;
@@ -16,5 +17,5 @@ public interface UserService {
 	
 	ResponseApi update(UserDto userDto) throws JSONException;
 
-
+	UserDto findUserById(int Id) ;
 }

@@ -18,9 +18,12 @@ import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.MessageUtil;
 import net.cis.common.util.Utils;
+import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
+import net.cis.dto.ErrorDto;
+import net.cis.dto.ResponseApi;
 import net.cis.dto.ResponseDto;
 import net.cis.repository.CustomerInfoRepository;
 import net.cis.service.CustomerService;
@@ -48,13 +51,14 @@ public class CustomerEndpoint {
 	 */
 	@RequestMapping(value = "/find-by-numberplate", method = RequestMethod.GET)
 	@ApiOperation("Get detail customer by numberplate")
-	public @ResponseBody ResponseDto getById(@RequestParam(name = "numberPlate") String numberPlate) {
-		ResponseDto responseDto = new ResponseDto();
-		responseDto.setCode(HttpStatus.OK.toString());
+	public @ResponseBody ResponseApi getById(@RequestParam(name = "numberPlate") String numberPlate) {
+		ResponseApi responseDto = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		try {
 			if (!Utils.validateNumberPlate(numberPlate)) {
-				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage("Biển số xe sai định dạng");
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Biển số xe sai định dạng");
 				return responseDto;
 			}
 			// thuc hien lay thong tin customer tu bien so xe
@@ -82,8 +86,8 @@ public class CustomerEndpoint {
 			return responseDto;
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
-			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-			responseDto.setMessage(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
 			return responseDto;
 		}
 
