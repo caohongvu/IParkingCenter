@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.cis.dto.ReportProportionPaymentDto;
-import net.cis.jpa.entity.ReportProportionPaymentEntity;
 import net.cis.repository.ReportProportionPaymentRepository;
 import net.cis.service.ReportProportionPaymentService;
 
@@ -17,7 +16,6 @@ import net.cis.service.ReportProportionPaymentService;
 public class ReportProportionPaymentServiceImpl implements ReportProportionPaymentService {
 	@Autowired
 	private ReportProportionPaymentRepository proportionPaymentRepository;
-
 	ModelMapper mapper;
 
 	@PostConstruct
@@ -28,19 +26,16 @@ public class ReportProportionPaymentServiceImpl implements ReportProportionPayme
 
 	@Override
 	public List<ReportProportionPaymentDto> getProportionPayment(List<Long> lstCppId, long fromDate, long toDate) {
-		List<ReportProportionPaymentDto> entities = proportionPaymentRepository
-				.findByProportionPaymentEntity(lstCppId, fromDate, toDate);
+		List<ReportProportionPaymentDto> entities = proportionPaymentRepository.findByProportionPaymentEntity(lstCppId,
+				fromDate, toDate);
 		return entities;
 	}
 
 	@Override
 	public ReportProportionPaymentDto getProportionPayment(long cppId, long fromDate, long toDate) {
-		ReportProportionPaymentDto objProportionPaymentDto = new ReportProportionPaymentDto();
-		ReportProportionPaymentEntity entities = proportionPaymentRepository.findByProportionPaymentEntity(cppId,
-				fromDate, toDate);
-		if (entities == null)
-			return null;
-		mapper.map(entities, objProportionPaymentDto);
-		return objProportionPaymentDto;
+		ReportProportionPaymentDto entities = proportionPaymentRepository.findByProportionPaymentEntity(cppId, fromDate,
+				toDate);
+		return entities;
 	}
+
 }

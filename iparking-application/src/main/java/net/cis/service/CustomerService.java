@@ -14,7 +14,7 @@ public interface CustomerService {
 
 	CustomerDto saveCustomerInIparkingCenter(CustomerDto customerDto);
 
-	List<CustomerCarDto> findCustomerCarByNumberPlateAndVerified(String numberPlate, Integer verified) throws Exception;
+	List<CustomerCarDto> findCustomerCarByNumberPlate(String numberPlate) throws Exception;
 
 	void updateCustomerCarListByNumberPlate(String numberPlate, Integer verified) throws Exception;
 

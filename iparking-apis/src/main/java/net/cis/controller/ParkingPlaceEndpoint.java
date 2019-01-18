@@ -44,7 +44,7 @@ public class ParkingPlaceEndpoint {
 
 	@Autowired
 	TicketService ticketService;
-	
+
 	@Autowired
 	CompanyInfoCache companyInfoCache;
 
@@ -60,7 +60,7 @@ public class ParkingPlaceEndpoint {
 		parkingDto.setCurrentTicketInSession(ticketsInsession.size());
 		CompanyInforEntity companyEntity = companyInfoCache.get(parkingDto.getCompany());
 		boolean isProvideEInvoice = false;
-		if(companyEntity != null && (companyEntity.getDailyInvoice() == 1 || companyEntity.getMonthlyInvoice() == 1)) {
+		if (companyEntity != null && (companyEntity.getDailyInvoice() == 1 || companyEntity.getMonthlyInvoice() == 1)) {
 			isProvideEInvoice = true;
 		}
 		parkingDto.setIsProvideEInvoice(isProvideEInvoice);
@@ -122,12 +122,13 @@ public class ParkingPlaceEndpoint {
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
 
 	}
-	
+
 	@RequestMapping(value = "/by_company_id", method = RequestMethod.GET)
 	@ApiOperation("Get PP by Company Id")
 	public ResponseApi getParkingPlace(HttpServletRequest request, @RequestParam("id") Long id) {

@@ -1,5 +1,6 @@
 package net.cis.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,7 +18,6 @@ import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.MessageUtil;
 import net.cis.common.util.Utils;
-import net.cis.common.util.constant.UserConstant;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
@@ -58,10 +58,13 @@ public class CustomerEndpoint {
 				return responseDto;
 			}
 			// thuc hien lay thong tin customer tu bien so xe
-			List<CustomerCarDto> lstCustomerCarDto = customerService
-					.findCustomerCarByNumberPlateAndVerified(numberPlate, UserConstant.STATUS_VERIFIED);
-			if (lstCustomerCarDto != null && lstCustomerCarDto.size() == 1) {
-				CustomerCarDto objCustomerCarDto = lstCustomerCarDto.get(0);
+			List<CustomerCarDto> lstCustomerCarDto = customerService.findCustomerCarByNumberPlate(numberPlate);
+
+			if (lstCustomerCarDto == null || lstCustomerCarDto.size() == 0) {
+				return responseDto;
+			}
+			List<Object> lstResult = new ArrayList<Object>();
+			for (CustomerCarDto objCustomerCarDto : lstCustomerCarDto) {
 				CustomerInfoDto objCustomerInfoDto = customerService
 						.findCustomerInfoByCusId(objCustomerCarDto.getCustomer());
 				CustomerDto objCustomerDto = customerService.findCustomerByOldId(objCustomerCarDto.getCustomer());
@@ -73,9 +76,9 @@ public class CustomerEndpoint {
 					public String numberPlate = objCustomerCarDto.getNumberPlate();
 					public String email = objCustomerInfoDto.getEmail();
 				};
-				responseDto.setData(dataObject);
-				return responseDto;
+				lstResult.add(dataObject);
 			}
+			responseDto.setData(lstResult);
 			return responseDto;
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
@@ -204,6 +207,65 @@ public class CustomerEndpoint {
 				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_NOT_EXITS);
 				return responseDto;
 			}
+		} catch (Exception ex) {
+			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			return responseDto;
+		}
+	}
+
+	/**
+	 * liemnh
+	 * 
+	 * @param cusId
+	 * @param email
+	 * @param verificationCode
+	 * @param status
+	 * @return
+	 */
+	@RequestMapping(value = "/customer-create", method = RequestMethod.POST)
+	@ApiOperation("Create or update customer info")
+	public @ResponseBody ResponseDto createCustomer(@RequestParam(name = "phone") String phone,
+			@RequestParam(name = "telco") String telco, @RequestParam(name = "password") String password,
+			@RequestParam(name = "status_reason") String status_reason,
+			@RequestParam(name = "checksum") String checkSum, @RequestParam(name = "status") int status,
+			@RequestParam(name = "old_id") long old_id) {
+		ResponseDto responseDto = new ResponseDto();
+		responseDto.setCode(HttpStatus.OK.toString());
+		try {
+			// kiem tra so dien thoai
+			if (!Utils.validateVNPhoneNumber(phone)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Phone Malformed");
+				return responseDto;
+			}
+
+			CustomerDto objCustomerDto = customerService.findCustomerByOldId(old_id);
+			if (objCustomerDto != null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Customer exits");
+				return responseDto;
+			}
+
+			objCustomerDto = customerService.findByPhone2(phone);
+			if (objCustomerDto != null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Customer by phone exits");
+				return responseDto;
+			}
+			objCustomerDto = new CustomerDto();
+			objCustomerDto.setPhone(phone);
+			objCustomerDto.setPhone2(phone);
+			objCustomerDto.setTelco(telco);
+			objCustomerDto.setPassword(password.getBytes());
+			objCustomerDto.setCheckSum(checkSum);
+			objCustomerDto.setStatus(status);
+			objCustomerDto.setOldId(old_id);
+			objCustomerDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerDto = customerService.saveCustomerInIparkingCenter(objCustomerDto);
+			responseDto.setData(objCustomerDto);
+			return responseDto;
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
 			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
