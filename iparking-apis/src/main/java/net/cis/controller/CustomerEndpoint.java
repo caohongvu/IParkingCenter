@@ -211,4 +211,63 @@ public class CustomerEndpoint {
 		}
 	}
 
+	/**
+	 * liemnh
+	 * 
+	 * @param cusId
+	 * @param email
+	 * @param verificationCode
+	 * @param status
+	 * @return
+	 */
+	@RequestMapping(value = "/customer-create", method = RequestMethod.POST)
+	@ApiOperation("Create or update customer info")
+	public @ResponseBody ResponseDto createCustomer(@RequestParam(name = "phone") String phone,
+			@RequestParam(name = "telco") String telco, @RequestParam(name = "password") String password,
+			@RequestParam(name = "status_reason") String status_reason,
+			@RequestParam(name = "checksum") String checkSum, @RequestParam(name = "status") int status,
+			@RequestParam(name = "old_id") long old_id) {
+		ResponseDto responseDto = new ResponseDto();
+		responseDto.setCode(HttpStatus.OK.toString());
+		try {
+			//kiem tra so dien thoai 
+			if(!Utils.validateVNPhoneNumber(phone)){
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Phone Malformed");
+				return responseDto;
+			}
+			
+			CustomerDto objCustomerDto = customerService.findCustomerByOldId(old_id);
+			if (objCustomerDto != null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Customer exits");
+				return responseDto;
+			}
+
+			objCustomerDto = customerService.findByPhone2(phone);
+			if (objCustomerDto != null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Customer by phone exits");
+				return responseDto;
+			}
+			objCustomerDto = new CustomerDto();
+			objCustomerDto.setPhone(phone);
+			objCustomerDto.setPhone2(phone);
+			objCustomerDto.setTelco(telco);
+			objCustomerDto.setPassword(password.getBytes());
+			objCustomerDto.setCheckSum(checkSum);
+			objCustomerDto.setStatus(status);
+			objCustomerDto.setOldId(old_id);
+			objCustomerDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerDto = customerService.saveCustomerInIparkingCenter(objCustomerDto);
+			responseDto.setData(objCustomerDto);
+			return responseDto;
+		} catch (Exception ex) {
+			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			return responseDto;
+		}
+	}
+
 }

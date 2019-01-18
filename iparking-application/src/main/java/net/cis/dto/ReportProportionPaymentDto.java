@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ReportProportionPaymentDto {
 	private String id;
-
 	@JsonProperty("code")
 	private String parkingCode;
 	@JsonProperty("company")

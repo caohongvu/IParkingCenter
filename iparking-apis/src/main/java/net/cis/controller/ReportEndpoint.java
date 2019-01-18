@@ -33,9 +33,9 @@ import net.cis.dto.ParkingContractDto;
 import net.cis.dto.ParkingDto;
 import net.cis.dto.ParkingInfoDto;
 import net.cis.dto.PerformanceExtractionDto;
-import net.cis.dto.ReportProportionPaymentDto;
 import net.cis.dto.ReportDailyPaymentDto;
 import net.cis.dto.ReportMonthlyPaymentDto;
+import net.cis.dto.ReportProportionPaymentDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.DailyTicketPaymentCriteria;
 import net.cis.jpa.criteria.MonthlyTicketPaymentCriteria;
@@ -438,8 +438,8 @@ public class ReportEndpoint {
 	}
 
 	/**
-	 * liemnh
-	 * Tinh toan hieu suat khai thac
+	 * liemnh Tinh toan hieu suat khai thac
+	 * 
 	 * @param request
 	 * @param cppCode
 	 * @param fromDate
@@ -623,8 +623,9 @@ public class ReportEndpoint {
 			objResult.setCard(((item.getAtm() + item.getVisa_master_kh()) / item.getRevenue()) * 100);
 			objResult.setSms((item.getSms() / item.getRevenue()) * 100);
 			objResult.setBalance((item.getBalance() / item.getRevenue()) * 100);
-			objResult.setDelegatePayment(((item.getBalance_tth() + item.getVisa_master_tth()) / item.getRevenue()) * 100);
-			
+			objResult.setDelegatePayment(
+					((item.getBalance_tth() + item.getVisa_master_tth()) / item.getRevenue()) * 100);
+
 			objResult.setBalance_tth(null);
 			objResult.setVisa_master_kh(null);
 			objResult.setVisa_master_tth(null);
@@ -788,4 +789,5 @@ public class ReportEndpoint {
 			return responseApi;
 		}
 	}
+
 }
