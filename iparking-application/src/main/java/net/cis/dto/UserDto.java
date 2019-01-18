@@ -16,13 +16,16 @@ public class UserDto {
 	private String email;
 	private String phone;
 	private String recovery;
-		
+	private int role;
 	
 	
 	
-	
-	
-	
+	public int getRole() {
+		return role;
+	}
+	public void setRole(int role) {
+		this.role = role;
+	}
 	public String getRecovery() {
 		return recovery;
 	}
