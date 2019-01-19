@@ -1,35 +1,13 @@
-package net.cis.jpa.entity;
+package net.cis.dto;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "parking_config_type")
-public class ParkingConfigTypeEntity {
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ParkingConfigTypeDto {
 	private long id;
-
-	@Column(name = "name")
 	private String name;
-
-	@Column(name = "desscription")
 	private String desscription;
-
-	@Column(name = "created_at")
 	private Date createdAt;
-
-	@Column(name = "updated_at")
 	private Date updatedAt;
-
-	@Column(name = "status")
 	private Integer status;
 
 	public Integer getStatus() {
