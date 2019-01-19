@@ -9,14 +9,18 @@ public interface ParkingConfigService {
 
 	List<ParkingConfigTypeDto> getParkingConfigTypes(Integer status);
 
+	List<ParkingConfigTypeDto> getParkingConfigTypes(Integer status, String name);
+
 	ParkingConfigTypeDto findParkingConfigTypeById(long id);
 
 	ParkingConfigTypeDto saveParkingConfigType(ParkingConfigTypeDto request);
 
 	List<ParkingConfigDto> getParkingConfig(long parkingConfigType);
 
+	List<ParkingConfigDto> getParkingConfig(String configKey, Long company, Long configType);
+
 	ParkingConfigDto findParkingConfigById(long id);
 
-	ParkingConfigDto saveParkingConfigType(ParkingConfigDto request);
+	ParkingConfigDto saveParkingConfig(ParkingConfigDto request);
 
 }

@@ -11,13 +11,7 @@ public class ParkingConfigDto {
 
 	private String configDescription;
 
-	private String parkingCode;
-
-	private long parkingId;
-
-	private String company;
-
-	private long companyId;
+	private Long companyId;
 
 	private Date createdAt;
 
@@ -59,35 +53,11 @@ public class ParkingConfigDto {
 		this.configDescription = configDescription;
 	}
 
-	public String getParkingCode() {
-		return parkingCode;
-	}
-
-	public void setParkingCode(String parkingCode) {
-		this.parkingCode = parkingCode;
-	}
-
-	public long getParkingId() {
-		return parkingId;
-	}
-
-	public void setParkingId(long parkingId) {
-		this.parkingId = parkingId;
-	}
-
-	public String getCompany() {
-		return company;
-	}
-
-	public void setCompany(String company) {
-		this.company = company;
-	}
-
-	public long getCompanyId() {
+	public Long getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(long companyId) {
+	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
 	}
 

@@ -5,7 +5,7 @@ import java.util.Date;
 public class ParkingConfigTypeDto {
 	private long id;
 	private String name;
-	private String desscription;
+	private String description;
 	private Date createdAt;
 	private Date updatedAt;
 	private Integer status;
@@ -34,12 +34,12 @@ public class ParkingConfigTypeDto {
 		this.name = name;
 	}
 
-	public String getDesscription() {
-		return desscription;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDesscription(String desscription) {
-		this.desscription = desscription;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Date getCreatedAt() {

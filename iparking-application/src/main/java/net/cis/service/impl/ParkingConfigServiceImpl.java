@@ -99,10 +99,24 @@ public class ParkingConfigServiceImpl implements ParkingConfigService {
 	}
 
 	@Override
-	public ParkingConfigDto saveParkingConfigType(ParkingConfigDto request) {
+	public ParkingConfigDto saveParkingConfig(ParkingConfigDto request) {
 		ParkingConfigEntity entity = new ParkingConfigEntity();
 		mapper.map(request, entity);
 		mapper.map(parkingConfigRepository.save(entity), request);
 		return request;
+	}
+
+	@Override
+	public List<ParkingConfigTypeDto> getParkingConfigTypes(Integer status, String name) {
+		List<ParkingConfigTypeEntity> entities = parkingConfigTypeRepository
+				.findByStatusAndNameIgnoreCaseContaining(status, name);
+		return this.map(entities);
+	}
+
+	@Override
+	public List<ParkingConfigDto> getParkingConfig(String configKey, Long company, Long configType) {
+		List<ParkingConfigEntity> entities = parkingConfigRepository.findByParkingConfigs(configKey, company,
+				configType);
+		return this.mapParkingConfigDto(entities);
 	}
 }
