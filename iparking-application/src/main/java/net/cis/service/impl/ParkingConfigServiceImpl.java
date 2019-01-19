@@ -71,7 +71,7 @@ public class ParkingConfigServiceImpl implements ParkingConfigService {
 
 	@Override
 	public List<ParkingConfigDto> getParkingConfig(long configKey) {
-		List<ParkingConfigEntity> lstParkingConfigEntity = parkingConfigRepository.findByParkingConfigType(configKey);
+		List<ParkingConfigEntity> lstParkingConfigEntity = parkingConfigRepository.findByParkingConfigTypeId(configKey);
 		return this.mapParkingConfigDto(lstParkingConfigEntity);
 	}
 

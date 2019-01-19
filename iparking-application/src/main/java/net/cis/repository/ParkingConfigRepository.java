@@ -9,5 +9,5 @@ import net.cis.jpa.entity.ParkingConfigEntity;
 public interface ParkingConfigRepository extends JpaRepository<ParkingConfigEntity, Long> {
 	ParkingConfigEntity findByConfigKey(String configKey);
 
-	List<ParkingConfigEntity> findByParkingConfigType(long configKey);
+	List<ParkingConfigEntity> findByParkingConfigTypeId(long configKey);
 }

@@ -1,6 +1,5 @@
 package net.cis.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,19 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import net.cis.common.util.DateTimeUtil;
-import net.cis.constants.NotificationType;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
-import net.cis.dto.NotificationHistoryDto;
-import net.cis.dto.ParkingContractInfoDto;
+import net.cis.dto.NotificationDto;
+import net.cis.dto.ParkingDto;
 import net.cis.dto.ResponseApi;
-import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.security.filter.TokenAuthenticationService;
-import net.cis.service.EmailService;
-import net.cis.service.NotificationHistoryService;
+import net.cis.service.NotificationService;
 import net.cis.service.ParkingContractService;
-import net.cis.service.SmsService;
+import net.cis.service.ParkingService;
 
 @RestController
 @RequestMapping("/notification")
@@ -40,13 +35,10 @@ public class NotificationEndpoint {
 	ParkingContractService parkingContractService;
 
 	@Autowired
-	NotificationHistoryService notificationHistoryService;
+	NotificationService notificationHistoryService;
 
 	@Autowired
-	SmsService smsService;
-
-	@Autowired
-	EmailService emailService;
+	ParkingService parkingService;
 
 	/**
 	 * Lay thong tin khach hang cua ve thang cua 1 diem do
@@ -60,12 +52,19 @@ public class NotificationEndpoint {
 	@ApiOperation("push (Notification, Email, Sms)")
 	public @ResponseBody ResponseApi getCompany(HttpServletRequest request,
 			@RequestParam(name = "parking_code") String parkingCode, @RequestParam(name = "title") String title,
-			@RequestParam(name = "content") String content, @RequestParam(name = "type") int type) throws Exception {
+			@RequestParam(name = "content") String content, @RequestParam(name = "type") List<Integer> type)
+			throws Exception {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
 		try {
+			if (StringUtils.isEmpty(supervisorId)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
 			if (StringUtils.isEmpty(parkingCode)) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage("Parking Code empty");
@@ -84,55 +83,11 @@ public class NotificationEndpoint {
 				responseApi.setError(errorDto);
 				return responseApi;
 			}
-			ParkingContractCriteria ticketCriteria = new ParkingContractCriteria();
-			ticketCriteria.setCppCode(parkingCode);
-			// lay danh sach khach hang ve thang theo diem do
-			List<ParkingContractInfoDto> lstParkingContractInfoDto = parkingContractService
-					.findParkingContractInfo(ticketCriteria);
-			if (lstParkingContractInfoDto == null || lstParkingContractInfoDto.size() <= 0) {
-				errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
-				errorDto.setMessage("Data empty");
-				responseApi.setError(errorDto);
-				return responseApi;
-			}
-			List<String> lstDevices = new ArrayList<>();
-			List<String> lstPhone = new ArrayList<>();
-			List<String> lstEmail = new ArrayList<>();
-			for (ParkingContractInfoDto objParkingContractInfoDto : lstParkingContractInfoDto) {
-				if (!StringUtils.isEmpty(objParkingContractInfoDto.getEmail())) {
-					lstEmail.add(objParkingContractInfoDto.getEmail());
-				}
-				if (!StringUtils.isEmpty(objParkingContractInfoDto.getPhone2())) {
-					lstPhone.add(objParkingContractInfoDto.getPhone2());
-				}
-			}
-			responseApi.setData(lstParkingContractInfoDto);
-
-			// thuc hien luu history
-			NotificationHistoryDto objNotificationHistoryDto = new NotificationHistoryDto();
-			objNotificationHistoryDto.setTitle(title);
-			objNotificationHistoryDto.setContent(content);
-			objNotificationHistoryDto.setCreatedBy(Long.parseLong(supervisorId));
-			objNotificationHistoryDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
-			objNotificationHistoryDto.setType(type);
-
-			if (NotificationType.NOTIFICATION == type) {
-				// notification
-				objNotificationHistoryDto.setSended(lstDevices.toString());
-			} else if (NotificationType.EMAIL == type) {
-				// email
-				emailService.sendASynchronousMail(title, content, lstEmail.toArray(new String[lstEmail.size()]));
-				objNotificationHistoryDto.setSended(lstEmail.toString());
-			} else {
-				// sms
-				for (String phoneSend : lstPhone) {
-					smsService.sendSms(phoneSend, content);
-				}
-				objNotificationHistoryDto.setSended(lstPhone.toString());
-			}
-			notificationHistoryService.save(objNotificationHistoryDto);
+			notificationHistoryService.push(parkingCode, title, content, supervisorId, type);
+			responseApi.setError(errorDto);
 			return responseApi;
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			LOGGER.error(ex.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage(ex.getMessage());
@@ -143,23 +98,34 @@ public class NotificationEndpoint {
 
 	@RequestMapping(value = "/getNotificationHistory", method = RequestMethod.GET)
 	@ApiOperation("Nhat ky gui notification")
-	public @ResponseBody ResponseApi getCompany(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResponseApi getCompany(HttpServletRequest request,
+			@RequestParam(name = "parking_code") String parkingCode) throws Exception {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		try {
-			String companyId = TokenAuthenticationService.getAuthenticationInfo(request);
-			if (StringUtils.isEmpty(companyId)) {
+			String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
+			if (StringUtils.isEmpty(supervisorId)) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
 				responseApi.setError(errorDto);
 				return responseApi;
 			}
-			List<NotificationHistoryDto> lstNotificationHistoryDto = notificationHistoryService
-					.findAllByCreatedBy(Long.parseLong(companyId));
+
+			ParkingDto objParkingDto = parkingService.findByParkingCode(parkingCode);
+			if (objParkingDto == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Parking does not exits");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			List<NotificationDto> lstNotificationHistoryDto = notificationHistoryService
+					.findAllByCreatedBy(Long.parseLong(objParkingDto.getOldId()), Long.parseLong(supervisorId));
 			responseApi.setData(lstNotificationHistoryDto);
 			responseApi.setError(errorDto);
 			return responseApi;
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			LOGGER.error(ex.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage(ex.getMessage());
