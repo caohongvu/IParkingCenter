@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "notification_parking_place")
-public class NotificationParkingPlaceEntity {
+@Table(name = "notification_customer")
+public class NotificationCustomerEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,14 +20,8 @@ public class NotificationParkingPlaceEntity {
 	@Column(name = "notification_id")
 	private Long notificationId;
 
-	@Column(name = "parking_id")
-	private Long parkingId;
-
-	@Column(name = "company_id")
-	private Integer companyId;
-
-	@Column(name = "type")
-	private Integer type;
+	@Column(name = "cus_id")
+	private Long cusId;
 
 	@Column(name = "created_at")
 	private Date createdAt;
@@ -40,28 +34,12 @@ public class NotificationParkingPlaceEntity {
 		this.notificationId = notificationId;
 	}
 
-	public Long getParkingId() {
-		return parkingId;
+	public Long getCusId() {
+		return cusId;
 	}
 
-	public void setParkingId(Long parkingId) {
-		this.parkingId = parkingId;
-	}
-
-	public Integer getCompanyId() {
-		return companyId;
-	}
-
-	public void setCompanyId(Integer companyId) {
-		this.companyId = companyId;
-	}
-
-	public Integer getType() {
-		return type;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
+	public void setCusId(Long cusId) {
+		this.cusId = cusId;
 	}
 
 	public long getId() {

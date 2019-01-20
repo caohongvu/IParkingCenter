@@ -11,14 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.cis.common.util.DateTimeUtil;
+import net.cis.dto.NotificationCustomerDto;
 import net.cis.dto.NotificationDto;
 import net.cis.dto.NotificationParkingPlaceDto;
 import net.cis.dto.ParkingContractInfoDto;
 import net.cis.dto.ParkingDto;
 import net.cis.dto.UserDto;
 import net.cis.jpa.criteria.ParkingContractCriteria;
+import net.cis.jpa.entity.NotificationCustomerEntity;
 import net.cis.jpa.entity.NotificationEntity;
 import net.cis.jpa.entity.NotificationParkingPlaceEntity;
+import net.cis.repository.NotificationCustomerRepository;
 import net.cis.repository.NotificationParkingPlaceRepository;
 import net.cis.repository.NotificationRepository;
 import net.cis.service.EmailService;
@@ -35,6 +38,9 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Autowired
 	NotificationParkingPlaceRepository notificationParkingPlaceRepository;
+
+	@Autowired
+	NotificationCustomerRepository notificationCustomerRepository;
 
 	@Autowired
 	ParkingContractService parkingContractService;
@@ -123,7 +129,22 @@ public class NotificationServiceImpl implements NotificationService {
 		List<String> lstDevices = new ArrayList<>();
 		List<String> lstPhone = new ArrayList<>();
 		List<String> lstEmail = new ArrayList<>();
+		// thuc hien luu history Notification
+		NotificationDto objNotificationHistoryDto = new NotificationDto();
+		objNotificationHistoryDto.setTitle(title);
+		objNotificationHistoryDto.setContent(content);
+		objNotificationHistoryDto.setCreatedBy(Long.parseLong(createdBy));
+		objNotificationHistoryDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+		objNotificationHistoryDto = saveNotification(objNotificationHistoryDto);
+
 		for (ParkingContractInfoDto objParkingContractInfoDto : lstParkingContractInfoDto) {
+			// thuc hien luu danh sach customer nhan tin
+			NotificationCustomerDto objNotificationCustomerDto = new NotificationCustomerDto();
+			objNotificationCustomerDto.setNotificationId(objNotificationHistoryDto.getId());
+			objNotificationCustomerDto.setCusId(objParkingContractInfoDto.getCusId());
+			objNotificationCustomerDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			saveNotificationCustomer(objNotificationCustomerDto);
+
 			if (!StringUtils.isEmpty(objParkingContractInfoDto.getEmail())) {
 				lstEmail.add(objParkingContractInfoDto.getEmail());
 			}
@@ -132,15 +153,8 @@ public class NotificationServiceImpl implements NotificationService {
 			}
 		}
 
-		// thuc hien luu history
-		NotificationDto objNotificationHistoryDto = new NotificationDto();
-		objNotificationHistoryDto.setTitle(title);
-		objNotificationHistoryDto.setContent(content);
-		objNotificationHistoryDto.setCreatedBy(Long.parseLong(createdBy));
-		objNotificationHistoryDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
-		objNotificationHistoryDto = saveNotification(objNotificationHistoryDto);
 		for (Integer type : types) {
-			// thuc hien save notification type
+			// thuc hien save notification_parking_place
 			NotificationParkingPlaceDto objNotificationCpp = new NotificationParkingPlaceDto();
 			objNotificationCpp.setNotificationId(objNotificationHistoryDto.getId());
 			objNotificationCpp.setParkingId(Long.parseLong(objParkingDto.getOldId()));
@@ -179,6 +193,14 @@ public class NotificationServiceImpl implements NotificationService {
 		List<NotificationParkingPlaceEntity> lstResult = notificationParkingPlaceRepository
 				.findByNotificationIdAndParkingId(notificationId, parkingId);
 		return lstResult;
+	}
+
+	@Override
+	public NotificationCustomerDto saveNotificationCustomer(NotificationCustomerDto notificationCustomerDto) {
+		NotificationCustomerEntity entity = new NotificationCustomerEntity();
+		mapper.map(notificationCustomerDto, entity);
+		mapper.map(notificationCustomerRepository.save(entity), notificationCustomerDto);
+		return notificationCustomerDto;
 	}
 
 }
