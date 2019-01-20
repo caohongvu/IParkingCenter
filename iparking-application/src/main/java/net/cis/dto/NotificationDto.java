@@ -1,16 +1,33 @@
 package net.cis.dto;
 
 import java.util.Date;
+import java.util.List;
 
-public class NotificationHistoryDto {
+public class NotificationDto {
+	private long id;
 	private String title;
 	private String content;
-	private int type;
 	private Date createdAt;
 	private long createdBy;
 	private String createdByUserName;
 	private String createdByFullName;
-	private String sended;
+	private List<Integer> types;
+
+	public List<Integer> getTypes() {
+		return types;
+	}
+
+	public void setTypes(List<Integer> types) {
+		this.types = types;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	public String getCreatedByFullName() {
 		return createdByFullName;
@@ -28,14 +45,6 @@ public class NotificationHistoryDto {
 		this.createdByUserName = createdByUserName;
 	}
 
-	public String getSended() {
-		return sended;
-	}
-
-	public void setSended(String sended) {
-		this.sended = sended;
-	}
-
 	public String getTitle() {
 		return title;
 	}
@@ -50,14 +59,6 @@ public class NotificationHistoryDto {
 
 	public void setContent(String content) {
 		this.content = content;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
 	}
 
 	public Date getCreatedAt() {

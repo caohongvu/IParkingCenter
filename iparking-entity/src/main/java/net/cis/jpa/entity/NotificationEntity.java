@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "notification_history")
-public class NotificationHistoryEntity {
+@Table(name = "notification")
+public class NotificationEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,25 +23,11 @@ public class NotificationHistoryEntity {
 	@Column(name = "content")
 	private String content;
 
-	@Column(name = "sended")
-	private String sended;
-
-	@Column(name = "type")
-	private int type;
-
 	@Column(name = "created_at")
 	private Date createdAt;
 
 	@Column(name = "created_by")
 	private long createdBy;
-
-	public String getSended() {
-		return sended;
-	}
-
-	public void setSended(String sended) {
-		this.sended = sended;
-	}
 
 	public String getTitle() {
 		return title;
@@ -65,14 +51,6 @@ public class NotificationHistoryEntity {
 
 	public void setContent(String content) {
 		this.content = content;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
 	}
 
 	public Date getCreatedAt() {
