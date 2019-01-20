@@ -4,9 +4,9 @@ import java.util.Date;
 
 public class NotificationParkingPlaceDto {
 	private long id;
-	private long notificationId;
-	private long parkingId;
-	private long companyId;
+	private Long notificationId;
+	private Long parkingId;
+	private Integer companyId;
 	private Integer type;
 	private Date createdAt;
 
@@ -34,27 +34,27 @@ public class NotificationParkingPlaceDto {
 		this.id = id;
 	}
 
-	public long getNotificationId() {
+	public Long getNotificationId() {
 		return notificationId;
 	}
 
-	public void setNotificationId(long notificationId) {
+	public void setNotificationId(Long notificationId) {
 		this.notificationId = notificationId;
 	}
 
-	public long getParkingId() {
+	public Long getParkingId() {
 		return parkingId;
 	}
 
-	public void setParkingId(long parkingId) {
+	public void setParkingId(Long parkingId) {
 		this.parkingId = parkingId;
 	}
 
-	public long getCompanyId() {
+	public Integer getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(long companyId) {
+	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
 	}
 

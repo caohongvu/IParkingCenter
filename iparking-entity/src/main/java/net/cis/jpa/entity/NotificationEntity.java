@@ -27,7 +27,7 @@ public class NotificationEntity {
 	private Date createdAt;
 
 	@Column(name = "created_by")
-	private long createdBy;
+	private Long createdBy;
 
 	public String getTitle() {
 		return title;
@@ -61,11 +61,11 @@ public class NotificationEntity {
 		this.createdAt = createdAt;
 	}
 
-	public long getCreatedBy() {
+	public Long getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
+	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
 	}
 
