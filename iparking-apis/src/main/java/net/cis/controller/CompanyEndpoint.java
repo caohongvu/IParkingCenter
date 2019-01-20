@@ -50,5 +50,5 @@ public class CompanyEndpoint {
 			return responseApi;
 		}
 	}
-	
+
 }

@@ -201,20 +201,6 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public boolean checkCustomerCarSendOtp(String numberPlate, long cusId) throws Exception {
-		CustomerCarDto objCustomerCarDto = findCustomerCarByNumberPlateAndCusId(numberPlate, cusId);
-		if (objCustomerCarDto == null) {
-			return Boolean.TRUE;
-		} else {
-			if (UserConstant.STATUS_VERIFIED == objCustomerCarDto.getVerified()) {
-				return Boolean.FALSE;
-			} else {
-				return Boolean.TRUE;
-			}
-		}
-	}
-
-	@Override
 	public CustomerCarDto findCustomerCarById(long id) throws Exception {
 		CustomerCarDto objCustomerCarDto = new CustomerCarDto();
 		CustomerCarEntity objCustomerCarEntity = customerCarRepository.findOne(id);
@@ -274,15 +260,6 @@ public class CustomerServiceImpl implements CustomerService {
 		return result;
 	}
 
-	@Override
-	public void updateCustomerCarListByNumberPlate(String numberPlate, Integer verified) throws Exception {
-		// TODO Auto-generated method stub
-		List<CustomerCarEntity> lstCustomerCarEntity = customerCarRepository.findCustomerCarByNumberPlate(numberPlate);
-		for (CustomerCarEntity entity : lstCustomerCarEntity) {
-			entity.setVerified(verified);
-			customerCarRepository.save(entity);
-		}
-	}
 
 	@Override
 	public CustomerDto findById(long cusId) throws Exception {

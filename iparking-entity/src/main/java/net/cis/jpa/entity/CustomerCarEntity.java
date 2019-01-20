@@ -5,8 +5,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -33,9 +31,6 @@ public class CustomerCarEntity implements Serializable {
 
 	@Column(name = "updated_at")
 	private Date updatedAt;
-
-	@Column(name = "verified")
-	private int verified;
 
 	public Date getCreatedAt() {
 		return createdAt;
@@ -75,14 +70,6 @@ public class CustomerCarEntity implements Serializable {
 
 	public void setCustomer(long customer) {
 		this.customer = customer;
-	}
-
-	public int getVerified() {
-		return verified;
-	}
-
-	public void setVerified(int verified) {
-		this.verified = verified;
 	}
 
 }

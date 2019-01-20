@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.springframework.data.domain.Pageable;
+
 import net.cis.dto.ResponseApi;
 import net.cis.dto.UserDto;
 import net.cis.jpa.entity.UserEntity;
@@ -21,5 +22,5 @@ public interface UserService {
 	
 	ResponseApi findByUsername(HashSet<Integer> listIdUser, String username, String fullname);
 
-
+	UserDto findUserById(int Id) ;
 }
