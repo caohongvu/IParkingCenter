@@ -8,7 +8,7 @@ public class NotificationDto {
 	private String title;
 	private String content;
 	private Date createdAt;
-	private long createdBy;
+	private Long createdBy;
 	private String createdByUserName;
 	private String createdByFullName;
 	private List<Integer> types;
@@ -69,11 +69,11 @@ public class NotificationDto {
 		this.createdAt = createdAt;
 	}
 
-	public long getCreatedBy() {
+	public Long getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
+	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
 	}
 
