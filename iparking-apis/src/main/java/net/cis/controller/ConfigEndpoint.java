@@ -81,7 +81,7 @@ public class ConfigEndpoint {
 	}
 
 	// UPDATE CONFIG SERVICE FOR COMPANY
-	@RequestMapping(value = "/update/config", method = RequestMethod.POST)
+	@RequestMapping(value = "/update/config", method = RequestMethod.GET)
 	@ApiOperation("Update config Service for company")
 	public @ResponseBody ResponseApi updateConfigService(
 			@RequestParam(name = "is_invoice", required = false) int isInvoice,
