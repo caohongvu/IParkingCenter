@@ -111,11 +111,85 @@ public class CustomerEndpoint {
 	 * @param status
 	 * @return
 	 */
+	@RequestMapping(value = "/customer-info-update/sync", method = RequestMethod.POST)
+	@ApiOperation("Create or update customer info")
+	public @ResponseBody ResponseApi updateCustomerInfoSync(@RequestParam(name = "cus_id") long cusId,
+			@RequestParam(name = "email") String email,
+			@RequestParam(name = "phone") String phone,
+			@RequestParam(name = "status", required = false) Integer status) {
+		ResponseApi responseDto = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			// tim kiem CustomerInfo from db
+			CustomerInfoDto objCustomerInfoDtoInDB = customerService.findCustomerInfoByCusId(cusId);
+			if (objCustomerInfoDtoInDB != null) {
+				// thuc hien cap nhat customer_info
+				objCustomerInfoDtoInDB.setEmail(email);
+				if (status != null)
+					objCustomerInfoDtoInDB.setStatus(status);
+				if (StringUtils.isEmpty(phone)) {
+					errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+					errorDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
+					responseDto.setError(errorDto);
+					return responseDto;
+				}
+				if(!Utils.validateVNPhoneNumber(String.valueOf(phone))){
+					errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+					errorDto.setMessage("Phone Malformed");
+					responseDto.setError(errorDto);
+					return responseDto;
+				}
+				Map<String, Object> result = customerService.saveCustomerInfoInPoseidonDbReturnObject(cusId, phone, email);
+				objCustomerInfoDtoInDB.setStatus(Integer.parseInt(result.get("Status").toString()));
+				objCustomerInfoDtoInDB.setVerificationCode(result.get("VerificationCode").toString());
+				objCustomerInfoDtoInDB = customerService.saveCustomerInfoEntity(objCustomerInfoDtoInDB);
+				responseDto.setError(errorDto);
+				responseDto.setData(objCustomerInfoDtoInDB);
+				return responseDto;
+			}
+
+			CustomerInfoDto objCustomerInfoDto = new CustomerInfoDto();
+			objCustomerInfoDto.setCusId(cusId);
+			objCustomerInfoDto.setEmail(email);
+			if (status != null)
+				objCustomerInfoDto.setStatus(status);
+			if (StringUtils.isEmpty(phone)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
+				responseDto.setError(errorDto);
+				return responseDto;
+			}
+			if(!Utils.validateVNPhoneNumber(String.valueOf(phone))){
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Phone Malformed");
+				responseDto.setError(errorDto);
+				return responseDto;
+			}
+			Map<String, Object> result = customerService.saveCustomerInfoInPoseidonDbReturnObject(cusId, phone, email);
+			objCustomerInfoDto.setStatus(Integer.parseInt(result.get("Status").toString()));
+			objCustomerInfoDto.setVerificationCode(result.get("VerificationCode").toString());
+			objCustomerInfoDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerInfoDto = customerService.saveCustomerInfoEntity(objCustomerInfoDto);
+			responseDto.setError(errorDto);
+			responseDto.setData(objCustomerInfoDto);
+			return responseDto;
+		} catch (Exception ex) {
+			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseDto.setError(errorDto);
+			return responseDto;
+		}
+	}
+	
 	@RequestMapping(value = "/customer-info-update", method = RequestMethod.POST)
 	@ApiOperation("Create or update customer info")
 	public @ResponseBody ResponseApi updateCustomerInfo(@RequestParam(name = "cus_id") long cusId,
 			@RequestParam(name = "email") String email,
 			@RequestParam(name = "verification_code", required = false) String verificationCode,
+			@RequestParam(name = "gender", required = false) Long gender,
+			@RequestParam(name = "full_name", required = false) String full_name,
 			@RequestParam(name = "status", required = false) Integer status) {
 		ResponseApi responseDto = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
@@ -130,6 +204,10 @@ public class CustomerEndpoint {
 					objCustomerInfoDtoInDB.setVerificationCode(verificationCode);
 				if (status != null)
 					objCustomerInfoDtoInDB.setStatus(status);
+				if (gender != null)
+					objCustomerInfoDtoInDB.setGender(gender);
+				if (!StringUtils.isEmpty(full_name))
+					objCustomerInfoDtoInDB.setFullName(full_name);
 				objCustomerInfoDtoInDB = customerService.saveCustomerInfoEntity(objCustomerInfoDtoInDB);
 				responseDto.setError(errorDto);
 				responseDto.setData(objCustomerInfoDtoInDB);

@@ -37,5 +37,5 @@ public interface CustomerService {
 	CustomerDto findById(long cusId) throws Exception;
 	Map<String, Object> otpSignupCallGolang(String phone, String captcha, String captchaID) throws Exception;
 	Map<String, Object> napSignupCallGolang(String phone, String ticket, String otp) throws Exception;
-
+	Map<String, Object> saveCustomerInfoInPoseidonDbReturnObject(long cusId, String phone, String email) throws Exception;
 }
