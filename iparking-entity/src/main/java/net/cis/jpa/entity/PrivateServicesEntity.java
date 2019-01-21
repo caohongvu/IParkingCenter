@@ -10,18 +10,18 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "private_services_parking")
-public class PrivateServiceParking {
+@Table(name = "private_services")
+public class PrivateServicesEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@Column(name = "parking_id")
-	private Long parkingId;
+	@Column(name = "name")
+	private String name;
 
-	@Column(name = "private_service_id")
-	private Long privateServiceId;
+	@Column(name = "desscription")
+	private String desscription;
 
 	@Column(name = "created_at")
 	private Date createdAt;
@@ -31,7 +31,7 @@ public class PrivateServiceParking {
 
 	@Column(name = "status")
 	private Integer status;
-
+	
 	public Integer getStatus() {
 		return status;
 	}
@@ -48,20 +48,20 @@ public class PrivateServiceParking {
 		this.id = id;
 	}
 
-	public Long getParkingId() {
-		return parkingId;
+	public String getName() {
+		return name;
 	}
 
-	public void setParkingId(Long parkingId) {
-		this.parkingId = parkingId;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public Long getPrivateServiceId() {
-		return privateServiceId;
+	public String getDesscription() {
+		return desscription;
 	}
 
-	public void setPrivateServiceId(Long privateServiceId) {
-		this.privateServiceId = privateServiceId;
+	public void setDesscription(String desscription) {
+		this.desscription = desscription;
 	}
 
 	public Date getCreatedAt() {
