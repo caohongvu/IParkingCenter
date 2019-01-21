@@ -1,6 +1,10 @@
 package net.cis.service.impl;
 
+import net.cis.dto.FuncDto;
+import net.cis.dto.RoleDto;
 import net.cis.dto.RolePermissionDto;
+import net.cis.jpa.entity.FuncEntity;
+import net.cis.jpa.entity.RoleEntity;
 import net.cis.jpa.entity.RolePermissionEntity;
 import net.cis.repository.FuncRepository;
 import net.cis.repository.RolePermissionRepository;
@@ -20,37 +24,17 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     @Autowired
     RolePermissionRepository rolePermissionRepository;
 
-//    @Autowired
-//    FuncRepository funcRepository;
-//
-//    @Autowired
-//    RoleRepository roleRepository;
+    @Autowired
+    FuncRepository funcRepository;
 
-    private ModelMapper modelMapper;
+    @Autowired
+    RoleRepository roleRepository;
+
+    private ModelMapper modelMapper ;
 
     @PostConstruct
     public void initialize() {
         modelMapper = new ModelMapper();
-
-        modelMapper.addMappings(new PropertyMap<RolePermissionEntity, RolePermissionDto>() {
-            protected void configure() {
-                map().setFuncId(source.getFunc().getId());
-                map().setFuncName(source.getFunc().getName());
-                map().setFuncDesc(source.getFunc().getDesc());
-
-                map().setRole(source.getRole().getId());
-                map().setRoleDesc(source.getRole().getDesc());
-            }
-        });
-
-//        modelMapper.addMappings(new PropertyMap<RolePermissionDto, RolePermissionEntity>() {
-//            @Override
-//            protected void configure() {
-//                map().setId(source.getId());
-//                map().setFunc(funcRepository.findOne(source.getFuncId()));
-//                map().setRole(roleRepository.findOne(source.getRole()));
-//            }
-//        });
     }
 
     @Override
@@ -59,8 +43,19 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     }
 
     @Override
-    public List<RolePermissionDto> findByRole(Long role) {
-        return this.map(rolePermissionRepository.findByRole(role));
+    public List<RolePermissionDto> findByRole(RoleDto role) {
+        RoleEntity ett = new RoleEntity();
+        ett.setId(role.getId());
+        return this.map(rolePermissionRepository.findByRole(ett));
+    }
+
+    @Override
+    public RolePermissionDto findOneByRoleAndFunc(RoleDto roleDto, FuncDto funcDto) {
+        RolePermissionEntity ett = rolePermissionRepository.findOneByRoleAndFunc(modelMapper.map(roleDto, RoleEntity.class), modelMapper.map(funcDto, FuncEntity.class));
+        if (ett == null)
+            return null;
+
+        return modelMapper.map(ett, RolePermissionDto.class);
     }
 
     @Override
@@ -68,21 +63,26 @@ public class RolePermissionServiceImpl implements RolePermissionService {
         return modelMapper.map(rolePermissionRepository.findOne(id), RolePermissionDto.class);
     }
 
-//    @Override
-//    public RolePermissionDto create(RolePermissionDto dto) {
-//        RolePermissionEntity entity = modelMapper.map(dto, RolePermissionEntity.class);
-//        if (entity.getId() != null) {
-//            entity.setId(null);
-//        }
-//
-//        return modelMapper.map(rolePermissionRepository.save(entity), RolePermissionDto.class);
-//    }
-//
-//    @Override
-//    public RolePermissionDto update(RolePermissionDto dto) {
-//        RolePermissionEntity entity = modelMapper.map(dto, RolePermissionEntity.class);
-//        return modelMapper.map(rolePermissionRepository.save(entity), RolePermissionDto.class);
-//    }
+    @Override
+    public RolePermissionDto create(RolePermissionDto dto) {
+        RolePermissionEntity entity = modelMapper.map(dto, RolePermissionEntity.class);
+        if (entity.getId() != null) {
+            entity.setId(null);
+        }
+
+        return modelMapper.map(rolePermissionRepository.save(entity), RolePermissionDto.class);
+    }
+
+    @Override
+    public RolePermissionDto update(RolePermissionDto dto) {
+        RolePermissionEntity entity = modelMapper.map(dto, RolePermissionEntity.class);
+        return modelMapper.map(rolePermissionRepository.save(entity), RolePermissionDto.class);
+    }
+
+    @Override
+    public void delete(RolePermissionDto entity) {
+        rolePermissionRepository.delete(entity.getId());
+    }
 
     private List<RolePermissionDto> map(List<RolePermissionEntity> entities) {
         List<RolePermissionDto> dtos = new ArrayList<>();

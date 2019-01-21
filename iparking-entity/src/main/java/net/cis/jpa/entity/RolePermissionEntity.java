@@ -1,5 +1,7 @@
 package net.cis.jpa.entity;
 
+import org.hibernate.annotations.LazyToOne;
+
 import javax.persistence.*;
 
 @Entity
