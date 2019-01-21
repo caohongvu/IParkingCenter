@@ -149,7 +149,7 @@ public class ParkingConfigEndPoint {
 	}
 
 	@RequestMapping(value = "/create-parking-config", method = RequestMethod.POST)
-	@ApiOperation("Get config of company")
+	@ApiOperation("Tao parking config ")
 	public @ResponseBody ResponseApi createParkingConfig(HttpServletRequest request,
 			@RequestParam(name = "config_key") String configKey,
 			@RequestParam(name = "config_value") String configValue,
@@ -184,30 +184,27 @@ public class ParkingConfigEndPoint {
 	}
 
 	@RequestMapping(value = "/update-parking-config", method = RequestMethod.POST)
-	@ApiOperation("Get config of company")
+	@ApiOperation("Cap nhat parking config")
 	public @ResponseBody ResponseApi updateParkingConfig(HttpServletRequest request, @RequestParam(name = "id") Long id,
-			@RequestParam(name = "name") String name,
-			@RequestParam(name = "description", required = false) String description,
-			@RequestParam(name = "status") Integer status) {
+			@RequestParam(name = "config_value") String configValue) {
 		ResponseApi responseDto = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		try {
-			ParkingConfigTypeDto dto = parkingConfigService.findParkingConfigTypeById(id);
-			if (dto == null) {
+			ParkingConfigDto objParkingConfigDto = parkingConfigService.findParkingConfigById(id);
+			if (objParkingConfigDto == null) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-				errorDto.setMessage("ParkingConfigType không tồn tại");
+				errorDto.setMessage("ParkingConfig không tồn tại");
 				responseDto.setError(errorDto);
 				return responseDto;
 			}
-			dto.setName(name);
-			dto.setDescription(description);
-			dto.setStatus(status);
-			responseDto.setData(parkingConfigService.saveParkingConfigType(dto));
+			objParkingConfigDto.setConfigValue(configValue);
+			objParkingConfigDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			responseDto.setData(parkingConfigService.saveParkingConfig(objParkingConfigDto));
 			responseDto.setError(errorDto);
 			return responseDto;
-
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage(ex.getMessage());
