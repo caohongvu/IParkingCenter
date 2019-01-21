@@ -23,11 +23,22 @@ public class NotificationEntity {
 	@Column(name = "content")
 	private String content;
 
+	@Column(name = "content_sms")
+	private String contentSms;
+
 	@Column(name = "created_at")
 	private Date createdAt;
 
 	@Column(name = "created_by")
 	private Long createdBy;
+
+	public String getContentSms() {
+		return contentSms;
+	}
+
+	public void setContentSms(String contentSms) {
+		this.contentSms = contentSms;
+	}
 
 	public String getTitle() {
 		return title;

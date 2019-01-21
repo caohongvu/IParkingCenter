@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.cis.common.util.DateTimeUtil;
+import net.cis.constants.NotificationType;
 import net.cis.dto.NotificationCustomerDto;
 import net.cis.dto.NotificationDto;
 import net.cis.dto.NotificationParkingPlaceDto;
@@ -114,7 +115,7 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void push(String parkingCode, String title, String content, String createdBy, List<Integer> types)
+	public void push(String parkingCode, String title, String content,  String contentSms, String createdBy, List<Integer> types)
 			throws Exception {
 		ParkingDto objParkingDto = parkingService.findByParkingCode(parkingCode);
 		if (objParkingDto == null) {
@@ -133,6 +134,7 @@ public class NotificationServiceImpl implements NotificationService {
 		NotificationDto objNotificationHistoryDto = new NotificationDto();
 		objNotificationHistoryDto.setTitle(title);
 		objNotificationHistoryDto.setContent(content);
+		objNotificationHistoryDto.setContentSms(contentSms);
 		objNotificationHistoryDto.setCreatedBy(Long.parseLong(createdBy));
 		objNotificationHistoryDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 		objNotificationHistoryDto = saveNotification(objNotificationHistoryDto);
@@ -162,19 +164,18 @@ public class NotificationServiceImpl implements NotificationService {
 			objNotificationCpp.setType(type);
 			objNotificationCpp.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 			saveNotificationParkingPlace(objNotificationCpp);
-			// if (NotificationType.NOTIFICATION == type) {
-			// // notification
-			//
-			// } else if (NotificationType.EMAIL == type) {
-			// // email
-			// emailService.sendASynchronousMail(title, content,
-			// lstEmail.toArray(new String[lstEmail.size()]));
-			// } else {
-			// // sms
-			// for (String phoneSend : lstPhone) {
-			// smsService.sendSms(phoneSend, content);
-			// }
-			// }
+			if (NotificationType.NOTIFICATION == type) {
+				// notification
+
+			} else if (NotificationType.EMAIL == type) {
+				// email
+				emailService.sendASynchronousMail(title, content, lstEmail.toArray(new String[lstEmail.size()]));
+			} else {
+				// sms
+				for (String phoneSend : lstPhone) {
+					smsService.sendSms(phoneSend, content);
+				}
+			}
 		}
 
 	}
