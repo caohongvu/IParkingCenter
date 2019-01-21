@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.MessageUtil;
 import net.cis.common.util.Utils;
+import net.cis.constants.CustomerConstans;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.CarProfileDto;
 import net.cis.dto.CustomerCarDto;
@@ -114,8 +115,7 @@ public class CustomerEndpoint {
 	@RequestMapping(value = "/customer-info-update/sync", method = RequestMethod.POST)
 	@ApiOperation("Create or update customer info")
 	public @ResponseBody ResponseApi updateCustomerInfoSync(@RequestParam(name = "cus_id") long cusId,
-			@RequestParam(name = "email") String email,
-			@RequestParam(name = "phone") String phone,
+			@RequestParam(name = "email") String email, @RequestParam(name = "phone") String phone,
 			@RequestParam(name = "status", required = false) Integer status) {
 		ResponseApi responseDto = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
@@ -134,13 +134,14 @@ public class CustomerEndpoint {
 					responseDto.setError(errorDto);
 					return responseDto;
 				}
-				if(!Utils.validateVNPhoneNumber(String.valueOf(phone))){
+				if (!Utils.validateVNPhoneNumber(String.valueOf(phone))) {
 					errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 					errorDto.setMessage("Phone Malformed");
 					responseDto.setError(errorDto);
 					return responseDto;
 				}
-				Map<String, Object> result = customerService.saveCustomerInfoInPoseidonDbReturnObject(cusId, phone, email);
+				Map<String, Object> result = customerService.saveCustomerInfoInPoseidonDbReturnObject(cusId, phone,
+						email);
 				objCustomerInfoDtoInDB.setStatus(Integer.parseInt(result.get("Status").toString()));
 				objCustomerInfoDtoInDB.setVerificationCode(result.get("VerificationCode").toString());
 				objCustomerInfoDtoInDB = customerService.saveCustomerInfoEntity(objCustomerInfoDtoInDB);
@@ -160,7 +161,7 @@ public class CustomerEndpoint {
 				responseDto.setError(errorDto);
 				return responseDto;
 			}
-			if(!Utils.validateVNPhoneNumber(String.valueOf(phone))){
+			if (!Utils.validateVNPhoneNumber(String.valueOf(phone))) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage("Phone Malformed");
 				responseDto.setError(errorDto);
@@ -182,7 +183,7 @@ public class CustomerEndpoint {
 			return responseDto;
 		}
 	}
-	
+
 	@RequestMapping(value = "/customer-info-update", method = RequestMethod.POST)
 	@ApiOperation("Create or update customer info")
 	public @ResponseBody ResponseApi updateCustomerInfo(@RequestParam(name = "cus_id") long cusId,
@@ -384,59 +385,11 @@ public class CustomerEndpoint {
 	 * 
 	 * @param id
 	 * @param cusId
-	 * @param numberPlate
-	 * @return
-	 */
-	@RequestMapping(value = "/customer-car-update", method = RequestMethod.POST)
-	@ApiOperation("create or update customer car")
-	public @ResponseBody ResponseApi updateCustomerInfo(@RequestParam(name = "id") long id,
-			@RequestParam(name = "cus_id") long cusId, @RequestParam(name = "number_plate") String numberPlate) {
-		ResponseApi responseDto = new ResponseApi();
-		ErrorDto errorDto = new ErrorDto();
-		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
-		try {
-			// tim kiem customer
-			CustomerDto objCustomerDto = customerService.findCustomerByOldId(cusId);
-			// tim kiem CustomerInfo from db
-			if (objCustomerDto == null) {
-				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-				errorDto.setMessage("Không tồn tại customer");
-				responseDto.setError(errorDto);
-				return responseDto;
-			}
-			CustomerCarDto objCustomerCarDto = customerService.findCustomerCarByNumberPlateAndCusId(numberPlate, cusId);
-			if (objCustomerCarDto == null) {
-				objCustomerCarDto = new CustomerCarDto();
-				objCustomerCarDto.setCustomer(cusId);
-				objCustomerCarDto.setNumberPlate(numberPlate);
-				objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
-				objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
-				objCustomerCarDto = customerService.saveCustomerCarEntity(objCustomerCarDto);
-			}
-			responseDto.setError(errorDto);
-			responseDto.setData(objCustomerCarDto);
-			return responseDto;
-
-		} catch (Exception ex) {
-			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
-			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-			errorDto.setMessage(ex.getMessage());
-			responseDto.setError(errorDto);
-			return responseDto;
-		}
-	}
-
-	/**
-	 * liemnh
-	 * 
-	 * @param id
-	 * @param cusId
 	 * @return
 	 */
 	@RequestMapping(value = "/customer-car-delete", method = RequestMethod.POST)
 	@ApiOperation("delete customer car")
-	public @ResponseBody ResponseApi updateCustomerInfo(@RequestParam(name = "id") long id,
-			@RequestParam(name = "cus_id") long cusId) {
+	public @ResponseBody ResponseApi updateCustomerInfo(@RequestParam(name = "id") long id) {
 		ResponseApi responseDto = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -449,16 +402,10 @@ public class CustomerEndpoint {
 				responseDto.setError(errorDto);
 				return responseDto;
 			}
-			if (objCustomerCarDto.getCustomer() == cusId) {
-				customerService.deleteCustomerCar(id);
-				responseDto.setError(errorDto);
-				return responseDto;
-			} else {
-				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-				errorDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_NOT_EXITS);
-				responseDto.setError(errorDto);
-				return responseDto;
-			}
+			objCustomerCarDto.setStatus(CustomerConstans.CUSTOMER_CAR_STATUS_DISABLE);
+			objCustomerCarDto = customerService.saveCustomerCarEntity(objCustomerCarDto);
+			responseDto.setData(objCustomerCarDto);
+			return responseDto;
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
