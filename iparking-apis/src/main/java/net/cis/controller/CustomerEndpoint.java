@@ -243,8 +243,7 @@ public class CustomerEndpoint {
 	@ApiOperation("create or update customer car")
 	public @ResponseBody ResponseApi createCustomerCarForGolang(@RequestParam(name = "id") long id,
 			@RequestParam(name = "cus_id") long cusId, @RequestParam(name = "number_plate") String numberPlate,
-			@RequestParam(name = "car_type") String carType, @RequestParam(name = "seat") int seat,
-			@RequestParam(name = "p_class") String pClass) {
+			@RequestParam(name = "seat") int seat, @RequestParam(name = "p_class") String pClass) {
 		/**
 		 * Golang service gọi để tạo customer_car
 		 */
@@ -403,12 +402,9 @@ public class CustomerEndpoint {
 	@RequestMapping(value = "/customer-create", method = RequestMethod.POST)
 	@ApiOperation("Create or update customer info")
 	public @ResponseBody ResponseApi createCustomer(@RequestParam(name = "phone") String phone,
-			@RequestParam(name = "phone2") String phone2,
-			@RequestParam(name = "password") String password,
-			@RequestParam(name = "telco") String telco,
-			@RequestParam(name = "status_reason") String status_reason,
-			@RequestParam(name = "checksum") String checkSum, 
-			@RequestParam(name = "status") int status,
+			@RequestParam(name = "phone2") String phone2, @RequestParam(name = "password") String password,
+			@RequestParam(name = "telco") String telco, @RequestParam(name = "status_reason") String status_reason,
+			@RequestParam(name = "checksum") String checkSum, @RequestParam(name = "status") int status,
 			@RequestParam(name = "id") long old_id) {
 		ResponseApi responseDto = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
@@ -459,13 +455,12 @@ public class CustomerEndpoint {
 			return responseDto;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/otp/signup", method = RequestMethod.POST)
 	@ApiOperation("signup customer")
-	public @ResponseBody Object otpSignUp(@RequestParam(name = "phone", required =  true) String phone,
-			@RequestParam(name = "captchaID" , required =  true) String captchaID,
-			@RequestParam(name = "captcha" , required =  true) String captcha) {
+	public @ResponseBody Object otpSignUp(@RequestParam(name = "phone", required = true) String phone,
+			@RequestParam(name = "captchaID", required = true) String captchaID,
+			@RequestParam(name = "captcha", required = true) String captcha) {
 		ResponseDto responseDto = new ResponseDto();
 		try {
 			if (StringUtils.isEmpty(captchaID)) {
@@ -478,13 +473,13 @@ public class CustomerEndpoint {
 				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_CHECK_CAPTCHA);
 				return responseDto;
 			}
-			
+
 			if (StringUtils.isEmpty(phone)) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
 				return responseDto;
 			}
-			if(!Utils.validateVNPhoneNumber(String.valueOf(phone))){
+			if (!Utils.validateVNPhoneNumber(String.valueOf(phone))) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 				responseDto.setMessage("Phone Malformed");
 				return responseDto;
@@ -498,19 +493,19 @@ public class CustomerEndpoint {
 			responseDto.setCode(HttpStatus.OK.toString());
 			responseDto.setData(result);
 			return responseDto;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
 			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 			return responseDto;
 		}
 	}
-	
+
 	@RequestMapping(value = "/nap/signup", method = RequestMethod.POST)
 	@ApiOperation("signup customer")
-	public @ResponseBody Object napSignUp(@RequestParam(name = "phone", required =  true) String phone,
-			@RequestParam(name = "ticket" , required =  true) String ticket,
-			@RequestParam(name = "otp" , required =  true) String otp) {
+	public @ResponseBody Object napSignUp(@RequestParam(name = "phone", required = true) String phone,
+			@RequestParam(name = "ticket", required = true) String ticket,
+			@RequestParam(name = "otp", required = true) String otp) {
 		ResponseDto responseDto = new ResponseDto();
 		try {
 			if (StringUtils.isEmpty(otp)) {
@@ -523,13 +518,13 @@ public class CustomerEndpoint {
 				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_TICKET);
 				return responseDto;
 			}
-			
+
 			if (StringUtils.isEmpty(phone)) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
 				return responseDto;
 			}
-			if(!Utils.validateVNPhoneNumber(String.valueOf(phone))){
+			if (!Utils.validateVNPhoneNumber(String.valueOf(phone))) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 				responseDto.setMessage("Phone Malformed");
 				return responseDto;
@@ -544,7 +539,7 @@ public class CustomerEndpoint {
 			responseDto.setMessage(result.get("Message").toString());
 			responseDto.setData(result.get("Token"));
 			return responseDto;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
 			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
