@@ -14,6 +14,15 @@ public class CustomerDto {
 	private String checkSum;
 	private long oldId;
 	private String otp;
+	private int verifyPhone;
+
+	public int getVerifyPhone() {
+		return verifyPhone;
+	}
+
+	public void setVerifyPhone(int verifyPhone) {
+		this.verifyPhone = verifyPhone;
+	}
 
 	public String getTelco() {
 		return telco;
