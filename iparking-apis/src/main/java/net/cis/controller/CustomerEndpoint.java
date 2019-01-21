@@ -20,6 +20,7 @@ import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.MessageUtil;
 import net.cis.common.util.Utils;
 import net.cis.constants.ResponseErrorCodeConstants;
+import net.cis.dto.CarProfileDto;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
@@ -27,6 +28,7 @@ import net.cis.dto.ResponseApi;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ResponseDto;
 import net.cis.repository.CustomerInfoRepository;
+import net.cis.service.CarProfileService;
 import net.cis.service.CustomerService;
 
 /**
@@ -43,6 +45,9 @@ public class CustomerEndpoint {
 	CustomerService customerService;
 	@Autowired
 	CustomerInfoRepository customerInfoRepository;
+
+	@Autowired
+	CarProfileService carProfileService;
 
 	/**
 	 * liemnh
@@ -221,6 +226,151 @@ public class CustomerEndpoint {
 			responseDto.setError(errorDto);
 			responseDto.setData(objCustomerInfoDto);
 			return responseDto;
+		} catch (Exception ex) {
+			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseDto.setError(errorDto);
+			return responseDto;
+		}
+	}
+
+	/**
+	 * liemnh
+	 * 
+	 * @param id
+	 * @param cusId
+	 * @param numberPlate
+	 * @return
+	 */
+	@RequestMapping(value = "/create-customer-car", method = RequestMethod.POST)
+	@ApiOperation("create or update customer car")
+	public @ResponseBody ResponseApi createCustomerCarForApp(@RequestParam(name = "cus_id") long cusId,
+			@RequestParam(name = "number_plate") String numberPlate, @RequestParam(name = "seat") int seat,
+			@RequestParam(name = "car_type") int carType) {
+		/**
+		 * Thưc hiện gọi sang API /p/add/car bên golang để thực hiện thêm mới
+		 * Nhận kết quả thêm mơi và insert vào DB iparking_center
+		 */
+		ResponseApi responseDto = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			// tim kiem customer
+			CustomerDto objCustomerDto = customerService.findCustomerByOldId(cusId);
+			// tim kiem CustomerInfo from db
+			if (objCustomerDto == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Không tồn tại customer");
+				responseDto.setError(errorDto);
+				return responseDto;
+			}
+			// thuc hien goi sang API golang de tao customer_car
+			Map<String, Object> map = customerService.saveCustomerCarInPoseidonDb(cusId, numberPlate, carType);
+
+			if (map == null || !HttpStatus.OK.toString().equals(map.get("Code"))) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Lỗi tạo Customer Car In PoseidonDb");
+				responseDto.setError(errorDto);
+				return responseDto;
+			}
+			String pClass = (String) map.get("p_class");
+			// thuc hien kiem tra car_profile
+			CarProfileDto objCarProfileDto = carProfileService.findByNumberPlateAndSeatsAndPClass(numberPlate, seat,
+					pClass);
+
+			if (objCarProfileDto == null) {
+				// thuc hien tap car profile
+				objCarProfileDto = new CarProfileDto();
+				objCarProfileDto.setNumberPlate(numberPlate);
+				objCarProfileDto.setSeats(seat);
+				objCarProfileDto.setpClass(pClass);
+				objCarProfileDto = carProfileService.save(objCarProfileDto);
+			}
+
+			CustomerCarDto objCustomerCarDto = new CustomerCarDto();
+			objCustomerCarDto.setId((long) map.get("cus_car_id"));
+			objCustomerCarDto.setNumberPlate((String) map.get("number_plate"));
+			objCustomerCarDto.setCustomer((long) map.get("cus_id"));
+			objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerCarDto = customerService.saveCustomerCarEntity(objCustomerCarDto);
+
+			responseDto.setError(errorDto);
+			responseDto.setData(objCustomerCarDto);
+			return responseDto;
+
+		} catch (Exception ex) {
+			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseDto.setError(errorDto);
+			return responseDto;
+		}
+	}
+
+	/**
+	 * liemnh
+	 * 
+	 * @param id
+	 * @param cusId
+	 * @param numberPlate
+	 * @return
+	 */
+	@RequestMapping(value = "/create-customer-car-golang", method = RequestMethod.POST)
+	@ApiOperation("create or update customer car")
+	public @ResponseBody ResponseApi createCustomerCarForGolang(@RequestParam(name = "id") long id,
+			@RequestParam(name = "cus_id") long cusId, @RequestParam(name = "number_plate") String numberPlate,
+			@RequestParam(name = "car_type") String carType, @RequestParam(name = "seat") int seat,
+			@RequestParam(name = "p_class") String pClass) {
+		/**
+		 * Golang service gọi để tạo customer_car
+		 */
+		ResponseApi responseDto = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			// tim kiem customer
+			CustomerDto objCustomerDto = customerService.findCustomerByOldId(cusId);
+			// tim kiem CustomerInfo from db
+			if (objCustomerDto == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Không tồn tại customer");
+				responseDto.setError(errorDto);
+				return responseDto;
+			}
+
+			// thuc hien kiem tra car_profile
+			CarProfileDto objCarProfileDto = carProfileService.findByNumberPlateAndSeatsAndPClass(numberPlate, seat,
+					pClass);
+
+			if (objCarProfileDto == null) {
+				// thuc hien tap car profile
+				objCarProfileDto = new CarProfileDto();
+				objCarProfileDto.setNumberPlate(numberPlate);
+				objCarProfileDto.setSeats(seat);
+				objCarProfileDto.setpClass(pClass);
+				objCarProfileDto = carProfileService.save(objCarProfileDto);
+			}
+			CustomerCarDto objCustomerCarDto = customerService.findCustomerCarById(id);
+			if (objCustomerCarDto != null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Customer car đã tồn tại");
+				responseDto.setError(errorDto);
+				return responseDto;
+			}
+			// thuc hien tao customer car
+			objCustomerCarDto = new CustomerCarDto();
+			objCustomerCarDto.setNumberPlate(numberPlate);
+			objCustomerCarDto.setId(id);
+			objCustomerCarDto.setCustomer(cusId);
+			objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerCarDto = customerService.saveCustomerCarEntity(objCustomerCarDto);
+			responseDto.setError(errorDto);
+			responseDto.setData(objCustomerCarDto);
+			return responseDto;
+
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);

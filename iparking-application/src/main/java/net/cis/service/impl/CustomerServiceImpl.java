@@ -259,9 +259,11 @@ public class CustomerServiceImpl implements CustomerService {
 		if (ticketDataJSon.has("Status")) {
 			result.put("status", ticketDataJSon.getInt("Status"));
 		}
+		if (ticketDataJSon.has("P_class")) {
+			result.put("p_class", ticketDataJSon.getString("P_class"));
+		}
 		return result;
 	}
-
 
 	@Override
 	public CustomerDto findById(long cusId) throws Exception {
