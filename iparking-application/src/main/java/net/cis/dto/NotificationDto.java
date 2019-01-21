@@ -7,11 +7,20 @@ public class NotificationDto {
 	private long id;
 	private String title;
 	private String content;
+	private String contentSms;
 	private Date createdAt;
 	private Long createdBy;
 	private String createdByUserName;
 	private String createdByFullName;
 	private List<Integer> types;
+
+	public String getContentSms() {
+		return contentSms;
+	}
+
+	public void setContentSms(String contentSms) {
+		this.contentSms = contentSms;
+	}
 
 	public List<Integer> getTypes() {
 		return types;

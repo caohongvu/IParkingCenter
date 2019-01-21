@@ -52,8 +52,9 @@ public class NotificationEndpoint {
 	@ApiOperation("push (Notification, Email, Sms)")
 	public @ResponseBody ResponseApi getCompany(HttpServletRequest request,
 			@RequestParam(name = "parking_code") String parkingCode, @RequestParam(name = "title") String title,
-			@RequestParam(name = "content") String content, @RequestParam(name = "type") List<Integer> type)
-			throws Exception {
+			@RequestParam(name = "content", required = false) String content,
+			@RequestParam(name = "content_sms", required = false) String contentSms,
+			@RequestParam(name = "type") List<Integer> type) throws Exception {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -83,7 +84,7 @@ public class NotificationEndpoint {
 				responseApi.setError(errorDto);
 				return responseApi;
 			}
-			notificationHistoryService.push(parkingCode, title, content, supervisorId, type);
+			notificationHistoryService.push(parkingCode, title, content, contentSms, supervisorId, type);
 			responseApi.setError(errorDto);
 			return responseApi;
 		} catch (Exception ex) {

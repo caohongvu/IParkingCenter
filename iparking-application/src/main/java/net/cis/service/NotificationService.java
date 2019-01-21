@@ -9,7 +9,8 @@ import net.cis.jpa.entity.NotificationParkingPlaceEntity;
 
 public interface NotificationService {
 
-	void push(String parkingCode, String title, String content, String createdBy, List<Integer> type) throws Exception;
+	void push(String parkingCode, String title, String content, String contentSms, String createdBy, List<Integer> type)
+			throws Exception;
 
 	NotificationDto saveNotification(NotificationDto notificationHistoryDto);
 
