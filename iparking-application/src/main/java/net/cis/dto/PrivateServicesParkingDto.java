@@ -2,10 +2,10 @@ package net.cis.dto;
 
 import java.util.Date;
 
-public class PrivateServicesDto {
+public class PrivateServicesParkingDto {
 	private long id;
-	private String name;
-	private String desscription;
+	private Long parkingId;
+	private Long privateServiceId;
 	private Date createdAt;
 	private Date updatedAt;
 	private Integer status;
@@ -18,20 +18,20 @@ public class PrivateServicesDto {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public Long getParkingId() {
+		return parkingId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setParkingId(Long parkingId) {
+		this.parkingId = parkingId;
 	}
 
-	public String getDesscription() {
-		return desscription;
+	public Long getPrivateServiceId() {
+		return privateServiceId;
 	}
 
-	public void setDesscription(String desscription) {
-		this.desscription = desscription;
+	public void setPrivateServiceId(Long privateServiceId) {
+		this.privateServiceId = privateServiceId;
 	}
 
 	public Date getCreatedAt() {
