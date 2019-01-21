@@ -295,5 +295,63 @@ public class CustomerServiceImpl implements CustomerService {
 		mapper.map(objCustomerEntity, objCustomerDto);
 		return objCustomerDto;
 	}
+	
+	@Override
+	public Map<String, Object> otpSignupCallGolang(String phone, String captcha, String captchaID)
+			throws Exception {
+		// TODO Auto-generated method stub
+		String finalURL = URLConstants.URL_OTP_SIGNUP;
+		List<NameValuePair> formParams = new ArrayList<>();
+		formParams.add(new BasicNameValuePair("phone",phone));
+		formParams.add(new BasicNameValuePair("captchaID", captchaID));
+		formParams.add(new BasicNameValuePair("captcha", captcha));
+		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		LOGGER.info("otpSignupCallGolang Response: " + responseContent);
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		JSONObject ticketJSon = new JSONObject(responseContent);
+		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
+		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
+		if (ticketErrorJSon.has("Code")) {
+			result.put("Code", ticketErrorJSon.getString("Code"));
+		}
+		if (ticketErrorJSon.has("Message")) {
+			result.put("Message", ticketErrorJSon.getString("Message"));
+		}
+		if (ticketDataJSon.has("Ticket")) {
+			result.put("Ticket", ticketDataJSon.getString("Ticket"));
+		}
+		return result;
+	}
+	
+	
+	@Override
+	public Map<String, Object> napSignupCallGolang(String phone, String ticket, String otp)
+			throws Exception {
+		// TODO Auto-generated method stub
+		String finalURL = URLConstants.URL_NAP_SIGNUP;
+		List<NameValuePair> formParams = new ArrayList<>();
+		formParams.add(new BasicNameValuePair("phone", phone));
+		formParams.add(new BasicNameValuePair("ticket", ticket));
+		formParams.add(new BasicNameValuePair("otp", otp));
+		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		LOGGER.info("napSignupCallGolang Response: " + responseContent);
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		JSONObject ticketJSon = new JSONObject(responseContent);
+		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
+		if (ticketErrorJSon.has("Code")) {
+			result.put("Code", ticketErrorJSon.getString("Code"));
+		}
+		if (ticketErrorJSon.has("Message")) {
+			result.put("Message", ticketErrorJSon.getString("Message"));
+		}
+		if (ticketJSon.has("Data")) {
+			result.put("Token", ticketJSon.getString("Data"));
+		}
+		return result;
+	}
 
 }

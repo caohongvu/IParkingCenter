@@ -1,6 +1,7 @@
 package net.cis.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -21,6 +22,7 @@ import net.cis.common.util.constant.UserConstant;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
+import net.cis.dto.ResponseApi;
 import net.cis.dto.ResponseDto;
 import net.cis.repository.CustomerInfoRepository;
 import net.cis.service.CustomerService;
@@ -223,10 +225,13 @@ public class CustomerEndpoint {
 	@RequestMapping(value = "/customer-create", method = RequestMethod.POST)
 	@ApiOperation("Create or update customer info")
 	public @ResponseBody ResponseDto createCustomer(@RequestParam(name = "phone") String phone,
-			@RequestParam(name = "telco") String telco, @RequestParam(name = "password") String password,
+			@RequestParam(name = "phone2") String phone2,
+			@RequestParam(name = "password") String password,
+			@RequestParam(name = "telco") String telco,
 			@RequestParam(name = "status_reason") String status_reason,
-			@RequestParam(name = "checksum") String checkSum, @RequestParam(name = "status") int status,
-			@RequestParam(name = "old_id") long old_id) {
+			@RequestParam(name = "checksum") String checkSum, 
+			@RequestParam(name = "status") int status,
+			@RequestParam(name = "id") long old_id) {
 		ResponseDto responseDto = new ResponseDto();
 		responseDto.setCode(HttpStatus.OK.toString());
 		try {
@@ -265,6 +270,98 @@ public class CustomerEndpoint {
 			return responseDto;
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			return responseDto;
+		}
+	}
+	
+	
+	@RequestMapping(value = "/otp/signup", method = RequestMethod.POST)
+	@ApiOperation("signup customer")
+	public @ResponseBody Object otpSignUp(@RequestParam(name = "phone", required =  true) String phone,
+			@RequestParam(name = "captchaID" , required =  true) String captchaID,
+			@RequestParam(name = "captcha" , required =  true) String captcha) {
+		ResponseDto responseDto = new ResponseDto();
+		try {
+			if (StringUtils.isEmpty(captchaID)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_CHECK_CAPTCHA);
+				return responseDto;
+			}
+			if (StringUtils.isEmpty(captcha)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_CHECK_CAPTCHA);
+				return responseDto;
+			}
+			
+			if (StringUtils.isEmpty(phone)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
+				return responseDto;
+			}
+			if(!Utils.validateVNPhoneNumber(String.valueOf(phone))){
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Phone Malformed");
+				return responseDto;
+			}
+			Map<String, Object> result = customerService.otpSignupCallGolang(phone, captcha, captchaID);
+			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Lỗi tạo otp");
+				return responseDto;
+			}
+			responseDto.setCode(HttpStatus.OK.toString());
+			responseDto.setData(result);
+			return responseDto;
+		}catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			return responseDto;
+		}
+	}
+	
+	@RequestMapping(value = "/nap/signup", method = RequestMethod.POST)
+	@ApiOperation("signup customer")
+	public @ResponseBody Object napSignUp(@RequestParam(name = "phone", required =  true) String phone,
+			@RequestParam(name = "ticket" , required =  true) String ticket,
+			@RequestParam(name = "otp" , required =  true) String otp) {
+		ResponseDto responseDto = new ResponseDto();
+		try {
+			if (StringUtils.isEmpty(otp)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_OTP);
+				return responseDto;
+			}
+			if (StringUtils.isEmpty(ticket)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_TICKET);
+				return responseDto;
+			}
+			
+			if (StringUtils.isEmpty(phone)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
+				return responseDto;
+			}
+			if(!Utils.validateVNPhoneNumber(String.valueOf(phone))){
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Phone Malformed");
+				return responseDto;
+			}
+			Map<String, Object> result = customerService.napSignupCallGolang(phone, ticket, otp);
+			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Lỗi tạo token");
+				return responseDto;
+			}
+			responseDto.setCode(HttpStatus.OK.toString());
+			responseDto.setMessage(result.get("Message").toString());
+			responseDto.setData(result.get("Token"));
+			return responseDto;
+		}catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
 			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 			return responseDto;
 		}
