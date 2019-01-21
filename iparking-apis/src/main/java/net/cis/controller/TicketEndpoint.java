@@ -328,6 +328,7 @@ public class TicketEndpoint extends BaseEndpoint {
 						objCustomerCarDto.setCustomer((long) resultCreateCustomerCar.get("cus_id"));
 						objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 						objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+						objCustomerCarDto.setStatus((int)resultCreateCustomerCar.get("status"));
 						customerService.saveCustomerCarEntity(objCustomerCarDto);
 					}
 				}
