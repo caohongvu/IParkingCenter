@@ -14,9 +14,7 @@ public interface CustomerService {
 
 	CustomerDto saveCustomerInIparkingCenter(CustomerDto customerDto);
 
-	List<CustomerCarDto> findCustomerCarByNumberPlateAndVerified(String numberPlate, Integer verified) throws Exception;
-
-	void updateCustomerCarListByNumberPlate(String numberPlate, Integer verified) throws Exception;
+	List<CustomerCarDto> findCustomerCarByNumberPlate(String numberPlate) throws Exception;
 
 	CustomerCarDto findCustomerCarByNumberPlateAndCusId(String numberPlate, long cusId) throws Exception;
 
@@ -32,12 +30,12 @@ public interface CustomerService {
 
 	void saveCustomerInfoInPoseidonDb(long cusId, String phone, String email) throws Exception;
 
-	boolean checkCustomerCarSendOtp(String numberPlate, long cusId) throws Exception;
-
 	CustomerCarDto findCustomerCarById(long id) throws Exception;
 
 	void deleteCustomerCar(long id) throws Exception;
 	
 	CustomerDto findById(long cusId) throws Exception;
+	Map<String, Object> otpSignupCallGolang(String phone, String captcha, String captchaID) throws Exception;
+	Map<String, Object> napSignupCallGolang(String phone, String ticket, String otp) throws Exception;
 
 }

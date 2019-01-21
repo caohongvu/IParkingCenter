@@ -1,9 +1,12 @@
 package net.cis.dto;
 
+import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class MonthlyTicketReportDto {
 	private Long ticket_id;
+	private Long cpp_id;
 	private String contract_code;
 	private String contract_no;
 	private String parking_place;
@@ -18,6 +21,11 @@ public class MonthlyTicketReportDto {
 	private Long valid_end;
 	private int expired;
 	private String fullName;
+	private int status;
+	private boolean is_liquidated;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern="yyyy-MM-dd@HH:mm:ss.SSSZ")
+	private Date created_at;
 	public Long getTicket_id() {
 		return ticket_id;
 	}
@@ -108,6 +116,32 @@ public class MonthlyTicketReportDto {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public boolean getIs_liquidated() {
+		return is_liquidated;
+	}
+	public void setIs_liquidated(boolean is_liquidated) {
+		this.is_liquidated = is_liquidated;
+	}
+	public Long getCpp_id() {
+		return cpp_id;
+	}
+	public void setCpp_id(Long cpp_id) {
+		this.cpp_id = cpp_id;
+	}
+	public Date getCreated_at() {
+		return created_at;
+	}
+	public void setCreated_at(Date created_at) {
+		this.created_at = created_at;
+	}
+	
+	
 	
 	
 }

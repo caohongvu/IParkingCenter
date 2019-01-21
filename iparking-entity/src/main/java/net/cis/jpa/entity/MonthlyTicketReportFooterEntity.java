@@ -1,14 +1,19 @@
 package net.cis.jpa.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
 @Entity
 @Table(name = "report_monthly_ticket_view")
+@NamedQuery(name = "MonthlyTicketReportFooterEntity.listUniqueticketId", 
+query = "SELECT DISTINCT ticket.ticket_id FROM MonthlyTicketReportFooterEntity ticket")
 public class MonthlyTicketReportFooterEntity {
 
 	@Id
@@ -59,6 +64,15 @@ public class MonthlyTicketReportFooterEntity {
 
 	@Column(name = "fullname")
 	private String fullName;
+	
+	@Column(name = "status")
+	private int status;
+	
+	@Column(name = "is_liquidated")
+	private boolean is_liquidated;
+	
+	@Column(name = "created_at")
+	private Date created_at;
 	
 	@Formula("COUNT(*)")
 	private long total_row;
@@ -205,6 +219,28 @@ public class MonthlyTicketReportFooterEntity {
 	public void setTotalTicket_amount(double totalTicket_amount) {
 		this.totalTicket_amount = totalTicket_amount;
 	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public boolean isIs_liquidated() {
+		return is_liquidated;
+	}
+	public void setIs_liquidated(boolean is_liquidated) {
+		this.is_liquidated = is_liquidated;
+	}
+	public Date getCreated_at() {
+		return created_at;
+	}
+	public void setCreated_at(Date created_at) {
+		this.created_at = created_at;
+	}
+	
+	
+	
+	
 	
 	
 }

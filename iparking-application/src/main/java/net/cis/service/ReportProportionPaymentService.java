@@ -8,4 +8,5 @@ public interface ReportProportionPaymentService {
 	List<ReportProportionPaymentDto> getProportionPayment(List<Long> cppId, long fromDate, long toDate);
 
 	ReportProportionPaymentDto getProportionPayment(long cppId, long fromDate, long toDate);
+
 }

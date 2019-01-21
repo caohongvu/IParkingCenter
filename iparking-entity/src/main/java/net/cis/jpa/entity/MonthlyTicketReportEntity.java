@@ -1,5 +1,7 @@
 package net.cis.jpa.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -57,6 +59,15 @@ public class MonthlyTicketReportEntity {
 
 	@Column(name = "fullname")
 	private String fullName;
+	
+	@Column(name = "status")
+	private int status;
+	
+	@Column(name = "is_liquidated")
+	private boolean is_liquidated;
+	
+	@Column(name = "created_at")
+	private Date created_at;
 	
 	public String getId() {
 		return id;
@@ -130,9 +141,6 @@ public class MonthlyTicketReportEntity {
 		this.paid_amount = paid_amount;
 	}
 
-	public int isIs_paid() {
-		return is_paid;
-	}
 
 	public void setIs_paid(int is_paid) {
 		this.is_paid = is_paid;
@@ -185,6 +193,36 @@ public class MonthlyTicketReportEntity {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public int getIs_paid() {
+		return is_paid;
+	}
+
+	public boolean getIs_liquidated() {
+		return is_liquidated;
+	}
+
+	public void setIs_liquidated(boolean is_liquidated) {
+		this.is_liquidated = is_liquidated;
+	}
+
+	public Date getCreated_at() {
+		return created_at;
+	}
+
+	public void setCreated_at(Date created_at) {
+		this.created_at = created_at;
+	}
+	
+	
 	
 	
 	

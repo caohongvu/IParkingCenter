@@ -2,6 +2,8 @@ package net.cis.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import net.cis.constants.ResponseErrorCodeConstants;
+
 public class ErrorDto {	
 	private int Code;
 	private String Message;

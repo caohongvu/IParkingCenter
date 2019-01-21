@@ -14,6 +14,7 @@ import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.MonthlyTicketReportDto;
 import net.cis.dto.MonthlyTicketReportEndPointDto;
+import net.cis.dto.ParkingDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.MonthlyTicketReportCriteria;
 import net.cis.jpa.entity.MonthlyTicketReportEntity;
@@ -21,6 +22,7 @@ import net.cis.jpa.entity.MonthlyTicketReportFooterEntity;
 import net.cis.repository.MonthlyTicketReportFooterRepository;
 import net.cis.repository.MonthlyTicketReportRepository;
 import net.cis.service.MonthlyTicketReportService;
+import net.cis.service.cache.ParkingPlaceCache;
 
 
 @Service
@@ -31,6 +33,9 @@ public class MonthlyTicketReportServiceImpl implements MonthlyTicketReportServic
 	
 	@Autowired
 	MonthlyTicketReportFooterRepository monthlyTicketReportFooterRepository;
+	
+	@Autowired
+	private ParkingPlaceCache parkingPlaceCache;
 
 	ModelMapper mapper;
 	
@@ -51,7 +56,7 @@ public class MonthlyTicketReportServiceImpl implements MonthlyTicketReportServic
 					monthlyTicketReportCriteria.getParking_place(), monthlyTicketReportCriteria.getExpired(),
 					monthlyTicketReportCriteria.getPhone(), monthlyTicketReportCriteria.getNumber_plate(),
 					monthlyTicketReportCriteria.getFullName(), monthlyTicketReportCriteria.getContract_code(),
-					monthlyTicketReportCriteria.getContract_no(), monthlyTicketReportCriteria.getValid_from(),
+					monthlyTicketReportCriteria.getContract_no(), monthlyTicketReportCriteria.getStatus(), monthlyTicketReportCriteria.getValid_from(),
 					monthlyTicketReportCriteria.getValid_end(), pageable);
 			List<MonthlyTicketReportDto> ticketReportDtos = this.map(monthlyTicketReportEntities);
 			MonthlyTicketReportFooterEntity monthlyTicketReportFooterEntity = null;
@@ -60,7 +65,7 @@ public class MonthlyTicketReportServiceImpl implements MonthlyTicketReportServic
 					monthlyTicketReportCriteria.getParking_place(), monthlyTicketReportCriteria.getExpired(),
 					monthlyTicketReportCriteria.getPhone(), monthlyTicketReportCriteria.getNumber_plate(),
 					monthlyTicketReportCriteria.getFullName(), monthlyTicketReportCriteria.getContract_code(),
-					monthlyTicketReportCriteria.getContract_no(), monthlyTicketReportCriteria.getValid_from(),
+					monthlyTicketReportCriteria.getContract_no(), monthlyTicketReportCriteria.getStatus(), monthlyTicketReportCriteria.getValid_from(),
 					monthlyTicketReportCriteria.getValid_end());
 				
 				if (monthlyTicketReportFooterEntity == null) {
@@ -96,6 +101,10 @@ public class MonthlyTicketReportServiceImpl implements MonthlyTicketReportServic
 		source.stream().map((entity) -> {
 			MonthlyTicketReportDto dto = new MonthlyTicketReportDto();
 			mapper.map(entity, dto);
+			ParkingDto parkingDto = parkingPlaceCache.get(String.valueOf(entity.getParking_place()));
+			if (parkingDto != null) {
+				dto.setCpp_id(Long.valueOf(parkingDto.getOldId()).longValue());
+			}
 			return dto;
 		}).forEachOrdered((dto) -> {
 			rtn.add(dto);

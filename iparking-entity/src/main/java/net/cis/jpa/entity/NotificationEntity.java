@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "notification_history")
-public class NotificationHistoryEntity {
+@Table(name = "notification")
+public class NotificationEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,24 +23,21 @@ public class NotificationHistoryEntity {
 	@Column(name = "content")
 	private String content;
 
-	@Column(name = "sended")
-	private String sended;
-
-	@Column(name = "type")
-	private int type;
+	@Column(name = "content_sms")
+	private String contentSms;
 
 	@Column(name = "created_at")
 	private Date createdAt;
 
 	@Column(name = "created_by")
-	private long createdBy;
+	private Long createdBy;
 
-	public String getSended() {
-		return sended;
+	public String getContentSms() {
+		return contentSms;
 	}
 
-	public void setSended(String sended) {
-		this.sended = sended;
+	public void setContentSms(String contentSms) {
+		this.contentSms = contentSms;
 	}
 
 	public String getTitle() {
@@ -67,14 +64,6 @@ public class NotificationHistoryEntity {
 		this.content = content;
 	}
 
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-
 	public Date getCreatedAt() {
 		return createdAt;
 	}
@@ -83,11 +72,11 @@ public class NotificationHistoryEntity {
 		this.createdAt = createdAt;
 	}
 
-	public long getCreatedBy() {
+	public Long getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
+	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
 	}
 
