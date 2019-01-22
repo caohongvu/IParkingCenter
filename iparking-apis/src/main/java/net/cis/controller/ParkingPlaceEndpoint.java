@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -21,12 +22,15 @@ import net.cis.common.util.StatusUtil;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.CompanyDto;
 import net.cis.dto.ErrorDto;
+import net.cis.dto.ParkingActorDto;
 import net.cis.dto.ParkingDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketDto;
 import net.cis.jpa.criteria.TicketCriteria;
 import net.cis.jpa.entity.CompanyInforEntity;
+import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CompanyService;
+import net.cis.service.ParkingActorService;
 import net.cis.service.ParkingService;
 import net.cis.service.TicketService;
 import net.cis.service.cache.CompanyInfoCache;
@@ -47,6 +51,10 @@ public class ParkingPlaceEndpoint {
 
 	@Autowired
 	CompanyInfoCache companyInfoCache;
+	
+
+	@Autowired
+	ParkingActorService parkingActorService;
 
 	@RequestMapping(value = "/{id}/getByOldId", method = RequestMethod.GET)
 	public @ResponseBody ParkingDto getByOldId(@PathVariable("id") String oldId) throws Exception {
@@ -145,5 +153,49 @@ public class ParkingPlaceEndpoint {
 			return responseApi;
 		}
 
+	}
+	
+	//GET DETAIL FOR PORTAL
+	@RequestMapping(value = "/detail/cpp", method = RequestMethod.GET)
+	public @ResponseBody ResponseApi getByOldIdToken(HttpServletRequest request) throws Exception {
+		
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		
+		String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
+	
+		
+		if (StringUtils.isEmpty(supervisorId)) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage("Authentication faile!");
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+		
+		// lấy thông tin cppCode mà user quản l
+		List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(Long.parseLong(supervisorId));
+		if (parkingActorDtos == null || parkingActorDtos.size() == 0) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage("User chưa được cấu hình điểm dịch vụ");
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+		ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+		if (objParkingDto == null) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage("Điểm dịch vụ không tồn tại");
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+		
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		errorDto.setMessage("");
+		responseApi.setError(errorDto);
+		responseApi.setData(objParkingDto);
+		
+		
+
+		
+		return responseApi;
 	}
 }
