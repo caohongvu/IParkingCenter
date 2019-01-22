@@ -122,7 +122,6 @@ public class NotificationServiceImpl implements NotificationService {
 		// lay danh sach khach hang ve thang theo diem do
 		List<ParkingContractInfoDto> lstParkingContractInfoDto = parkingContractService
 				.findParkingContractInfo(ticketCriteria);
-		List<String> lstDevices = new ArrayList<>();
 		List<String> lstPhone = new ArrayList<>();
 		List<String> lstEmail = new ArrayList<>();
 		// thuc hien luu history Notification
