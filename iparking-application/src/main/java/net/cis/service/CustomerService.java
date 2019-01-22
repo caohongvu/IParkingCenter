@@ -33,9 +33,15 @@ public interface CustomerService {
 	CustomerCarDto findCustomerCarById(long id) throws Exception;
 
 	void deleteCustomerCar(long id) throws Exception;
-	
+
 	CustomerDto findById(long cusId) throws Exception;
+
+	Map<String, Object> getCapcha(String captchaID) throws Exception;
+
 	Map<String, Object> otpSignupCallGolang(String phone, String captcha, String captchaID) throws Exception;
+
 	Map<String, Object> napSignupCallGolang(String phone, String ticket, String otp) throws Exception;
-	Map<String, Object> saveCustomerInfoInPoseidonDbReturnObject(long cusId, String phone, String email) throws Exception;
+
+	Map<String, Object> saveCustomerInfoInPoseidonDbReturnObject(long cusId, String phone, String email)
+			throws Exception;
 }
