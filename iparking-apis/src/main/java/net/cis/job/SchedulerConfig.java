@@ -135,6 +135,46 @@ public class SchedulerConfig implements SchedulingConfigurer {
 		return Boolean.FALSE;
 	}
 
+	private String cronJobGetCompanyDailyRevenuePaymentConfig() {
+		String cronTabExpression = PropertiesUtils.getProperty("JOB_COMPANY_DAILY_REVENUE");
+		if (StringUtils.isEmpty(cronTabExpression))
+			cronTabExpression = "0/5 * * * * *";
+		LOGGER.info("CronJobGetCompanyDailyRevenuePaymentConfig partten:" + cronTabExpression);
+		return cronTabExpression;
+	}
+
+	private boolean cronJobGetCompanyDailyRevenuePaymentEnableConfig() {
+		String strEnable = PropertiesUtils.getProperty("JOB_COMPANY_DAILY_REVENUE_ENABLE");
+		LOGGER.info("cronJobGetCompanyDailyRevenuePaymentEnableConfig: " + strEnable);
+		if (StringUtils.isEmpty(strEnable)) {
+			return Boolean.FALSE;
+		}
+		if (ParkingCenterConstants.JOB_ENABLE.equals(strEnable)) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
+
+	private String cronJobGetCompanyMonthlyRevenuePaymentConfig() {
+		String cronTabExpression = PropertiesUtils.getProperty("JOB_COMPANY_MONTHLY_REVENUE");
+		if (StringUtils.isEmpty(cronTabExpression))
+			cronTabExpression = "0/5 * * * * *";
+		LOGGER.info("CronJobGetCompanyDailyRevenuePaymentConfig partten:" + cronTabExpression);
+		return cronTabExpression;
+	}
+
+	private boolean cronJobGetCompanyMonthlyRevenuePaymentEnableConfig() {
+		String strEnable = PropertiesUtils.getProperty("JOB_COMPANY_MONTHLY_REVENUE_ENABLE");
+		LOGGER.info("cronJobGetCompanyDailyRevenuePaymentEnableConfig: " + strEnable);
+		if (StringUtils.isEmpty(strEnable)) {
+			return Boolean.FALSE;
+		}
+		if (ParkingCenterConstants.JOB_ENABLE.equals(strEnable)) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
+
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
 
@@ -212,6 +252,38 @@ public class SchedulerConfig implements SchedulingConfigurer {
 			@Override
 			public Date nextExecutionTime(TriggerContext triggerContext) {
 				CronTrigger trigger = new CronTrigger(cronJobGetProportionPaymentConfig());
+				Date nextExec = trigger.nextExecutionTime(triggerContext);
+				return nextExec;
+			}
+		});
+
+		// job get company daily revenue
+		taskRegistrar.addTriggerTask(new Runnable() {
+			@Override
+			public void run() {
+				if (cronJobGetCompanyDailyRevenuePaymentEnableConfig())
+					jobService.getCompanyDalyRevenue();
+			}
+		}, new Trigger() {
+			@Override
+			public Date nextExecutionTime(TriggerContext triggerContext) {
+				CronTrigger trigger = new CronTrigger(cronJobGetCompanyDailyRevenuePaymentConfig());
+				Date nextExec = trigger.nextExecutionTime(triggerContext);
+				return nextExec;
+			}
+		});
+
+		// job get company monthly revenue
+		taskRegistrar.addTriggerTask(new Runnable() {
+			@Override
+			public void run() {
+				if (cronJobGetCompanyMonthlyRevenuePaymentEnableConfig())
+					jobService.getCompanyMonthRevenue();
+			}
+		}, new Trigger() {
+			@Override
+			public Date nextExecutionTime(TriggerContext triggerContext) {
+				CronTrigger trigger = new CronTrigger(cronJobGetCompanyMonthlyRevenuePaymentConfig());
 				Date nextExec = trigger.nextExecutionTime(triggerContext);
 				return nextExec;
 			}
