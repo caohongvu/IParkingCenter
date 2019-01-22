@@ -1,5 +1,9 @@
 package net.cis.service;
 
-public interface PrivateServicesService {
+import java.util.List;
 
+import net.cis.dto.PrivateServicesParkingDto;
+
+public interface PrivateServicesService {
+	List<PrivateServicesParkingDto> getPrivateServiceParkings(Long parkingId, Integer status);
 }
