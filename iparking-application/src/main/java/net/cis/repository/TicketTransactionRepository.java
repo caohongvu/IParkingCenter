@@ -14,7 +14,7 @@ import net.cis.jpa.entity.TicketTransactionPortalEntity;
 public interface TicketTransactionRepository  extends JpaRepository<TicketTransactionEntity, String> {
 	
 	TicketTransactionEntity findByPaymentOrderNo(String paymentOrderNo);
-	List<TicketTransactionEntity> findByTicketId(Long ticketId);
+	List<TicketTransactionEntity> findByTicketId(long ticketId);
 	
 	TicketTransactionPortalEntity getDetailPortalById(String id);
 	

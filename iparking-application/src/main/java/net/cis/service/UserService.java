@@ -1,7 +1,6 @@
 package net.cis.service;
 
 import java.util.HashSet;
-import java.util.List;
 
 import org.json.JSONException;
 import org.springframework.data.domain.Pageable;

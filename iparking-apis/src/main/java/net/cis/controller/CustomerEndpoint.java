@@ -25,8 +25,8 @@ import net.cis.dto.CarProfileDto;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
-import net.cis.dto.ResponseApi;
 import net.cis.dto.ErrorDto;
+import net.cis.dto.ResponseApi;
 import net.cis.dto.ResponseDto;
 import net.cis.repository.CustomerInfoRepository;
 import net.cis.service.CarProfileService;
@@ -477,6 +477,33 @@ public class CustomerEndpoint {
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage(ex.getMessage());
 			responseDto.setError(errorDto);
+			return responseDto;
+		}
+	}
+
+	@RequestMapping(value = "/capcha", method = RequestMethod.GET)
+	@ApiOperation("signup customer")
+	public @ResponseBody Object getCapcha(@RequestParam(name = "captchaID", required = true) String captchaID) {
+		ResponseDto responseDto = new ResponseDto();
+		try {
+			if (StringUtils.isEmpty(captchaID)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_CHECK_CAPTCHA);
+				return responseDto;
+			}
+			Map<String, Object> result = customerService.getCapcha(captchaID);
+			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Lỗi tạo otp");
+				return responseDto;
+			}
+			responseDto.setCode(HttpStatus.OK.toString());
+			responseDto.setData(result);
+			return responseDto;
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 			return responseDto;
 		}
 	}
