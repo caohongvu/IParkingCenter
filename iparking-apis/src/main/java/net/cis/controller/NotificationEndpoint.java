@@ -62,8 +62,8 @@ public class NotificationEndpoint {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
-		String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
 		try {
+			String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
 			if (StringUtils.isEmpty(supervisorId)) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage("Authentication faile!");
@@ -120,8 +120,7 @@ public class NotificationEndpoint {
 				responseApi.setError(errorDto);
 				return responseApi;
 			}
-
-			// lấy thông tin cppCode mà user quản l
+			// lấy thông tin cppCode mà user quản ly
 			List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(Long.parseLong(supervisorId));
 			if (parkingActorDtos == null || parkingActorDtos.size() == 0) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
