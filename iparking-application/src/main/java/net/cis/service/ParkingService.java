@@ -25,4 +25,6 @@ public interface ParkingService {
 	List<ParkingDto> findByCompany(long company);
 	
 	List<ParkingEntity> findByCompanyId(int companyId);
+	
+	ParkingDto updateParkingPlace(ParkingDto parkingDto);
 }

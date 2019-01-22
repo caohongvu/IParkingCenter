@@ -15,7 +15,7 @@ public interface UserService {
 	ResponseApi findAll(String username, String fullname,Pageable pageable);
 	ResponseApi save(UserDto userDto) throws JSONException;
 	
-	ResponseApi findById(int Id);
+	UserDto findById(int Id);
 	UserEntity findByUsername(String username);
 	
 	ResponseApi update(UserDto userDto) throws JSONException;

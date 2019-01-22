@@ -124,4 +124,13 @@ public class ParkingServiceImpl implements ParkingService {
 		return parkingEntities;
 	}
 
+	@Override
+	public ParkingDto updateParkingPlace(ParkingDto parkingDto) {
+		ParkingEntity entity = new ParkingEntity();
+		mapper.map(parkingDto, entity);
+		ParkingEntity oBjEntity = parkingRepository.save(entity);
+		mapper.map(oBjEntity, parkingDto);		
+		return parkingDto;
+	}
+
 }
