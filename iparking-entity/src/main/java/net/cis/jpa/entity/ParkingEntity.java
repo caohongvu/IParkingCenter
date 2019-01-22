@@ -66,6 +66,29 @@ public class ParkingEntity {
 	@Column(name="old_id")
 	private String oldId;
 	
+	@Column(name="phone")
+	private Integer phone;
+	
+	@Column(name="parking_name")
+	private String parkingName;
+	
+	
+	public Integer getPhone() {
+		return phone;
+	}
+
+	public void setPhone(Integer phone) {
+		this.phone = phone;
+	}
+
+	public String getParkingName() {
+		return parkingName;
+	}
+
+	public void setParkingName(String parkingName) {
+		this.parkingName = parkingName;
+	}
+
 	public long getId() {
 		return id;
 	}
