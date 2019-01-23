@@ -41,7 +41,9 @@ public interface CustomerService {
 
 	Map<String, Object> otpSignupCallGolang(String phone, String captcha, String captchaID) throws Exception;
 
-	Map<String, Object> napSignupCallGolang(String phone, String ticket, String otp, String password) throws Exception;
+	Map<String, Object> verifyOtpSignupCallGolang(String phone, String otp, String ticket) throws Exception;
+
+	Map<String, Object> napSignupCallGolang(String phone, String password) throws Exception;
 
 	Map<String, Object> saveCustomerInfoInPoseidonDbReturnObject(long cusId, String phone, String email)
 			throws Exception;
