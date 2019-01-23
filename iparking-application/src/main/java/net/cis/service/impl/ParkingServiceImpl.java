@@ -8,12 +8,9 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.http.NameValuePair;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import net.cis.dto.ParkingDto;
@@ -22,7 +19,6 @@ import net.cis.jpa.entity.ParkingEntity;
 import net.cis.repository.ParkingRepository;
 import net.cis.service.ParkingService;
 import net.cis.service.cache.ParkingPlaceCache;
-import net.cis.utils.RestfulUtil;
 
 /**
  * Created by Vincent on 02/10/2018

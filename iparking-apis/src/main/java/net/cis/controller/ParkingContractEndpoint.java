@@ -68,7 +68,7 @@ public class ParkingContractEndpoint {
 	}
 
 	/**
-	 * liemnh
+	 * liemnh lay danh sach hop dong thang qua han
 	 * 
 	 * @param parkingCode
 	 * @return
@@ -96,7 +96,7 @@ public class ParkingContractEndpoint {
 		}
 
 	}
-	
+
 	@RequestMapping(value = "/get_by_cpp/", method = RequestMethod.GET)
 	@ApiOperation("Get Ticket By Parking Place")
 	public @ResponseBody Object getByCppId(@RequestParam("code") String code) throws Exception {
@@ -108,7 +108,7 @@ public class ParkingContractEndpoint {
 		} catch (Exception e) {
 			responseApi.setData(null);
 			responseApi.setError(new ErrorDto(ResponseErrorCodeConstants.StatusInternalServerError, ""));
-		} 
+		}
 		return responseApi;
 	}
 }

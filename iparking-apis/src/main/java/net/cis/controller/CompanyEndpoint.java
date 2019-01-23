@@ -26,6 +26,13 @@ public class CompanyEndpoint {
 	@Autowired
 	CompanyService companyService;
 
+	/**
+	 * liemnh chi tiet cong ty
+	 * 
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/getCompanyDetail", method = RequestMethod.GET)
 	@ApiOperation("Chi tiet cong ty")
 	public @ResponseBody ResponseApi getCompany(HttpServletRequest request) throws Exception {

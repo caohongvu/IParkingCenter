@@ -160,6 +160,7 @@ public class DailyTicketPaymentServiceImpl implements DailyTicketPaymentService 
 		storedProcedureQuery.setParameter("to_time", ticketCriteria.getEnd_time());
 		storedProcedureQuery.execute();
 		List<DailyTicketRevenueDto> result = new ArrayList<>();
+		@SuppressWarnings("unchecked")
 		List<Object[]> lst = storedProcedureQuery.getResultList();
 		for (Object[] value : lst) {
 			DailyTicketRevenueDto obDailyTicketRevenueDto = new DailyTicketRevenueDto();
@@ -191,6 +192,7 @@ public class DailyTicketPaymentServiceImpl implements DailyTicketPaymentService 
 		storedProcedureQuery.setParameter("to_time", ticketCriteria.getEnd_time());
 		storedProcedureQuery.execute();
 		List<DailyTicketRevenueDto> result = new ArrayList<>();
+		@SuppressWarnings("unchecked")
 		List<Object[]> lst = storedProcedureQuery.getResultList();
 		for (Object[] value : lst) {
 			DailyTicketRevenueDto obDailyTicketRevenueDto = new DailyTicketRevenueDto();
