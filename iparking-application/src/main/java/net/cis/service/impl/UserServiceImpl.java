@@ -436,6 +436,8 @@ public class UserServiceImpl implements UserService {
 		userDto.setType(type);
 		userDto.setPassword(password);
 		userDto.setRecovery(recovery);
+		userDto.setFullname(user.getFullname());
+		userDto.setRole(userSecurity.getRole());
 
 		// user
 		mapper.map(userDto, entity);
