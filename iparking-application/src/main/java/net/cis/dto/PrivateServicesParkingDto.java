@@ -5,10 +5,28 @@ import java.util.Date;
 public class PrivateServicesParkingDto {
 	private long id;
 	private Long parkingId;
+	private String parkingCode;
 	private Long privateServiceId;
+	private String parkingServiceName;
 	private Date createdAt;
 	private Date updatedAt;
 	private Integer status;
+
+	public String getParkingCode() {
+		return parkingCode;
+	}
+
+	public void setParkingCode(String parkingCode) {
+		this.parkingCode = parkingCode;
+	}
+
+	public String getParkingServiceName() {
+		return parkingServiceName;
+	}
+
+	public void setParkingServiceName(String parkingServiceName) {
+		this.parkingServiceName = parkingServiceName;
+	}
 
 	public long getId() {
 		return id;

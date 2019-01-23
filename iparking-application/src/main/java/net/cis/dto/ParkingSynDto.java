@@ -2,24 +2,20 @@ package net.cis.dto;
 
 import java.util.Date;
 
-/**
- * Created by Vincent on 02/10/2018
- */
-public class ParkingDto {
-
+public class ParkingSynDto {
 	 private Long id;
 	 private String parkingCode;
 	 private String address;
 	 private String province;
-	 private Long district;
+	 private int district;
 	 private int status;
-	 private Date iparkingJoined;
+	 private String iparkingJoined;
 	 private int capacity;
 	 private int adjust;
 	 private int currentTicketInSession;
 	 private String parkingPlaceData;
-	 private Date createdAt;
-	 private Date updatedAt;
+	 private String createdAt;
+	 private String updatedAt;
 	 private int company;
 	 private boolean isProvideEInvoice;
 	 private String lat;
@@ -27,23 +23,6 @@ public class ParkingDto {
 	 private String oldId;
 	 private String phone;
 	 private String parkingName;
-	 
-	 
-	public String getPhone() {
-		return phone;
-	}
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-	public String getParkingName() {
-		return parkingName;
-	}
-	public void setParkingName(String parkingName) {
-		this.parkingName = parkingName;
-	}
-	public void setProvideEInvoice(boolean isProvideEInvoice) {
-		this.isProvideEInvoice = isProvideEInvoice;
-	}
 	public Long getId() {
 		return id;
 	}
@@ -68,10 +47,10 @@ public class ParkingDto {
 	public void setProvince(String province) {
 		this.province = province;
 	}
-	public Long getDistrict() {
+	public int getDistrict() {
 		return district;
 	}
-	public void setDistrict(Long district) {
+	public void setDistrict(int district) {
 		this.district = district;
 	}
 	public int getStatus() {
@@ -80,10 +59,10 @@ public class ParkingDto {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public Date getIparkingJoined() {
+	public String getIparkingJoined() {
 		return iparkingJoined;
 	}
-	public void setIparkingJoined(Date iparkingJoined) {
+	public void setIparkingJoined(String iparkingJoined) {
 		this.iparkingJoined = iparkingJoined;
 	}
 	public int getCapacity() {
@@ -92,17 +71,12 @@ public class ParkingDto {
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
 	}
-	
 	public int getAdjust() {
 		return adjust;
 	}
 	public void setAdjust(int adjust) {
 		this.adjust = adjust;
 	}
-	public int getRemain() {
-		return (capacity + adjust)-currentTicketInSession;
-	}
-	
 	public int getCurrentTicketInSession() {
 		return currentTicketInSession;
 	}
@@ -115,16 +89,16 @@ public class ParkingDto {
 	public void setParkingPlaceData(String parkingPlaceData) {
 		this.parkingPlaceData = parkingPlaceData;
 	}
-	public Date getCreatedAt() {
+	public String getCreatedAt() {
 		return createdAt;
 	}
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
-	public Date getUpdatedAt() {
+	public String getUpdatedAt() {
 		return updatedAt;
 	}
-	public void setUpdatedAt(Date updatedAt) {
+	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 	public int getCompany() {
@@ -133,11 +107,10 @@ public class ParkingDto {
 	public void setCompany(int company) {
 		this.company = company;
 	}
-	
-	public boolean getIsProvideEInvoice() {
+	public boolean isProvideEInvoice() {
 		return isProvideEInvoice;
 	}
-	public void setIsProvideEInvoice(boolean isProvideEInvoice) {
+	public void setProvideEInvoice(boolean isProvideEInvoice) {
 		this.isProvideEInvoice = isProvideEInvoice;
 	}
 	public String getLat() {
@@ -158,11 +131,23 @@ public class ParkingDto {
 	public void setOldId(String oldId) {
 		this.oldId = oldId;
 	}
-	 
-	 @Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return id.hashCode();
+	public String getPhone() {
+		return phone;
 	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getParkingName() {
+		return parkingName;
+	}
+	public void setParkingName(String parkingName) {
+		this.parkingName = parkingName;
+	}
+	 
+	 
+	 
+	 
+	 
+	
 	
 }

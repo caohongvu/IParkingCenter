@@ -29,7 +29,6 @@ public class ConfigServiceImpl implements ConfigService {
 	public ResponseApi findAllConfigOfCompany(int id) {
 		ErrorDto errorDto = new ErrorDto();
 		ResponseApi responseApi = new ResponseApi();
-		ModelMapper mapper = new ModelMapper();
 
 		List<CompanyServiceEntity> entity = companyServiceReponsitory.findConfigByCompanyId(id);
 		if (entity == null) {

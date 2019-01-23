@@ -8,6 +8,6 @@ import net.cis.jpa.entity.NotificationEntity;
 
 public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {
 
-	List<NotificationEntity> findByCreatedBy(long createdBy);  
+	List<NotificationEntity> findByCreatedBy(Long createdBy);  
 
 }
