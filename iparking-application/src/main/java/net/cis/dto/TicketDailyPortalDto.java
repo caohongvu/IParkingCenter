@@ -1,7 +1,5 @@
 package net.cis.dto;
 
-import java.util.Date;
-
 public class TicketDailyPortalDto {
 	private long id;
 

@@ -217,16 +217,14 @@ public class UserServiceImpl implements UserService {
 
 	// FIND BY ID
 	@Override
-	public ResponseApi findById(int Id) {
+	public UserDto findById(int Id) {
 		UserEntity entity = new UserEntity();
-		ResponseApi responseApi = new ResponseApi();
+		UserDto userDto = new UserDto();
 
 		entity = userRepository.findOne(Id);
-		if (entity == null) {
-			responseApi.setData(null);
-		}
-		responseApi.setData(entity);
-		return responseApi;
+		
+		mapper.map(entity, userDto);
+		return userDto;
 	}
 
 	// FIND BY USERNAME

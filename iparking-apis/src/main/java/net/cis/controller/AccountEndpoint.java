@@ -65,7 +65,7 @@ public class AccountEndpoint extends BaseEndpoint {
 		Pageable pageable = new PageRequest(page, size);
 		
 		String userId = TokenAuthenticationService.getAuthenticationInfo(request);
-		ResponseApi user = userService.findById(Integer.parseInt(userId));
+//		ResponseApi user = userService.findById(Integer.parseInt(userId));
 		
 		//lay danh sach diem do thuoc cong ty
 		List<ParkingDto> listParkingPlace = parkingService.findByCompany(Long.parseLong(userId));

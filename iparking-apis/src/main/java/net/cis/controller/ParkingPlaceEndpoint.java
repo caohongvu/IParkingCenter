@@ -1,11 +1,15 @@
 package net.cis.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,23 +20,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.paypal.api.payments.Phone;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.StatusUtil;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.CompanyDto;
 import net.cis.dto.ErrorDto;
+import net.cis.dto.HistoryParkingDto;
 import net.cis.dto.ParkingActorDto;
 import net.cis.dto.ParkingDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketDto;
+import net.cis.dto.UserDto;
 import net.cis.jpa.criteria.TicketCriteria;
 import net.cis.jpa.entity.CompanyInforEntity;
+import net.cis.jpa.entity.UserEntity;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CompanyService;
+import net.cis.service.HistoryParkingService;
 import net.cis.service.ParkingActorService;
 import net.cis.service.ParkingService;
 import net.cis.service.TicketService;
+import net.cis.service.UserService;
 import net.cis.service.cache.CompanyInfoCache;
 
 @RestController
@@ -51,10 +62,15 @@ public class ParkingPlaceEndpoint {
 
 	@Autowired
 	CompanyInfoCache companyInfoCache;
-	
 
 	@Autowired
 	ParkingActorService parkingActorService;
+	
+	@Autowired
+	HistoryParkingService parkingPlaceHistoryService;
+	
+	@Autowired
+	UserService userService;
 
 	@RequestMapping(value = "/{id}/getByOldId", method = RequestMethod.GET)
 	public @ResponseBody ParkingDto getByOldId(@PathVariable("id") String oldId) throws Exception {
@@ -154,24 +170,158 @@ public class ParkingPlaceEndpoint {
 		}
 
 	}
-	
-	//GET DETAIL FOR PORTAL
+
+	// GET DETAIL FOR PORTAL
 	@RequestMapping(value = "/detail/cpp", method = RequestMethod.GET)
 	public @ResponseBody ResponseApi getByOldIdToken(HttpServletRequest request) throws Exception {
-		
+
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
-		
+
 		String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
-	
-		
+
 		if (StringUtils.isEmpty(supervisorId)) {
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage("Authentication faile!");
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
+
+		// lấy thông tin cppCode mà user quản l
+		List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(Long.parseLong(supervisorId));
+		if (parkingActorDtos == null || parkingActorDtos.size() == 0) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage("User chưa được cấu hình điểm dịch vụ");
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+		ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+		if (objParkingDto == null) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage("Điểm dịch vụ không tồn tại");
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		errorDto.setMessage("");
+		responseApi.setError(errorDto);
+		responseApi.setData(objParkingDto);
+
+		return responseApi;
+	}
+
+	// UPDATE CPP FOR PORTAL
+	@RequestMapping(value = "/update/cpp", method = RequestMethod.POST)
+	@ApiOperation("update account cpp")
+	public @ResponseBody ResponseApi updateParkingPlace(HttpServletRequest request,
+			@RequestParam(name = "cppName") String cppName,
+			@RequestParam(name = "address", required = false) String address,
+			@RequestParam(name = "hotline", required = false) String hotline) throws Exception {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
+
+		if (StringUtils.isEmpty(supervisorId)) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage("Authentication faile!");
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+
+		// lấy thông tin cppCode mà user quản l
+		List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(Long.parseLong(supervisorId));
+		if (parkingActorDtos == null || parkingActorDtos.size() == 0) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage("User chưa được cấu hình điểm dịch vụ");
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+		ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+		if (objParkingDto == null) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage("Điểm dịch vụ không tồn tại");
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+		HistoryParkingDto history = new HistoryParkingDto();
+		String infoChange ="";
+		//
+		if(!objParkingDto.getAddress().equals(address)) {
+			infoChange += address+",";
+		}else if(address =="" && objParkingDto.getAddress() !="" ) {
+			infoChange += "Đã xoá "+address+",";
+		}
+		//
+		if(objParkingDto.getPhone() != Integer.parseInt(hotline)) {
+			infoChange += hotline+",";
+		}else if(hotline == "" && objParkingDto.getPhone() != 0) {
+			infoChange += "Đã xoá "+hotline+",";
+		}
+		//cppName
+		if(!objParkingDto.getParkingName().equals(cppName)) {
+			infoChange += cppName+",";
+		}else if(cppName =="" && objParkingDto.getParkingName() !="" ) {
+			infoChange += "Đã xoá "+cppName+",";
+		}
+		System.out.println(infoChange);
 		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = new Date();
+		
+		//get username update
+		UserDto res = userService.findById(Integer.parseInt(supervisorId));
+		
+		
+		String userName = res.getUsername();
+		
+		history.setOldId(objParkingDto.getOldId());
+		history.setInfoUpdate(infoChange);
+		history.setUpdatedAt(dateFormat.format(date));
+		history.setUserName(userName);
+		
+		objParkingDto.setAddress(address);
+		objParkingDto.setParkingName(cppName);
+		objParkingDto.setPhone(Integer.parseInt(hotline));
+		
+		
+		ParkingDto obj = new ParkingDto();
+		try {
+			obj = parkingService.updateParkingPlace(objParkingDto);
+			parkingPlaceHistoryService.save(history);
+			
+		}catch (Exception e) {
+			System.out.println(e.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage("");
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		errorDto.setMessage("");
+		responseApi.setError(errorDto);
+		responseApi.setData(obj);
+		
+		return responseApi;
+
+	}
+	
+	// GET LIST HISTORY UPDATE FOR PORTAL
+	@RequestMapping(value = "/history/cpp", method = RequestMethod.GET)
+	public @ResponseBody ResponseApi getListHistoryByCppId(HttpServletRequest request) throws Exception {
+
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+
+		String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
+
+		if (StringUtils.isEmpty(supervisorId)) {
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage("Authentication faile!");
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+
 		// lấy thông tin cppCode mà user quản l
 		List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(Long.parseLong(supervisorId));
 		if (parkingActorDtos == null || parkingActorDtos.size() == 0) {
@@ -188,14 +338,13 @@ public class ParkingPlaceEndpoint {
 			return responseApi;
 		}
 		
+		List<HistoryParkingDto> listHistory = parkingPlaceHistoryService.findByOldId(String.valueOf(objParkingDto.getOldId()));
+
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		errorDto.setMessage("");
 		responseApi.setError(errorDto);
-		responseApi.setData(objParkingDto);
-		
-		
+		responseApi.setData(listHistory);
 
-		
 		return responseApi;
 	}
 }
