@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.cis.common.util.DateTimeUtil;
+import net.cis.constants.CustomerConstans;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
+import net.cis.dto.PrivateServicesParkingCustomerDto;
+import net.cis.dto.PrivateServicesParkingDto;
 import net.cis.dto.ResponseApi;
 import net.cis.service.PrivateServicesService;
 
@@ -52,7 +56,7 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * Lấy danh sach dịch vụ tại của 1 customer
+	 * Lấy danh sach dịch vụ của 1 customer
 	 * 
 	 * @param oldId
 	 * @return
@@ -67,8 +71,10 @@ public class PrivateServicesEndpoint {
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		responseApi.setError(errorDto);
 		try {
+			responseApi.setData(privateServicesService.getPrivateServicesParkingCustomers(customerId));
 			return responseApi;
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			LOGGER.error(ex.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage(ex.getMessage());
@@ -78,21 +84,41 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * Lấy danh sach dịch vụ tại của 1 customer
+	 * Tạo 1 dịch vụ của customer
 	 * 
 	 * @param oldId
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/private-service-customer/create", method = RequestMethod.POST)
-	@ApiOperation("Danh sách dịch vụ của 1 customer")
+	@ApiOperation("Tạo 1 dịch vụ của customer")
 	public @ResponseBody ResponseApi createPrivateServiceParkingCustomer(
-			@RequestParam(name = "customer-id") Long customerId) {
+			@RequestParam(name = "customer-id") Long customerId, @RequestParam(name = "parking-id") Long parkingId,
+			@RequestParam(name = "service-id") Long serviceId, @RequestParam(name = "info") String info) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		responseApi.setError(errorDto);
 		try {
+			// kiem tra dich vụ tại điểm dịch vụ có tồn tại hay ko
+			PrivateServicesParkingDto objPrivateServicesParkingDto = privateServicesService
+					.findPrivateServicesParking(parkingId, serviceId, CustomerConstans.CUSTOMER_SERVICE_ENABLE);
+			if (objPrivateServicesParkingDto == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Dịch vụ của tại điểm dịch vụ chưa được cấu hình");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// thuc hien them moi dich vu cho customer
+			PrivateServicesParkingCustomerDto dto = new PrivateServicesParkingCustomerDto();
+			dto.setParkingServiceParkingId(objPrivateServicesParkingDto.getId());
+			dto.setCusId(customerId);
+			dto.setInfo(info);
+			dto.setStatus(CustomerConstans.CUSTOMER_SERVICE_ENABLE);
+			dto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			dto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			dto = privateServicesService.savePrivateServicesParkingCustomer(dto);
+			responseApi.setData(dto);
 			return responseApi;
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());
@@ -104,21 +130,32 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * Lấy danh sach dịch vụ tại của 1 customer
+	 * Xoa dich vu của 1 customer
 	 * 
 	 * @param oldId
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/private-service-customer/delete", method = RequestMethod.POST)
-	@ApiOperation("Danh sách dịch vụ của 1 customer")
-	public @ResponseBody ResponseApi deletePrivateServiceParkingCustomer(
-			@RequestParam(name = "customer-id") Long customerId) {
+	@ApiOperation("Xoa dich vu của 1 customer")
+	public @ResponseBody ResponseApi deletePrivateServiceParkingCustomer(@RequestParam(name = "id") Long id) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		responseApi.setError(errorDto);
 		try {
+			// tim kiem dịch vụ cho customer
+			PrivateServicesParkingCustomerDto objPrivateServicesParkingCustomerDto = privateServicesService
+					.findPrivateServicesParkingCustomerById(id);
+			if (objPrivateServicesParkingCustomerDto == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Không tồn tại dịch vụ của customer");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// thuc hien cap nhat dich vu của customer thanh disable
+			objPrivateServicesParkingCustomerDto.setStatus(CustomerConstans.CUSTOMER_SERVICE_DISABLE);
+			privateServicesService.savePrivateServicesParkingCustomer(objPrivateServicesParkingCustomerDto);
 			return responseApi;
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());
