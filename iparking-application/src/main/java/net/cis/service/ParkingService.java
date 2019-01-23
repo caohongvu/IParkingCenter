@@ -2,6 +2,8 @@ package net.cis.service;
 
 import java.util.List;
 
+import org.json.JSONException;
+
 import net.cis.dto.ParkingDto;
 import net.cis.jpa.entity.ParkingEntity;
 
@@ -26,5 +28,5 @@ public interface ParkingService {
 	
 	List<ParkingEntity> findByCompanyId(int companyId);
 	
-	ParkingDto updateParkingPlace(ParkingDto parkingDto);
+	ParkingDto updateParkingPlace(ParkingDto parkingDto) throws JSONException;
 }

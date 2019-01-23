@@ -67,17 +67,17 @@ public class ParkingEntity {
 	private String oldId;
 	
 	@Column(name="phone")
-	private Integer phone;
+	private String phone;
 	
 	@Column(name="parking_name")
 	private String parkingName;
 	
 	
-	public Integer getPhone() {
+	public String getPhone() {
 		return phone;
 	}
 
-	public void setPhone(Integer phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 

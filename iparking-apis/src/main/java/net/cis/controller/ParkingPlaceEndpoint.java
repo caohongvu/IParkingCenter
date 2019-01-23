@@ -253,9 +253,9 @@ public class ParkingPlaceEndpoint {
 			infoChange += "Đã xoá "+address+",";
 		}
 		//
-		if(objParkingDto.getPhone() != Integer.parseInt(hotline)) {
+		if(objParkingDto.getPhone().equals(hotline)) {
 			infoChange += hotline+",";
-		}else if(hotline == "" && objParkingDto.getPhone() != 0) {
+		}else if(hotline == "" && objParkingDto.getPhone() != "") {
 			infoChange += "Đã xoá "+hotline+",";
 		}
 		//cppName
@@ -282,7 +282,7 @@ public class ParkingPlaceEndpoint {
 		
 		objParkingDto.setAddress(address);
 		objParkingDto.setParkingName(cppName);
-		objParkingDto.setPhone(Integer.parseInt(hotline));
+		objParkingDto.setPhone(hotline);
 		
 		
 		ParkingDto obj = new ParkingDto();
