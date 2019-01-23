@@ -1,5 +1,6 @@
 package net.cis.service;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -36,12 +37,15 @@ public interface CustomerService {
 
 	CustomerDto findById(long cusId) throws Exception;
 
-	Map<String, Object> getCapcha(String captchaID) throws Exception;
+	InputStream getCapcha(String captchaID) throws Exception;
 
 	Map<String, Object> otpSignupCallGolang(String phone, String captcha, String captchaID) throws Exception;
 
-	Map<String, Object> napSignupCallGolang(String phone, String ticket, String otp) throws Exception;
+	Map<String, Object> napSignupCallGolang(String phone, String ticket, String otp, String password) throws Exception;
 
 	Map<String, Object> saveCustomerInfoInPoseidonDbReturnObject(long cusId, String phone, String email)
 			throws Exception;
+
+	boolean saveCustomerFromPortal(CustomerDto customerDto, String fullName, String email);
+
 }

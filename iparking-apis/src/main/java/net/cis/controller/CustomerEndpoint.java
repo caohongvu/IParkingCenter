@@ -1,9 +1,11 @@
 package net.cis.controller;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.MessageUtil;
+import net.cis.common.util.PasswordGenerator;
 import net.cis.common.util.Utils;
+import net.cis.common.util.constant.UserConstant;
 import net.cis.constants.CustomerConstans;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.CarProfileDto;
@@ -322,7 +326,8 @@ public class CustomerEndpoint {
 	@ApiOperation("create or update customer car")
 	public @ResponseBody ResponseApi createCustomerCarForGolang(@RequestParam(name = "id") long id,
 			@RequestParam(name = "cus_id") long cusId, @RequestParam(name = "number_plate") String numberPlate,
-			@RequestParam(name = "seat") int seat, @RequestParam(name = "p_class") String pClass) {
+			@RequestParam(name = "seat") int seat, @RequestParam(name = "p_class") String pClass,
+			@RequestParam(name = "status") int status) {
 		/**
 		 * Golang service gọi để tạo customer_car
 		 */
@@ -366,6 +371,7 @@ public class CustomerEndpoint {
 			objCustomerCarDto.setCustomer(cusId);
 			objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 			objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerCarDto.setStatus(status);
 			objCustomerCarDto = customerService.saveCustomerCarEntity(objCustomerCarDto);
 			responseDto.setError(errorDto);
 			responseDto.setData(objCustomerCarDto);
@@ -491,14 +497,14 @@ public class CustomerEndpoint {
 				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_CHECK_CAPTCHA);
 				return responseDto;
 			}
-			Map<String, Object> result = customerService.getCapcha(captchaID);
-			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
+			InputStream result = customerService.getCapcha(captchaID);
+			if (result == null) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage("Lỗi tạo otp");
+				responseDto.setMessage("Lỗi tạo capcha");
 				return responseDto;
 			}
 			responseDto.setCode(HttpStatus.OK.toString());
-			responseDto.setData(result);
+			responseDto.setData(IOUtils.toByteArray(result));
 			return responseDto;
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -581,15 +587,79 @@ public class CustomerEndpoint {
 				responseDto.setMessage("Phone Malformed");
 				return responseDto;
 			}
-			Map<String, Object> result = customerService.napSignupCallGolang(phone, ticket, otp);
+			// kiem tra phone tren he thong
+			CustomerDto objCustomerDto = customerService.findByPhone2(phone);
+			if (objCustomerDto != null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_EXITS);
+				return responseDto;
+			}
+			// thuc hien tao pasword
+			String password = PasswordGenerator.createPasswordRamdom();
+			String passwordEncrypt = PasswordGenerator.encryptPassword(password);
+
+			Map<String, Object> result = customerService.napSignupCallGolang(phone, ticket, otp, passwordEncrypt);
 			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 				responseDto.setMessage("Lỗi tạo token");
 				return responseDto;
 			}
+			objCustomerDto = new CustomerDto();
+			objCustomerDto.setPhone(phone);
+			objCustomerDto.setPhone2(phone);
+			objCustomerDto.setTelco((String) result.get("Telco"));
+			objCustomerDto.setPassword(passwordEncrypt.getBytes());
+			objCustomerDto.setOldId((long) result.get("Cus_id"));
+			objCustomerDto.setCheckSum((String) result.get("Checksum"));
+			objCustomerDto.setStatus(UserConstant.STATUS_ACTIVATED);
+			objCustomerDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			objCustomerDto.setVerifyPhone(UserConstant.STATUS_VERIFIED);
+			objCustomerDto = customerService.saveCustomerInIparkingCenter(objCustomerDto);
 			responseDto.setCode(HttpStatus.OK.toString());
 			responseDto.setMessage(result.get("Message").toString());
-			responseDto.setData(result.get("Token"));
+			responseDto.setData(objCustomerDto);
+			return responseDto;
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			return responseDto;
+		}
+	}
+
+	@RequestMapping(value = "/nap/signin", method = RequestMethod.POST)
+	@ApiOperation("signup customer")
+	public @ResponseBody Object napSignIn(@RequestParam(name = "phone") String phone,
+			@RequestParam(name = "password") String password) {
+		ResponseDto responseDto = new ResponseDto();
+		try {
+
+			if (StringUtils.isEmpty(phone)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
+				return responseDto;
+			}
+			if (!Utils.validateVNPhoneNumber(String.valueOf(phone))) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Phone Malformed");
+				return responseDto;
+			}
+			CustomerDto objCustomerDto = customerService.findByPhone2(phone);
+
+			if (objCustomerDto == null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_NOT_EXITS);
+				return responseDto;
+			}
+			// kiem tra pass
+			if (!PasswordGenerator.verifyPassword(password, new String(objCustomerDto.getPassword()))) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_WRONG_PASS);
+				return responseDto;
+			}
+			// thuc hien tạo token
+			responseDto.setCode(HttpStatus.OK.toString());
 			return responseDto;
 		} catch (Exception e) {
 			// TODO: handle exception
