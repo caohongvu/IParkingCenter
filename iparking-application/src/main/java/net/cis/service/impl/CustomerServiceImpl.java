@@ -1,5 +1,6 @@
 package net.cis.service.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -274,6 +275,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public Map<String, Object> otpSignupCallGolang(String phone, String captcha, String captchaID) throws Exception {
+		LOGGER.info("otpSignupCallGolang phone: " + phone);
+		LOGGER.info("otpSignupCallGolang captcha: " + captcha);
+		LOGGER.info("otpSignupCallGolang captchaID: " + captchaID);
 		// TODO Auto-generated method stub
 		String finalURL = URLConstants.URL_OTP_SIGNUP;
 		List<NameValuePair> formParams = new ArrayList<>();
@@ -301,13 +305,19 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Map<String, Object> napSignupCallGolang(String phone, String ticket, String otp) throws Exception {
+	public Map<String, Object> napSignupCallGolang(String phone, String ticket, String otp, String password)
+			throws Exception {
+		LOGGER.info("napSignupCallGolang phone: " + phone);
+		LOGGER.info("napSignupCallGolang ticket: " + ticket);
+		LOGGER.info("napSignupCallGolang otp: " + otp);
+		LOGGER.info("napSignupCallGolang password: " + password);
 		// TODO Auto-generated method stub
 		String finalURL = URLConstants.URL_NAP_SIGNUP;
 		List<NameValuePair> formParams = new ArrayList<>();
 		formParams.add(new BasicNameValuePair("phone", phone));
 		formParams.add(new BasicNameValuePair("ticket", ticket));
 		formParams.add(new BasicNameValuePair("otp", otp));
+		formParams.add(new BasicNameValuePair("password", password));
 		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
 				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 		LOGGER.info("napSignupCallGolang Response: " + responseContent);
@@ -315,14 +325,27 @@ public class CustomerServiceImpl implements CustomerService {
 		Map<String, Object> result = new HashMap<String, Object>();
 		JSONObject ticketJSon = new JSONObject(responseContent);
 		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
+		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
 		if (ticketErrorJSon.has("Code")) {
 			result.put("Code", ticketErrorJSon.getString("Code"));
 		}
 		if (ticketErrorJSon.has("Message")) {
 			result.put("Message", ticketErrorJSon.getString("Message"));
 		}
-		if (ticketJSon.has("Data")) {
-			result.put("Token", ticketJSon.getString("Data"));
+		if (ticketDataJSon.has("Token")) {
+			result.put("Token", ticketDataJSon.getString("Token"));
+		}
+		if (ticketDataJSon.has("Token")) {
+			result.put("Token", ticketDataJSon.getString("Token"));
+		}
+		if (ticketDataJSon.has("Cus_id")) {
+			result.put("Cus_id", ticketDataJSon.getString("Cus_id"));
+		}
+		if (ticketDataJSon.has("Checksum")) {
+			result.put("Checksum", ticketDataJSon.getString("Checksum"));
+		}
+		if (ticketDataJSon.has("Telco")) {
+			result.put("Telco", ticketDataJSon.getString("Telco"));
 		}
 		return result;
 	}
@@ -361,32 +384,22 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Map<String, Object> getCapcha(String captchaID) throws Exception {
-		// TODO Auto-generated method stub
+	public InputStream getCapcha(String captchaID) throws Exception {
+		LOGGER.info("getCapcha captchaID: " + captchaID);
 		String finalURL = URLConstants.URL_CREATE_CAPCHA;
-		finalURL = finalURL.replace("{s}", captchaID);
-
-		String responseContent = RestfulUtil.getWithOutAccessToke(finalURL, null);
-		LOGGER.info("saveCustomerInfoInPoseidonDb Response: " + responseContent);
-		Map<String, Object> result = new HashMap<String, Object>();
-		JSONObject ticketJSon = new JSONObject(responseContent);
-		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
-		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
-		if (ticketErrorJSon.has("Code")) {
-			result.put("Code", ticketErrorJSon.getString("Code"));
-		}
-		if (ticketErrorJSon.has("Message")) {
-			result.put("Message", ticketErrorJSon.getString("Message"));
-		}
-		if (ticketDataJSon.has("Verification_code")) {
-			result.put("VerificationCode", ticketDataJSon.getString("Verification_code"));
-		}
-
-		if (ticketDataJSon.has("Status")) {
-			result.put("Status", ticketDataJSon.getInt("Status"));
-		}
-
-		return result;
+		finalURL = finalURL.replace("{capchaId}", captchaID);
+		InputStream responseContent = RestfulUtil.getWithOutAccessToken(finalURL, null);
+		LOGGER.info("getCapcha Response: " + responseContent);
+		return responseContent;
 	}
 
+	/**
+	 * thuc hien tao customer bên iparking center va customer info
+	 */
+
+	@Override
+	public boolean saveCustomerFromPortal(CustomerDto customerDto, String fullName, String email) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
