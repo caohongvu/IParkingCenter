@@ -10,15 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.cis.constants.CustomerConstans;
-import net.cis.dto.PrivateServicesParkingCustomerDto;
+import net.cis.dto.PrivateServicesParkingCusDto;
 import net.cis.dto.PrivateServicesParkingDto;
 import net.cis.jpa.entity.ParkingEntity;
 import net.cis.jpa.entity.PrivateServicesEntity;
-import net.cis.jpa.entity.PrivateServicesParkingCustomerEntity;
+import net.cis.jpa.entity.PrivateServicesParkingCusEntity;
 import net.cis.jpa.entity.PrivateServicesParkingEntity;
 import net.cis.repository.ParkingRepository;
 import net.cis.repository.PrivateServiceRepository;
-import net.cis.repository.PrivateServicesParkingCustomerRepository;
+import net.cis.repository.PrivateServicesParkingCusRepository;
 import net.cis.repository.PrivateServicesParkingRepository;
 import net.cis.service.PrivateServicesService;
 
@@ -27,7 +27,7 @@ public class PrivateServicesServiceImpl implements PrivateServicesService {
 	@Autowired
 	PrivateServiceRepository privateServiceRepository;
 	@Autowired
-	PrivateServicesParkingCustomerRepository privateServicesParkingCustomerRepository;
+	PrivateServicesParkingCusRepository privateServicesParkingCustomerRepository;
 	@Autowired
 	PrivateServicesParkingRepository privateServicesParkingRepository;
 
@@ -41,6 +41,9 @@ public class PrivateServicesServiceImpl implements PrivateServicesService {
 		mapper = new ModelMapper();
 	}
 
+	/**
+	 * Danh sach dich vu theo diem do va trang thang
+	 */
 	@Override
 	public List<PrivateServicesParkingDto> getPrivateServiceParkings(Long parkingId, Integer status) {
 		List<PrivateServicesParkingEntity> lst = null;
@@ -64,17 +67,20 @@ public class PrivateServicesServiceImpl implements PrivateServicesService {
 		return rtn;
 	}
 
+	/**
+	 * Danh sach dich vu theo customer
+	 */
 	@Override
-	public List<PrivateServicesParkingCustomerDto> getPrivateServicesParkingCustomers(Long cusId) {
-		List<PrivateServicesParkingCustomerEntity> lst = privateServicesParkingCustomerRepository
-				.findByCusIdAndStatus(cusId, CustomerConstans.CUSTOMER_SERVICE_ENABLE);
+	public List<PrivateServicesParkingCusDto> getPrivateServicesParkingCus(Long cusId) {
+		List<PrivateServicesParkingCusEntity> lst = privateServicesParkingCustomerRepository.findByCusIdAndStatus(cusId,
+				CustomerConstans.CUSTOMER_SERVICE_ENABLE);
 		return this.map2(lst);
 	}
 
-	private List<PrivateServicesParkingCustomerDto> map2(List<PrivateServicesParkingCustomerEntity> source) {
-		List<PrivateServicesParkingCustomerDto> rtn = new ArrayList<>();
+	private List<PrivateServicesParkingCusDto> map2(List<PrivateServicesParkingCusEntity> source) {
+		List<PrivateServicesParkingCusDto> rtn = new ArrayList<>();
 		source.stream().map((entity) -> {
-			PrivateServicesParkingCustomerDto dto = new PrivateServicesParkingCustomerDto();
+			PrivateServicesParkingCusDto dto = new PrivateServicesParkingCusDto();
 			mapper.map(entity, dto);
 			dto.setPrivateServicesParkingDto(getPrivateServicesParkingDetail(dto.getId()));
 			return dto;
@@ -84,6 +90,12 @@ public class PrivateServicesServiceImpl implements PrivateServicesService {
 		return rtn;
 	}
 
+	/**
+	 * Chi tiet dich vu diem do
+	 * 
+	 * @param parkingServiceParkingId
+	 * @return
+	 */
 	private PrivateServicesParkingDto getPrivateServicesParkingDetail(Long parkingServiceParkingId) {
 		PrivateServicesParkingEntity objPrivateServicesParkingEntity = privateServicesParkingRepository
 				.findOne(parkingServiceParkingId);
@@ -109,23 +121,32 @@ public class PrivateServicesServiceImpl implements PrivateServicesService {
 		return objPrivateServicesParkingDto;
 	}
 
+	/**
+	 * Tim kiem dich vu customer
+	 */
 	@Override
-	public PrivateServicesParkingCustomerDto findPrivateServicesParkingCustomerById(Long id) {
-		PrivateServicesParkingCustomerEntity entity = privateServicesParkingCustomerRepository.findOne(id);
-		PrivateServicesParkingCustomerDto dto = new PrivateServicesParkingCustomerDto();
+	public PrivateServicesParkingCusDto findPrivateServicesParkingCusById(Long id) {
+		PrivateServicesParkingCusEntity entity = privateServicesParkingCustomerRepository.findOne(id);
+		PrivateServicesParkingCusDto dto = new PrivateServicesParkingCusDto();
 		mapper.map(entity, dto);
 		return dto;
 	}
 
+	/**
+	 * Them moi cap nhat dich vu customer
+	 */
 	@Override
-	public PrivateServicesParkingCustomerDto savePrivateServicesParkingCustomer(
-			PrivateServicesParkingCustomerDto objPrivateServicesParkingCustomerDto) {
-		PrivateServicesParkingCustomerEntity entity = new PrivateServicesParkingCustomerEntity();
-		mapper.map(objPrivateServicesParkingCustomerDto, entity);
-		mapper.map(privateServicesParkingCustomerRepository.save(entity), objPrivateServicesParkingCustomerDto);
+	public PrivateServicesParkingCusDto savePrivateServicesParkingCus(
+			PrivateServicesParkingCusDto objPrivateServicesParkingCusDto) {
+		PrivateServicesParkingCusEntity entity = new PrivateServicesParkingCusEntity();
+		mapper.map(objPrivateServicesParkingCusDto, entity);
+		mapper.map(privateServicesParkingCustomerRepository.save(entity), objPrivateServicesParkingCusDto);
 		return null;
 	}
 
+	/**
+	 * Tim kiems dich vu cua diem do
+	 */
 	@Override
 	public PrivateServicesParkingDto findPrivateServicesParking(Long parkingId, Long privateServiceId, Integer status) {
 		PrivateServicesParkingDto objPrivateServicesParkingDto = new PrivateServicesParkingDto();
