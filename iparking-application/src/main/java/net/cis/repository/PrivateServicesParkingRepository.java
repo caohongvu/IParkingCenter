@@ -9,5 +9,5 @@ import net.cis.jpa.entity.PrivateServicesParkingEntity;
 public interface PrivateServicesParkingRepository extends JpaRepository<PrivateServicesParkingEntity, Long> {
 	List<PrivateServicesParkingEntity> findByParkingIdAndStatus(Long parkingId, Integer status);
 
-	List<PrivateServicesParkingEntity> findByParkingI(Long parkingId);
+	List<PrivateServicesParkingEntity> findByParkingId(Long parkingId);
 }

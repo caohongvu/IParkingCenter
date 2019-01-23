@@ -22,4 +22,7 @@ public interface UserService {
 	ResponseApi findByUsername(HashSet<Integer> listIdUser, String username, String fullname);
 
 	UserDto findUserById(int Id) ;
+	
+	ResponseApi resetPassWord(UserDto userDto) throws JSONException;
+
 }

@@ -222,7 +222,7 @@ public class UserServiceImpl implements UserService {
 		UserDto userDto = new UserDto();
 
 		entity = userRepository.findOne(Id);
-		
+
 		mapper.map(entity, userDto);
 		return userDto;
 	}
@@ -248,17 +248,6 @@ public class UserServiceImpl implements UserService {
 
 		ResponseApi respointApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
-
-		// check phone
-		if (!Utils.validateVNPhoneNumber(userDto.getPhone())) {
-			errorDto.setCode(400);
-			errorDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
-			respointApi.setData(null);
-			respointApi.setError(errorDto);
-			return respointApi;
-		}
-		String phone = Utils.buildPhoneNumberWithPrefix(userDto.getPhone());
-		userDto.setPhone(phone);
 
 		// check email
 		if (!Utils.validateEmail(userDto.getEmail())) {
@@ -361,10 +350,8 @@ public class UserServiceImpl implements UserService {
 		List<UserEntity> listByUsername = new ArrayList<UserEntity>();
 		List<UserEntity> listByFullname = new ArrayList<UserEntity>();
 
-
 		Iterator<Integer> userId = listIdUser.iterator();
-		
-		
+
 		ResponseApi respointApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 
@@ -374,34 +361,104 @@ public class UserServiceImpl implements UserService {
 			UserEntity entity = userRepository.findOne(userIdInt);
 			listEntity.add(entity);
 		}
-		
+
 		if (username == "") {
 			listByUsername = listEntity;
-		}else {
-			for(int i = 0 ; i< listEntity.size();i++) {
-				if(listEntity.get(i).getUsername().contains(username)) {
+		} else {
+			for (int i = 0; i < listEntity.size(); i++) {
+				if (listEntity.get(i).getUsername().contains(username)) {
 					listByUsername.add(listEntity.get(i));
 				}
 			}
 		}
-		
+
 		if (fullname == "") {
 			listByFullname = listByUsername;
-		}else {
-			for(int i = 0 ; i< listByUsername.size();i++) {
-				if(listByUsername.get(i).getFullname().contains(fullname)) {
+		} else {
+			for (int i = 0; i < listByUsername.size(); i++) {
+				if (listByUsername.get(i).getFullname().contains(fullname)) {
 					listByFullname.add(listByUsername.get(i));
 				}
 			}
 		}
-		
+
 		List<AccountUserDto> userDto = this.map(listByFullname);
-		
+
 		errorDto.setCode(200);
 		errorDto.setMessage("");
 		respointApi.setData(userDto);
 		respointApi.setError(errorDto);
 		return respointApi;
+	}
+
+	// RESET PASSWORD
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public ResponseApi resetPassWord(UserDto userDto) throws JSONException {
+		String updateUserURL = "https://admapi.live.iparkingstg.com/p/update/account";
+		// String updateUserURL = "http://localhost:8800/p/update/account";
+
+		List<NameValuePair> formParams = new ArrayList<>();
+
+		ResponseApi respointApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+
+		UserEntity user = userRepository.findByUsername(userDto.getUsername());
+
+		UserSecurityEntity userSecurity = userSecurityRepository.findOne(userDto.getUsername());
+
+		formParams.add(new BasicNameValuePair("username", user.getUsername()));
+		formParams.add(new BasicNameValuePair("fullname", user.getFullname()));
+		formParams.add(new BasicNameValuePair("password", userDto.getPassword()));
+		formParams.add(new BasicNameValuePair("role", String.valueOf(userSecurity.getRole())));
+		formParams.add(new BasicNameValuePair("group", "2"));
+		formParams.add(new BasicNameValuePair("delegatepayment", "1"));
+		formParams.add(new BasicNameValuePair("id", String.valueOf(user.getId())));
+
+		String responseContent = RestfulUtil.postFormData(updateUserURL, formParams,
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		JSONObject jsonObject = new JSONObject(responseContent);
+		
+		UserEntity userExits = userRepository.findOne(user.getId());
+
+
+		// get checksum and password from golang
+		String checksumUser = jsonObject.getJSONObject("Data").getString("ChecksumUser");
+		String checksumSecu = jsonObject.getJSONObject("Data").getString("ChecksumSecu");
+		String password = jsonObject.getJSONObject("Data").getString("Password");
+		String recovery = jsonObject.getJSONObject("Data").getString("Recovery");
+		int type = Integer.parseInt(jsonObject.getJSONObject("Data").getString("Type"));
+		int id = Integer.parseInt(jsonObject.getJSONObject("Data").getString("Id"));
+
+		UserEntity entity = new UserEntity();
+		UserSecurityEntity securityEntity = new UserSecurityEntity();
+
+		userDto.setType(type);
+		userDto.setPassword(password);
+		userDto.setRecovery(recovery);
+
+		// user
+		mapper.map(userDto, entity);
+		entity.setChecksum(checksumUser);
+		entity.setId(id);
+		entity.setStatus(1);
+		entity.setPwd_counter(5);
+		entity.setCreated_at(userExits.getCreated_at());
+		userRepository.save(entity);
+
+		// security
+		mapper.map(userDto, securityEntity);
+		securityEntity.setChecksum(checksumSecu);
+		securityEntity.setCreated_at(userExits.getCreated_at());
+		userSecurityRepository.save(securityEntity);
+		//
+		errorDto.setCode(200);
+		errorDto.setMessage("Success");
+		respointApi.setData(null);
+		respointApi.setError(errorDto);
+
+		return respointApi;
+
 	}
 
 }

@@ -35,7 +35,7 @@ public class PrivateServicesServiceImpl implements PrivateServicesService {
 	public List<PrivateServicesParkingDto> getPrivateServiceParkings(Long parkingId, Integer status) {
 		List<PrivateServicesParkingEntity> lst = null;
 		if (status == null) {
-			lst = privateServicesParkingRepository.findByParkingI(parkingId);
+			lst = privateServicesParkingRepository.findByParkingId(parkingId);
 		} else {
 			lst = privateServicesParkingRepository.findByParkingIdAndStatus(parkingId, status);
 		}
