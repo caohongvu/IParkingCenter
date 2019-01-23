@@ -274,83 +274,6 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Map<String, Object> otpSignupCallGolang(String phone, String captcha, String captchaID) throws Exception {
-		LOGGER.info("otpSignupCallGolang phone: " + phone);
-		LOGGER.info("otpSignupCallGolang captcha: " + captcha);
-		LOGGER.info("otpSignupCallGolang captchaID: " + captchaID);
-		// TODO Auto-generated method stub
-		String finalURL = URLConstants.URL_OTP_SIGNUP;
-		List<NameValuePair> formParams = new ArrayList<>();
-		formParams.add(new BasicNameValuePair("phone", phone));
-		formParams.add(new BasicNameValuePair("captchaID", captchaID));
-		formParams.add(new BasicNameValuePair("captcha", captcha));
-		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
-				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-		LOGGER.info("otpSignupCallGolang Response: " + responseContent);
-
-		Map<String, Object> result = new HashMap<String, Object>();
-		JSONObject ticketJSon = new JSONObject(responseContent);
-		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
-		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
-		if (ticketErrorJSon.has("Code")) {
-			result.put("Code", ticketErrorJSon.getString("Code"));
-		}
-		if (ticketErrorJSon.has("Message")) {
-			result.put("Message", ticketErrorJSon.getString("Message"));
-		}
-		if (ticketDataJSon.has("Ticket")) {
-			result.put("Ticket", ticketDataJSon.getString("Ticket"));
-		}
-		return result;
-	}
-
-	@Override
-	public Map<String, Object> napSignupCallGolang(String phone, String ticket, String otp, String password)
-			throws Exception {
-		LOGGER.info("napSignupCallGolang phone: " + phone);
-		LOGGER.info("napSignupCallGolang ticket: " + ticket);
-		LOGGER.info("napSignupCallGolang otp: " + otp);
-		LOGGER.info("napSignupCallGolang password: " + password);
-		// TODO Auto-generated method stub
-		String finalURL = URLConstants.URL_NAP_SIGNUP;
-		List<NameValuePair> formParams = new ArrayList<>();
-		formParams.add(new BasicNameValuePair("phone", phone));
-		formParams.add(new BasicNameValuePair("ticket", ticket));
-		formParams.add(new BasicNameValuePair("otp", otp));
-		formParams.add(new BasicNameValuePair("password", password));
-		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
-				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-		LOGGER.info("napSignupCallGolang Response: " + responseContent);
-
-		Map<String, Object> result = new HashMap<String, Object>();
-		JSONObject ticketJSon = new JSONObject(responseContent);
-		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
-		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
-		if (ticketErrorJSon.has("Code")) {
-			result.put("Code", ticketErrorJSon.getString("Code"));
-		}
-		if (ticketErrorJSon.has("Message")) {
-			result.put("Message", ticketErrorJSon.getString("Message"));
-		}
-		if (ticketDataJSon.has("Token")) {
-			result.put("Token", ticketDataJSon.getString("Token"));
-		}
-		if (ticketDataJSon.has("Token")) {
-			result.put("Token", ticketDataJSon.getString("Token"));
-		}
-		if (ticketDataJSon.has("Cus_id")) {
-			result.put("Cus_id", ticketDataJSon.getString("Cus_id"));
-		}
-		if (ticketDataJSon.has("Checksum")) {
-			result.put("Checksum", ticketDataJSon.getString("Checksum"));
-		}
-		if (ticketDataJSon.has("Telco")) {
-			result.put("Telco", ticketDataJSon.getString("Telco"));
-		}
-		return result;
-	}
-
-	@Override
 	public Map<String, Object> saveCustomerInfoInPoseidonDbReturnObject(long cusId, String phone, String email)
 			throws Exception {
 		// TODO Auto-generated method stub
@@ -391,6 +314,104 @@ public class CustomerServiceImpl implements CustomerService {
 		InputStream responseContent = RestfulUtil.getWithOutAccessToken(finalURL, null);
 		LOGGER.info("getCapcha Response: " + responseContent);
 		return responseContent;
+	}
+
+	@Override
+	public Map<String, Object> otpSignupCallGolang(String phone, String captcha, String captchaID) throws Exception {
+		LOGGER.info("otpSignupCallGolang phone: " + phone);
+		LOGGER.info("otpSignupCallGolang captcha: " + captcha);
+		LOGGER.info("otpSignupCallGolang captchaID: " + captchaID);
+		// TODO Auto-generated method stub
+		String finalURL = URLConstants.URL_OTP_SIGNUP;
+		List<NameValuePair> formParams = new ArrayList<>();
+		formParams.add(new BasicNameValuePair("phone", phone));
+		formParams.add(new BasicNameValuePair("captchaID", captchaID));
+		formParams.add(new BasicNameValuePair("captcha", captcha));
+		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		LOGGER.info("otpSignupCallGolang Response: " + responseContent);
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		JSONObject ticketJSon = new JSONObject(responseContent);
+		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
+		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
+		if (ticketErrorJSon.has("Code")) {
+			result.put("Code", ticketErrorJSon.getString("Code"));
+		}
+		if (ticketErrorJSon.has("Message")) {
+			result.put("Message", ticketErrorJSon.getString("Message"));
+		}
+		if (ticketDataJSon.has("Ticket")) {
+			result.put("Ticket", ticketDataJSon.getString("Ticket"));
+		}
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> verifyOtpSignupCallGolang(String phone, String otp, String ticket) throws Exception {
+		LOGGER.info("napSignupCallGolang phone: " + phone);
+		LOGGER.info("napSignupCallGolang ticket: " + ticket);
+		LOGGER.info("napSignupCallGolang otp: " + otp);
+		// TODO Auto-generated method stub
+		String finalURL = URLConstants.URL_VERIFY_OTP_SIGNUP;
+		List<NameValuePair> formParams = new ArrayList<>();
+		formParams.add(new BasicNameValuePair("phone", phone));
+		formParams.add(new BasicNameValuePair("ticket", ticket));
+		formParams.add(new BasicNameValuePair("otp", otp));
+		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		LOGGER.info("verifyOtpSignupCallGolang Response: " + responseContent);
+		Map<String, Object> result = new HashMap<String, Object>();
+		JSONObject ticketJSon = new JSONObject(responseContent);
+		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
+		if (ticketErrorJSon.has("Code")) {
+			result.put("Code", ticketErrorJSon.getString("Code"));
+		}
+		if (ticketErrorJSon.has("Message")) {
+			result.put("Message", ticketErrorJSon.getString("Message"));
+		}
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> napSignupCallGolang(String phone, String password) throws Exception {
+		LOGGER.info("napSignupCallGolang phone: " + phone);
+		LOGGER.info("napSignupCallGolang password: " + password);
+		// TODO Auto-generated method stub
+		String finalURL = URLConstants.URL_NAP_SIGNUP;
+		List<NameValuePair> formParams = new ArrayList<>();
+		formParams.add(new BasicNameValuePair("phone", phone));
+		formParams.add(new BasicNameValuePair("password", password));
+		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		LOGGER.info("napSignupCallGolang Response: " + responseContent);
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		JSONObject ticketJSon = new JSONObject(responseContent);
+		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
+		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
+		if (ticketErrorJSon.has("Code")) {
+			result.put("Code", ticketErrorJSon.getString("Code"));
+		}
+		if (ticketErrorJSon.has("Message")) {
+			result.put("Message", ticketErrorJSon.getString("Message"));
+		}
+		if (ticketDataJSon.has("token")) {
+			result.put("token", ticketDataJSon.getString("token"));
+		}
+		if (ticketDataJSon.has("Token")) {
+			result.put("Token", ticketDataJSon.getString("Token"));
+		}
+		if (ticketDataJSon.has("cus_id")) {
+			result.put("cus_id", ticketDataJSon.getLong("cus_id"));
+		}
+		if (ticketDataJSon.has("checksum")) {
+			result.put("checksum", ticketDataJSon.getString("checksum"));
+		}
+		if (ticketDataJSon.has("telco")) {
+			result.put("telco", ticketDataJSon.getString("telco"));
+		}
+		return result;
 	}
 
 	/**
