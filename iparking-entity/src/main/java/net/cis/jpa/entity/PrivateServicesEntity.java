@@ -20,25 +20,12 @@ public class PrivateServicesEntity {
 	@Column(name = "name")
 	private String name;
 
-	@Column(name = "desscription")
-	private String desscription;
+	@Column(name = "description")
+	private String description;
 
 	@Column(name = "created_at")
 	private Date createdAt;
 
-	@Column(name = "updated_at")
-	private Date updatedAt;
-
-	@Column(name = "status")
-	private Integer status;
-	
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
 
 	public long getId() {
 		return id;
@@ -56,12 +43,12 @@ public class PrivateServicesEntity {
 		this.name = name;
 	}
 
-	public String getDesscription() {
-		return desscription;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDesscription(String desscription) {
-		this.desscription = desscription;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Date getCreatedAt() {
@@ -70,14 +57,6 @@ public class PrivateServicesEntity {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 }
