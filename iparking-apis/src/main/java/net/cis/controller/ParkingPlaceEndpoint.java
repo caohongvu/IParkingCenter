@@ -31,6 +31,7 @@ import net.cis.dto.ErrorDto;
 import net.cis.dto.HistoryParkingDto;
 import net.cis.dto.ParkingActorDto;
 import net.cis.dto.ParkingDto;
+import net.cis.dto.ParkingSynDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.TicketDto;
 import net.cis.dto.UserDto;
@@ -346,5 +347,22 @@ public class ParkingPlaceEndpoint {
 		responseApi.setData(listHistory);
 
 		return responseApi;
+	}
+	
+	//CREATE PARKING PLACE
+
+	@RequestMapping(value = "/create",method = RequestMethod.POST)
+	@ApiOperation("create parking place")
+	public @ResponseBody Object create(ParkingSynDto parkingSynDto)throws Exception {
+		
+		ResponseApi endpoint = new ResponseApi();
+		
+		ParkingDto parkingDto = new ParkingDto();
+		
+		ParkingSynDto parking = parkingService.create(parkingSynDto);
+		
+		endpoint.setData(parking);
+
+		return endpoint;
 	}
 }
