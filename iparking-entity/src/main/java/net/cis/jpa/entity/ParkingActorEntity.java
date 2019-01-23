@@ -24,6 +24,9 @@ public class ParkingActorEntity {
 	
 	@Column(name="cpp_id")
 	private long cppId;
+	
+	@Column(name="balance_account_id")
+	private long balanceAccountId;
 
 	public long getId() {
 		return id;
@@ -48,6 +51,15 @@ public class ParkingActorEntity {
 	public void setCppId(long cppId) {
 		this.cppId = cppId;
 	}
+
+	public long getBalanceAccountId() {
+		return balanceAccountId;
+	}
+
+	public void setBalanceAccountId(long balanceAccountId) {
+		this.balanceAccountId = balanceAccountId;
+	}
+	
 	
 	
 }

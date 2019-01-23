@@ -9,6 +9,8 @@ public class ParkingActorDto {
 	private long actor;
 
 	private long cppId;
+	
+	private long balanceAccountId;
 
 	public long getId() {
 		return id;
@@ -33,5 +35,15 @@ public class ParkingActorDto {
 	public void setCppId(long cppId) {
 		this.cppId = cppId;
 	}
+
+	public long getBalanceAccountId() {
+		return balanceAccountId;
+	}
+
+	public void setBalanceAccountId(long balanceAccountId) {
+		this.balanceAccountId = balanceAccountId;
+	}
+	
+	
 
 }

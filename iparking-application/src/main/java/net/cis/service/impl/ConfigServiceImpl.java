@@ -29,7 +29,6 @@ public class ConfigServiceImpl implements ConfigService {
 	public ResponseApi findAllConfigOfCompany(int id) {
 		ErrorDto errorDto = new ErrorDto();
 		ResponseApi responseApi = new ResponseApi();
-		ModelMapper mapper = new ModelMapper();
 
 		List<CompanyServiceEntity> entity = companyServiceReponsitory.findConfigByCompanyId(id);
 		if (entity == null) {
@@ -134,41 +133,39 @@ public class ConfigServiceImpl implements ConfigService {
 		while (currentInt.hasNext()) {
 			listAll.add(currentInt.next());
 		}
-		
 
 		HashSet<Integer> listServicesAdd = new HashSet<Integer>();
 		HashSet<Integer> listServicesDelete = new HashSet<Integer>();
-		
+
 		Iterator<Integer> allInt = listAll.iterator();
 		while (allInt.hasNext()) {
 			int item = allInt.next();
-			if ( !listServicesCurrent.contains(item) && listServicesWillCongif.contains(item)) {
+			if (!listServicesCurrent.contains(item) && listServicesWillCongif.contains(item)) {
 				listServicesAdd.add(item);
 			}
-			
-			if ( listServicesCurrent.contains(item) && !listServicesWillCongif.contains(item)) {
+
+			if (listServicesCurrent.contains(item) && !listServicesWillCongif.contains(item)) {
 				listServicesDelete.add(item);
 			}
-						
+
 		}
 		System.out.println(listServicesAdd);
 		System.out.println(listServicesDelete);
-		//delete
+		// delete
 		if (listServicesDelete != null) {
 			Iterator<Integer> deleteInt = listServicesDelete.iterator();
 			while (deleteInt.hasNext()) {
 				int serviceId = deleteInt.next();
-					for(int i = 0; i< listServicesOfCompany.size() ;i++) {
-						if(listServicesOfCompany.get(i).getServiceId() == serviceId) {
-							companyServiceReponsitory.delete(listServicesOfCompany.get(i).getId());
+				for (int i = 0; i < listServicesOfCompany.size(); i++) {
+					if (listServicesOfCompany.get(i).getServiceId() == serviceId) {
+						companyServiceReponsitory.delete(listServicesOfCompany.get(i).getId());
 
 					}
 				}
-				
 
 			}
 		}
-		//add 
+		// add
 		if (listServicesAdd != null) {
 			Iterator<Integer> addInt = listServicesAdd.iterator();
 			while (addInt.hasNext()) {

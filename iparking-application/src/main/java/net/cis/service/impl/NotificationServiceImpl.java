@@ -115,19 +115,13 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void push(String parkingCode, String title, String content,  String contentSms, String createdBy, List<Integer> types)
-			throws Exception {
-		ParkingDto objParkingDto = parkingService.findByParkingCode(parkingCode);
-		if (objParkingDto == null) {
-			throw new Exception("Parking does not exits");
-		}
-
+	public void push(ParkingDto objParkingDto, String title, String content, String contentSms, String createdBy,
+			List<Integer> types) throws Exception {
 		ParkingContractCriteria ticketCriteria = new ParkingContractCriteria();
-		ticketCriteria.setCppCode(parkingCode);
+		ticketCriteria.setCppCode(objParkingDto.getParkingCode());
 		// lay danh sach khach hang ve thang theo diem do
 		List<ParkingContractInfoDto> lstParkingContractInfoDto = parkingContractService
 				.findParkingContractInfo(ticketCriteria);
-		List<String> lstDevices = new ArrayList<>();
 		List<String> lstPhone = new ArrayList<>();
 		List<String> lstEmail = new ArrayList<>();
 		// thuc hien luu history Notification

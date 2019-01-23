@@ -65,7 +65,7 @@ public class AccountEndpoint extends BaseEndpoint {
 		Pageable pageable = new PageRequest(page, size);
 		
 		String userId = TokenAuthenticationService.getAuthenticationInfo(request);
-		ResponseApi user = userService.findById(Integer.parseInt(userId));
+//		ResponseApi user = userService.findById(Integer.parseInt(userId));
 		
 		//lay danh sach diem do thuoc cong ty
 		List<ParkingDto> listParkingPlace = parkingService.findByCompany(Long.parseLong(userId));
@@ -153,7 +153,28 @@ public class AccountEndpoint extends BaseEndpoint {
 		ResponseApi endpoint = userService.update(userDto);
 
 		return endpoint;
+	}
+	//RESET PASSWORD
+	@RequestMapping(value = "/reset/pass", method = RequestMethod.GET)
+	@ApiOperation(" account user")
+	public @ResponseBody Object resetPasswordAccountUser(HttpServletRequest request,@RequestParam(name = "username", required = false) String username)throws Exception {
 
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = new Date();
+
+		String updateAt = formatter.format(date);
+
+		UserDto userDto = new UserDto();
+		
+		String password ="cis123456789";
+		
+		userDto.setUpdated_at(updateAt);
+		userDto.setPassword(password);
+		userDto.setUsername(username);
+		
+		ResponseApi endpoint = userService.resetPassWord(userDto);
+
+		return endpoint;
 	}
 
 }

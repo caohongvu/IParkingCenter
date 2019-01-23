@@ -25,6 +25,25 @@ public class ParkingDto {
 	 private String lat;
 	 private String lng;
 	 private String oldId;
+	 private String phone;
+	 private String parkingName;
+	 
+	 
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getParkingName() {
+		return parkingName;
+	}
+	public void setParkingName(String parkingName) {
+		this.parkingName = parkingName;
+	}
+	public void setProvideEInvoice(boolean isProvideEInvoice) {
+		this.isProvideEInvoice = isProvideEInvoice;
+	}
 	public Long getId() {
 		return id;
 	}
