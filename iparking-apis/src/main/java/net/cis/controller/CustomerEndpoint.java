@@ -33,6 +33,7 @@ import net.cis.dto.ErrorDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.ResponseDto;
 import net.cis.repository.CustomerInfoRepository;
+import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CarProfileService;
 import net.cis.service.CustomerService;
 
@@ -516,21 +517,10 @@ public class CustomerEndpoint {
 
 	@RequestMapping(value = "/otp/signup", method = RequestMethod.POST)
 	@ApiOperation("signup customer")
-	public @ResponseBody Object otpSignUp(@RequestParam(name = "phone", required = true) String phone,
-			@RequestParam(name = "captchaID", required = true) String captchaID,
-			@RequestParam(name = "captcha", required = true) String captcha) {
+	public @ResponseBody Object otpSignUp(@RequestParam(name = "phone") String phone,
+			@RequestParam(name = "captcha") String captcha, @RequestParam(name = "captchaID") String captchaID) {
 		ResponseDto responseDto = new ResponseDto();
 		try {
-			if (StringUtils.isEmpty(captchaID)) {
-				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_CHECK_CAPTCHA);
-				return responseDto;
-			}
-			if (StringUtils.isEmpty(captcha)) {
-				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_CHECK_CAPTCHA);
-				return responseDto;
-			}
 
 			if (StringUtils.isEmpty(phone)) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
@@ -545,11 +535,11 @@ public class CustomerEndpoint {
 			Map<String, Object> result = customerService.otpSignupCallGolang(phone, captcha, captchaID);
 			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage("Lỗi tạo otp");
+				responseDto.setMessage("Lỗi gửi OTP");
 				return responseDto;
 			}
 			responseDto.setCode(HttpStatus.OK.toString());
-			responseDto.setData(result);
+			responseDto.setData(result.get("Ticket"));
 			return responseDto;
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -559,23 +549,12 @@ public class CustomerEndpoint {
 		}
 	}
 
-	@RequestMapping(value = "/nap/signup", method = RequestMethod.POST)
+	@RequestMapping(value = "/otp/verify/signup", method = RequestMethod.POST)
 	@ApiOperation("signup customer")
-	public @ResponseBody Object napSignUp(@RequestParam(name = "phone", required = true) String phone,
-			@RequestParam(name = "ticket", required = true) String ticket,
-			@RequestParam(name = "otp", required = true) String otp) {
+	public @ResponseBody Object otpVerifySignUp(@RequestParam(name = "phone") String phone,
+			@RequestParam(name = "otp") String otp, @RequestParam(name = "ticket") String ticket) {
 		ResponseDto responseDto = new ResponseDto();
 		try {
-			if (StringUtils.isEmpty(otp)) {
-				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_OTP);
-				return responseDto;
-			}
-			if (StringUtils.isEmpty(ticket)) {
-				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage(MessageUtil.MESSAGE_CANNOT_TICKET);
-				return responseDto;
-			}
 
 			if (StringUtils.isEmpty(phone)) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
@@ -587,6 +566,43 @@ public class CustomerEndpoint {
 				responseDto.setMessage("Phone Malformed");
 				return responseDto;
 			}
+			Map<String, Object> result = customerService.verifyOtpSignupCallGolang(phone, otp, ticket);
+			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Verify otp không thành công");
+				return responseDto;
+			}
+			responseDto.setCode(HttpStatus.OK.toString());
+			return responseDto;
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			return responseDto;
+		}
+	}
+
+	@RequestMapping(value = "/nap/signup", method = RequestMethod.POST)
+	@ApiOperation("signup customer")
+	public @ResponseBody Object napSignUp(@RequestParam(name = "phone") String phone,
+			@RequestParam(name = "email", required = false) String email,
+			@RequestParam(name = "pasword", required = true) String pasword) {
+		ResponseDto responseDto = new ResponseDto();
+		try {
+
+			if (StringUtils.isEmpty(phone)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
+				return responseDto;
+			}
+			if (!Utils.validateVNPhoneNumber(String.valueOf(phone))) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Phone Malformed");
+				return responseDto;
+			}
+			if (phone.startsWith(Utils.phone_prefix)) {
+				phone = phone.replaceFirst(Utils.phone_prefix, Utils.phone_prefix_84);
+			}
 			// kiem tra phone tren he thong
 			CustomerDto objCustomerDto = customerService.findByPhone2(phone);
 			if (objCustomerDto != null) {
@@ -595,10 +611,11 @@ public class CustomerEndpoint {
 				return responseDto;
 			}
 			// thuc hien tao pasword
-			String password = PasswordGenerator.createPasswordRamdom();
-			String passwordEncrypt = PasswordGenerator.encryptPassword(password);
+			LOGGER.info("Password:" + pasword);
+			String passwordEncrypt = PasswordGenerator.encryptPassword(pasword);
+			LOGGER.info("passwordEncrypt:" + passwordEncrypt);
 
-			Map<String, Object> result = customerService.napSignupCallGolang(phone, ticket, otp, passwordEncrypt);
+			Map<String, Object> result = customerService.napSignupCallGolang(phone, passwordEncrypt);
 			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 				responseDto.setMessage("Lỗi tạo token");
@@ -607,21 +624,35 @@ public class CustomerEndpoint {
 			objCustomerDto = new CustomerDto();
 			objCustomerDto.setPhone(phone);
 			objCustomerDto.setPhone2(phone);
-			objCustomerDto.setTelco((String) result.get("Telco"));
+			objCustomerDto.setTelco((String) result.get("telco"));
 			objCustomerDto.setPassword(passwordEncrypt.getBytes());
-			objCustomerDto.setOldId((long) result.get("Cus_id"));
-			objCustomerDto.setCheckSum((String) result.get("Checksum"));
+			long cusId = (long) result.get("cus_id");
+			objCustomerDto.setOldId(cusId);
+			objCustomerDto.setCheckSum((String) result.get("checksum"));
 			objCustomerDto.setStatus(UserConstant.STATUS_ACTIVATED);
 			objCustomerDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 			objCustomerDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
 			objCustomerDto.setVerifyPhone(UserConstant.STATUS_VERIFIED);
 			objCustomerDto = customerService.saveCustomerInIparkingCenter(objCustomerDto);
+
+			if (objCustomerDto != null && !StringUtils.isEmpty(email)) {
+				// thuc hien kiem tra email de them moi customer_info
+				CustomerInfoDto objCustomerInfoDto = new CustomerInfoDto();
+				objCustomerInfoDto.setCusId(cusId);
+				objCustomerInfoDto.setEmail(email);
+				objCustomerInfoDto.setVerificationCode("");
+				objCustomerInfoDto.setStatus(UserConstant.STATUS_NOT_VERIFIED);
+				objCustomerInfoDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+				customerService.saveCustomerInfoEntity(objCustomerInfoDto);
+				customerService.saveCustomerInfoInPoseidonDb(cusId, phone, email);
+			}
 			responseDto.setCode(HttpStatus.OK.toString());
 			responseDto.setMessage(result.get("Message").toString());
 			responseDto.setData(objCustomerDto);
 			return responseDto;
 		} catch (Exception e) {
 			// TODO: handle exception
+			e.printStackTrace();
 			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
 			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 			return responseDto;
@@ -645,6 +676,9 @@ public class CustomerEndpoint {
 				responseDto.setMessage("Phone Malformed");
 				return responseDto;
 			}
+			if (phone.startsWith(Utils.phone_prefix)) {
+				phone = phone.replaceFirst(Utils.phone_prefix, Utils.phone_prefix_84);
+			}
 			CustomerDto objCustomerDto = customerService.findByPhone2(phone);
 
 			if (objCustomerDto == null) {
@@ -660,6 +694,8 @@ public class CustomerEndpoint {
 			}
 			// thuc hien tạo token
 			responseDto.setCode(HttpStatus.OK.toString());
+			responseDto.setData(TokenAuthenticationService
+					.createTokenCustomer(String.valueOf(objCustomerDto.getOldId()), objCustomerDto.getPhone2()));
 			return responseDto;
 		} catch (Exception e) {
 			// TODO: handle exception
