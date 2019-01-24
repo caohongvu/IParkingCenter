@@ -71,7 +71,7 @@ public class PrivateServicesEndpoint {
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		responseApi.setError(errorDto);
 		try {
-			responseApi.setData(privateServicesService.getPrivateServicesParkingCustomers(customerId));
+			responseApi.setData(privateServicesService.getPrivateServicesParkingCus(customerId));
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -117,7 +117,7 @@ public class PrivateServicesEndpoint {
 			dto.setStatus(CustomerConstans.CUSTOMER_SERVICE_ENABLE);
 			dto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 			dto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
-			dto = privateServicesService.savePrivateServicesParkingCustomer(dto);
+			dto = privateServicesService.savePrivateServicesParkingCus(dto);
 			responseApi.setData(dto);
 			return responseApi;
 		} catch (Exception ex) {
@@ -146,7 +146,7 @@ public class PrivateServicesEndpoint {
 		try {
 			// tim kiem dịch vụ cho customer
 			PrivateServicesParkingCusDto objPrivateServicesParkingCustomerDto = privateServicesService
-					.findPrivateServicesParkingCustomerById(id);
+					.findPrivateServicesParkingCusById(id);
 			if (objPrivateServicesParkingCustomerDto == null) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage("Không tồn tại dịch vụ của customer");
@@ -155,7 +155,7 @@ public class PrivateServicesEndpoint {
 			}
 			// thuc hien cap nhat dich vu của customer thanh disable
 			objPrivateServicesParkingCustomerDto.setStatus(CustomerConstans.CUSTOMER_SERVICE_DISABLE);
-			privateServicesService.savePrivateServicesParkingCustomer(objPrivateServicesParkingCustomerDto);
+			privateServicesService.savePrivateServicesParkingCus(objPrivateServicesParkingCustomerDto);
 			return responseApi;
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());
