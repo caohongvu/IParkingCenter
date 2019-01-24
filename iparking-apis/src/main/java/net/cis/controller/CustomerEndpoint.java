@@ -80,6 +80,8 @@ public class CustomerEndpoint {
 			List<CustomerCarDto> lstCustomerCarDto = customerService.findCustomerCarByNumberPlate(numberPlate);
 
 			if (lstCustomerCarDto == null || lstCustomerCarDto.size() == 0) {
+				responseDto.setError(errorDto);
+				responseDto.setData(lstCustomerCarDto);
 				return responseDto;
 			}
 			List<Object> lstResult = new ArrayList<Object>();
