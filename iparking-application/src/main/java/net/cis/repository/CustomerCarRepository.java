@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import net.cis.jpa.entity.CustomerCarEntity;
 
 public interface CustomerCarRepository extends JpaRepository<CustomerCarEntity, Long> {
-	@Query(value = "Select customer_car from CustomerCarEntity customer_car where (customer_car.numberPlate =:numberPlate)")
+	@Query(value = "Select customer_car from CustomerCarEntity customer_car where (customer_car.numberPlate =:numberPlate) ORDER BY updatedAt DESC")
 	public List<CustomerCarEntity> findCustomerCarByNumberPlate(@Param("numberPlate") String numnerPlate);
 
 	@Query(value = "Select customer_car from CustomerCarEntity customer_car where (customer_car.numberPlate =:numberPlate AND customer_car.customer =:customer)")
