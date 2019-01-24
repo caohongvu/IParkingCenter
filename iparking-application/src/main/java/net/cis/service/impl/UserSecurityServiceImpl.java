@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 
+import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ import net.cis.service.UserSecurityService;
 
 @Service
 public class UserSecurityServiceImpl implements UserSecurityService {
-
+	protected final Logger LOGGER = Logger.getLogger(getClass());
 	@Autowired
 	private UserSecurityRepository userSecurityRepository;
 
@@ -74,21 +75,31 @@ public class UserSecurityServiceImpl implements UserSecurityService {
 					objMenuDto.setMenuChilds(menuChilds);
 					result.add(objMenuDto);
 				}
+
 				objMenuDto = new MenuDto();
 				menuChilds = new ArrayList<MenuDto>();
 			} else {
+				objMenuDto.setId((int) value[0]);
 				objMenuDto.setName(value[1].toString());
 				objMenuDto.setLabel(value[2].toString());
 				objMenuDto.setDescription(value[3].toString());
 				objMenuDto.setLevel((int) value[4]);
 
 				MenuDto menuChild = new MenuDto();
-				menuChild.setLabel(value[6].toString());
-				menuChild.setDescription(value[7].toString());
-				menuChild.setLevel((int) value[8]);
+				menuChild.setId((int) value[5]);
+				menuChild.setName(value[6].toString());
+				menuChild.setLabel(value[7].toString());
+				menuChild.setDescription(value[8].toString());
+				menuChild.setLevel((int) value[9]);
+				menuChild.setParent_id((int) value[0]);
 				menuChilds.add(menuChild);
 			}
+			if (start == lst.size() - 1) {
+				objMenuDto.setMenuChilds(menuChilds);
+				result.add(objMenuDto);
+			}
 			start++;
+			temp_parent = (int) value[0];
 		}
 		return result;
 	}
