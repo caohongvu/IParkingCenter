@@ -55,7 +55,7 @@ public class ParkingEntity {
 	private Date updatedAt;
 	
 	@Column(name="company")
-	private Long company;
+	private long company;
 	
 	@Column(name="lat")
 	private String lat;
@@ -66,6 +66,29 @@ public class ParkingEntity {
 	@Column(name="old_id")
 	private String oldId;
 	
+	@Column(name="phone")
+	private String phone;
+	
+	@Column(name="parking_name")
+	private String parkingName;
+	
+	
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getParkingName() {
+		return parkingName;
+	}
+
+	public void setParkingName(String parkingName) {
+		this.parkingName = parkingName;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -164,11 +187,11 @@ public class ParkingEntity {
 		this.updatedAt = updatedAt;
 	}
 
-	public Long getCompany() {
+	public long getCompany() {
 		return company;
 	}
 
-	public void setCompany(Long company) {
+	public void setCompany(long company) {
 		this.company = company;
 	}
 

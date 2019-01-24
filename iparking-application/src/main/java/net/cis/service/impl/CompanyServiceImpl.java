@@ -23,12 +23,12 @@ public class CompanyServiceImpl implements CompanyService {
 
 	@Autowired
 	private CompanyRepository companyRepository;
-	
+
 	@Autowired
 	private CompanyCache companyCache;
 
 	ModelMapper mapper;
-	
+
 	@Override
 	public CompanyDto save(CompanyDto companyDto) {
 		ModelMapper mapper = new ModelMapper();
@@ -37,19 +37,18 @@ public class CompanyServiceImpl implements CompanyService {
 		mapper.map(companyRepository.save(entity), companyDto);
 		return companyDto;
 	}
-	
+
 	@Override
 	public CompanyDto findById(long id) {
 		ModelMapper mapper = new ModelMapper();
 		CompanyEntity entity = companyRepository.findOne(id);
-		if(entity == null) {
+		if (entity == null) {
 			return null;
 		}
 		CompanyDto companyDto = new CompanyDto();
 		mapper.map(entity, companyDto);
 		return companyDto;
 	}
-
 
 	@Override
 	public List<CompanyDto> findAll() {
@@ -58,9 +57,8 @@ public class CompanyServiceImpl implements CompanyService {
 		return parkingDtos;
 	}
 
-	
 	private List<CompanyDto> map(List<CompanyEntity> source) {
-		
+
 		ArrayList<CompanyDto> rtn = new ArrayList<>();
 		source.stream().map((entity) -> {
 			CompanyDto dto = new CompanyDto();
@@ -72,24 +70,32 @@ public class CompanyServiceImpl implements CompanyService {
 		return rtn;
 	}
 
-	
-
 	@PostConstruct
 	public void initialize() {
 		mapper = new ModelMapper();
 		List<CompanyDto> dtos = this.findAll();
-		for(CompanyDto dto : dtos) {
+		for (CompanyDto dto : dtos) {
 			this.companyCache.put(dto.getCompanyCode(), dto);
 			this.companyCache.put(String.valueOf(dto.getId()), dto);
 		}
 	}
 
-
 	@Override
 	public void delete(CompanyDto parkingDto) {
-		if(parkingDto != null && parkingDto.getId() > 0) {
+		if (parkingDto != null && parkingDto.getId() > 0) {
 			companyRepository.delete(parkingDto.getId());
 		}
+	}
+
+	@Override
+	public CompanyDto findByCompanyCode(String companyCode) {
+		CompanyEntity entity = companyRepository.findByCompanyCodeIgnoreCase(companyCode);
+		if (entity == null) {
+			return null;
+		}
+		CompanyDto companyDto = new CompanyDto();
+		mapper.map(entity, companyDto);
+		return companyDto;
 	}
 
 }

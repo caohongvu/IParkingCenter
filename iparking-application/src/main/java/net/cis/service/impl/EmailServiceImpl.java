@@ -113,4 +113,25 @@ public class EmailServiceImpl implements EmailService {
 		String dataResult = RestfulUtil.getWithOutAccessToke(finalURL, null);
 		LOGGER.info("Result send email active:" + dataResult);
 	}
+
+	@Override
+	public void sendASynchronousMail(String title, String content, String[] emailTos) throws Exception {
+//		SimpleMailMessage mail = new SimpleMailMessage();
+//		mail.setFrom("automailer@cis.net.vn");
+//		mail.setTo("operation_iparking@cis.net.vn");
+//		mail.setBcc(emailTos);
+//		mail.setSubject(title);
+//		mail.setText(content);
+//		quickService.submit(new Runnable() {
+//			@Override
+//			public void run() {
+//				try {
+//					mailSender.send(mail);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+
+	}
 }

@@ -55,6 +55,17 @@ public class CustomerEntity implements Serializable {
 	@Column(name = "otp")
 	private String otp;
 
+	@Column(name = "verify_phone")
+	private int verifyPhone;
+
+	public int getVerifyPhone() {
+		return verifyPhone;
+	}
+
+	public void setVerifyPhone(int verifyPhone) {
+		this.verifyPhone = verifyPhone;
+	}
+
 	public String getTelco() {
 		return telco;
 	}

@@ -22,19 +22,18 @@ public class ParkingActorServiceImpl implements ParkingActorService {
 
 	@Autowired
 	ParkingActorRepository parkingActorRepository;
-	
+
 	ModelMapper mapper;
-	
+
 	@Override
 	public List<ParkingActorDto> findByActors(long actorId) {
 		List<ParkingActorEntity> entities = parkingActorRepository.findByActor(actorId);
-		
+
 		return this.map(entities);
 	}
 
-	
 	private List<ParkingActorDto> map(List<ParkingActorEntity> source) {
-		
+
 		ArrayList<ParkingActorDto> rtn = new ArrayList<>();
 		source.stream().map((entity) -> {
 			ParkingActorDto dto = new ParkingActorDto();
@@ -45,10 +44,15 @@ public class ParkingActorServiceImpl implements ParkingActorService {
 		});
 		return rtn;
 	}
-	
-	
+
 	@PostConstruct
 	public void initialize() {
 		mapper = new ModelMapper();
+	}
+
+	@Override
+	public List<ParkingActorEntity> findByCppId(long cppId) {
+		List<ParkingActorEntity> entities = parkingActorRepository.findByCppId(cppId);
+		return entities;
 	}
 }

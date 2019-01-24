@@ -20,10 +20,30 @@ public class ParkingDto {
 	 private String parkingPlaceData;
 	 private Date createdAt;
 	 private Date updatedAt;
-	 private Long company;
+	 private int company;
+	 private boolean isProvideEInvoice;
 	 private String lat;
 	 private String lng;
 	 private String oldId;
+	 private String phone;
+	 private String parkingName;
+	 
+	 
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getParkingName() {
+		return parkingName;
+	}
+	public void setParkingName(String parkingName) {
+		this.parkingName = parkingName;
+	}
+	public void setProvideEInvoice(boolean isProvideEInvoice) {
+		this.isProvideEInvoice = isProvideEInvoice;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -107,11 +127,18 @@ public class ParkingDto {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	public Long getCompany() {
+	public int getCompany() {
 		return company;
 	}
-	public void setCompany(Long company) {
+	public void setCompany(int company) {
 		this.company = company;
+	}
+	
+	public boolean getIsProvideEInvoice() {
+		return isProvideEInvoice;
+	}
+	public void setIsProvideEInvoice(boolean isProvideEInvoice) {
+		this.isProvideEInvoice = isProvideEInvoice;
 	}
 	public String getLat() {
 		return lat;
@@ -132,6 +159,10 @@ public class ParkingDto {
 		this.oldId = oldId;
 	}
 	 
-	 
+	 @Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return id.hashCode();
+	}
 	
 }

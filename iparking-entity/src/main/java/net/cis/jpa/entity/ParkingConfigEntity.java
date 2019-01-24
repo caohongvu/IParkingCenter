@@ -1,5 +1,7 @@
 package net.cis.jpa.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "parking_config")
-public class ParkingConfig {
+public class ParkingConfigEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +25,53 @@ public class ParkingConfig {
 
 	@Column(name = "config_description")
 	private String configDescription;
+
+	@Column(name = "company_id")
+	private Long companyId;
+
+	@Column(name = "created_at")
+	private Date createdAt;
+
+	@Column(name = "updated_at")
+	private Date updatedAt;
+
+	@Column(name = "last_date_run")
+	private Date lastDateRun;
+
+	@Column(name = "parking_config_type_id")
+	private long parkingConfigTypeId;
+
+	public long getParkingConfigTypeId() {
+		return parkingConfigTypeId;
+	}
+
+	public void setParkingConfigTypeId(long parkingConfigTypeId) {
+		this.parkingConfigTypeId = parkingConfigTypeId;
+	}
+
+	public Long getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 
 	public long getId() {
 		return id;
@@ -55,4 +104,13 @@ public class ParkingConfig {
 	public void setConfigDescription(String configDescription) {
 		this.configDescription = configDescription;
 	}
+
+	public Date getLastDateRun() {
+		return lastDateRun;
+	}
+
+	public void setLastDateRun(Date lastDateRun) {
+		this.lastDateRun = lastDateRun;
+	}
+
 }

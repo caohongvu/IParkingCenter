@@ -24,4 +24,6 @@ public interface TicketRepository  extends JpaRepository<TicketEntity, Long> {
 	
 	@Query(value = "Select ticket from TicketEntity ticket where monthlyTicketId > 0 AND inSession = 1 order by createdAt ASC")
 	public List<TicketEntity> findByMonthlyTicketInSession();
+	
+	List<TicketEntity> findByParkingPlace(long parkingPlace);
 }

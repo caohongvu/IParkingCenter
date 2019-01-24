@@ -14,5 +14,7 @@ public interface DailyTicketPaymentService {
     ResponseApi getRevenueGroupByParkingCodeSP(DailyTicketPaymentCriteria ticketCriteria);
     
     ResponseApi getRevenueGroupByCompanyCode(DailyTicketPaymentCriteria ticketCriteria);
+    
+    ResponseApi getRevenueGroupByCompanyCodeSP(DailyTicketPaymentCriteria ticketCriteria);
 
 }
