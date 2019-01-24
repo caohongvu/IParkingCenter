@@ -46,7 +46,7 @@ public class NotificationEndpoint {
 	ParkingActorService parkingActorService;
 
 	/**
-	 * Lay thong tin khach hang cua ve thang cua 1 diem do
+	 * liemnh Thuc hien gui thong bao den customer cua 1 diem dich vu
 	 * 
 	 * @param request
 	 * @param parkingCode
@@ -106,6 +106,13 @@ public class NotificationEndpoint {
 		}
 	}
 
+	/**
+	 * liemnh lay lich su gui thong bao
+	 * 
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/getNotificationHistory", method = RequestMethod.GET)
 	@ApiOperation("Nhat ky gui notification")
 	public @ResponseBody ResponseApi getCompany(HttpServletRequest request) throws Exception {

@@ -14,7 +14,7 @@ import net.cis.common.util.DateTimeUtil;
 import net.cis.constants.CustomerConstans;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
-import net.cis.dto.PrivateServicesParkingCustomerDto;
+import net.cis.dto.PrivateServicesParkingCusDto;
 import net.cis.dto.PrivateServicesParkingDto;
 import net.cis.dto.ResponseApi;
 import net.cis.service.PrivateServicesService;
@@ -29,7 +29,7 @@ public class PrivateServicesEndpoint {
 	PrivateServicesService privateServicesService;
 
 	/**
-	 * Lấy danh sach dịch vụ tại 1 điểm đỗ
+	 * liemnh Lấy danh sach dịch vụ tại 1 điểm đỗ
 	 * 
 	 * @param oldId
 	 * @return
@@ -56,7 +56,7 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * Lấy danh sach dịch vụ của 1 customer
+	 * liemnh Lấy danh sach dịch vụ của 1 customer
 	 * 
 	 * @param oldId
 	 * @return
@@ -84,7 +84,7 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * Tạo 1 dịch vụ của customer
+	 * liemnh Tạo 1 dịch vụ của customer
 	 * 
 	 * @param oldId
 	 * @return
@@ -110,7 +110,7 @@ public class PrivateServicesEndpoint {
 				return responseApi;
 			}
 			// thuc hien them moi dich vu cho customer
-			PrivateServicesParkingCustomerDto dto = new PrivateServicesParkingCustomerDto();
+			PrivateServicesParkingCusDto dto = new PrivateServicesParkingCusDto();
 			dto.setParkingServiceParkingId(objPrivateServicesParkingDto.getId());
 			dto.setCusId(customerId);
 			dto.setInfo(info);
@@ -130,7 +130,7 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * Xoa dich vu của 1 customer
+	 * liemnh Xoa dich vu của 1 customer
 	 * 
 	 * @param oldId
 	 * @return
@@ -145,7 +145,7 @@ public class PrivateServicesEndpoint {
 		responseApi.setError(errorDto);
 		try {
 			// tim kiem dịch vụ cho customer
-			PrivateServicesParkingCustomerDto objPrivateServicesParkingCustomerDto = privateServicesService
+			PrivateServicesParkingCusDto objPrivateServicesParkingCustomerDto = privateServicesService
 					.findPrivateServicesParkingCustomerById(id);
 			if (objPrivateServicesParkingCustomerDto == null) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);

@@ -2,7 +2,7 @@ package net.cis.dto;
 
 import java.util.Date;
 
-public class PrivateServicesParkingCustomerDto {
+public class PrivateServicesParkingCusDto {
 	private long id;
 	private Long parkingServiceParkingId;
 	private Long cusId;

@@ -34,6 +34,14 @@ public class ParkingConfigEndPoint {
 	@Autowired
 	ParkingConfigService parkingConfigService;
 
+	/**
+	 * liemnh tim kiem parking config type
+	 * 
+	 * @param request
+	 * @param status
+	 * @param name
+	 * @return
+	 */
 	@RequestMapping(value = "/find-parking-config-type", method = RequestMethod.GET)
 	@ApiOperation("Lay danh sach kieu cau hinh")
 	public @ResponseBody ResponseApi getParkingConfigTypes(HttpServletRequest request,
@@ -61,6 +69,15 @@ public class ParkingConfigEndPoint {
 		}
 	}
 
+	/**
+	 * liemnh tao parking config type
+	 * 
+	 * @param request
+	 * @param name
+	 * @param description
+	 * @param status
+	 * @return
+	 */
 	@RequestMapping(value = "/create-parking-config-type", method = RequestMethod.POST)
 	@ApiOperation("Tạo mới kiểu cấu hình")
 	public @ResponseBody ResponseApi createParkingConfigType(HttpServletRequest request,
@@ -91,6 +108,16 @@ public class ParkingConfigEndPoint {
 		}
 	}
 
+	/**
+	 * liemnh cap nhat parking config type
+	 * 
+	 * @param request
+	 * @param id
+	 * @param name
+	 * @param description
+	 * @param status
+	 * @return
+	 */
 	@RequestMapping(value = "/update-parking-config-type", method = RequestMethod.POST)
 	@ApiOperation("Cập nhật kiểu cấu hình")
 	public @ResponseBody ResponseApi updateParkingConfigType(HttpServletRequest request,
@@ -124,6 +151,15 @@ public class ParkingConfigEndPoint {
 		}
 	}
 
+	/**
+	 * liemnh tim kiem parking config
+	 * 
+	 * @param request
+	 * @param configKey
+	 * @param company
+	 * @param configType
+	 * @return
+	 */
 	@RequestMapping(value = "/find-parking-config", method = RequestMethod.GET)
 	@ApiOperation("Lấy danh sách cấu hình")
 	public @ResponseBody ResponseApi getParkingConfigs(HttpServletRequest request,
@@ -148,6 +184,17 @@ public class ParkingConfigEndPoint {
 		}
 	}
 
+	/**
+	 * liemnh tao paking config
+	 * 
+	 * @param request
+	 * @param configKey
+	 * @param configValue
+	 * @param configDescription
+	 * @param company
+	 * @param configType
+	 * @return
+	 */
 	@RequestMapping(value = "/create-parking-config", method = RequestMethod.POST)
 	@ApiOperation("Tao parking config ")
 	public @ResponseBody ResponseApi createParkingConfig(HttpServletRequest request,
@@ -183,6 +230,14 @@ public class ParkingConfigEndPoint {
 		}
 	}
 
+	/**
+	 * liemnh update parking config
+	 * 
+	 * @param request
+	 * @param id
+	 * @param configValue
+	 * @return
+	 */
 	@RequestMapping(value = "/update-parking-config", method = RequestMethod.POST)
 	@ApiOperation("Cap nhat parking config")
 	public @ResponseBody ResponseApi updateParkingConfig(HttpServletRequest request, @RequestParam(name = "id") Long id,
