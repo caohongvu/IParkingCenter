@@ -2,6 +2,9 @@ package net.cis.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class MenuDto {
 	private long id;
 	private String name;
@@ -9,7 +12,9 @@ public class MenuDto {
 	private String description;
 	private Integer level;
 	private long parent_id;
+	@JsonInclude(Include.NON_NULL)
 	private Integer sort;
+	@JsonInclude(Include.NON_NULL)
 	private List<MenuDto> menuChilds;
 
 	public long getId() {
