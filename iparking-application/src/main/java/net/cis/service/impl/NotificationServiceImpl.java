@@ -15,6 +15,7 @@ import net.cis.constants.NotificationType;
 import net.cis.dto.NotificationCustomerDto;
 import net.cis.dto.NotificationDto;
 import net.cis.dto.NotificationParkingPlaceDto;
+import net.cis.dto.NotificationTypeDto;
 import net.cis.dto.ParkingContractInfoDto;
 import net.cis.dto.ParkingDto;
 import net.cis.dto.UserDto;
@@ -22,9 +23,11 @@ import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.jpa.entity.NotificationCustomerEntity;
 import net.cis.jpa.entity.NotificationEntity;
 import net.cis.jpa.entity.NotificationParkingPlaceEntity;
+import net.cis.jpa.entity.NotificationTypeEntity;
 import net.cis.repository.NotificationCustomerRepository;
 import net.cis.repository.NotificationParkingPlaceRepository;
 import net.cis.repository.NotificationRepository;
+import net.cis.repository.NotificationTypeRepository;
 import net.cis.service.EmailService;
 import net.cis.service.NotificationService;
 import net.cis.service.ParkingContractService;
@@ -42,6 +45,9 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Autowired
 	NotificationCustomerRepository notificationCustomerRepository;
+
+	@Autowired
+	NotificationTypeRepository notificationTypeRepository;
 
 	@Autowired
 	ParkingContractService parkingContractService;
@@ -88,13 +94,15 @@ public class NotificationServiceImpl implements NotificationService {
 			mapper.map(entity, dto);
 			dto.setCreatedByFullName(objUserDto.getFullname());
 			dto.setCreatedByUserName(objUserDto.getUsername());
-			List<NotificationParkingPlaceEntity> lstNotificationParkingPlace = findNotificationParkingPlace(dto.getId(),
-					parkingCode);
+			NotificationParkingPlaceEntity notificationParkingPlaceEntity = notificationParkingPlaceRepository
+					.findByNotificationIdAndParkingId(dto.getId(), parkingCode);
+			List<NotificationTypeEntity> lstNotiTypes = notificationTypeRepository.findByNotificationId(dto.getId());
 			List<Integer> lstTypes = new ArrayList<>();
-			for (NotificationParkingPlaceEntity type : lstNotificationParkingPlace) {
-				lstTypes.add(type.getType());
+			for (NotificationTypeEntity notificationTypeEntity : lstNotiTypes) {
+				lstTypes.add(notificationTypeEntity.getType());
 			}
 			dto.setTypes(lstTypes);
+			dto.setParkingId(notificationParkingPlaceEntity.getParkingId());
 			return dto;
 		}).forEachOrdered((dto) -> {
 			rtn.add(dto);
@@ -149,18 +157,23 @@ public class NotificationServiceImpl implements NotificationService {
 			}
 		}
 
+		// thuc hien tao NotificationParkingPlace
+		NotificationParkingPlaceDto objNotificationCpp = new NotificationParkingPlaceDto();
+		objNotificationCpp.setNotificationId(objNotificationHistoryDto.getId());
+		objNotificationCpp.setParkingId(Long.parseLong(objParkingDto.getOldId()));
+		objNotificationCpp.setCompanyId(objParkingDto.getCompany());
+		objNotificationCpp.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+		saveNotificationParkingPlace(objNotificationCpp);
+
 		for (Integer type : types) {
-			// thuc hien save notification_parking_place
-			NotificationParkingPlaceDto objNotificationCpp = new NotificationParkingPlaceDto();
-			objNotificationCpp.setNotificationId(objNotificationHistoryDto.getId());
-			objNotificationCpp.setParkingId(Long.parseLong(objParkingDto.getOldId()));
-			objNotificationCpp.setCompanyId(objParkingDto.getCompany());
-			objNotificationCpp.setType(type);
-			objNotificationCpp.setCreatedAt(DateTimeUtil.getCurrentDateTime());
-			saveNotificationParkingPlace(objNotificationCpp);
+			// thuc hien save notification_type
+			NotificationTypeDto objNotificationTypeDto = new NotificationTypeDto();
+			objNotificationTypeDto.setNotificationId(objNotificationHistoryDto.getId());
+			objNotificationTypeDto.setType(type);
+			objNotificationTypeDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			saveNotificationType(objNotificationTypeDto);
 			if (NotificationType.NOTIFICATION == type) {
 				// notification
-
 			} else if (NotificationType.EMAIL == type) {
 				// email
 				emailService.sendASynchronousMail(title, content, lstEmail.toArray(new String[lstEmail.size()]));
@@ -184,10 +197,11 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public List<NotificationParkingPlaceEntity> findNotificationParkingPlace(long notificationId, long parkingId) {
-		List<NotificationParkingPlaceEntity> lstResult = notificationParkingPlaceRepository
-				.findByNotificationIdAndParkingId(notificationId, parkingId);
-		return lstResult;
+	public NotificationTypeDto saveNotificationType(NotificationTypeDto notificationTypeDto) {
+		NotificationTypeEntity entity = new NotificationTypeEntity();
+		mapper.map(notificationTypeDto, entity);
+		mapper.map(notificationTypeRepository.save(entity), notificationTypeDto);
+		return notificationTypeDto;
 	}
 
 	@Override
@@ -196,6 +210,36 @@ public class NotificationServiceImpl implements NotificationService {
 		mapper.map(notificationCustomerDto, entity);
 		mapper.map(notificationCustomerRepository.save(entity), notificationCustomerDto);
 		return notificationCustomerDto;
+	}
+
+	@Override
+	public List<NotificationDto> findNotificationCustomer(long cusId) {
+		List<NotificationCustomerEntity> lstEntity = notificationCustomerRepository.findByCusId(cusId);
+		return this.mapNotificationCustomer(lstEntity);
+	}
+
+	public List<NotificationDto> mapNotificationCustomer(List<NotificationCustomerEntity> source) {
+		List<NotificationDto> rtn = new ArrayList<>();
+		source.stream().map((entity) -> {
+			NotificationDto dto = new NotificationDto();
+			// lay thong tin notfication
+			NotificationEntity notification = notificationRepository.findOne(entity.getNotificationId());
+			mapper.map(notification, dto);
+			NotificationParkingPlaceEntity notificationParkingPlaceEntity = notificationParkingPlaceRepository
+					.findByNotificationId(dto.getId());
+			List<NotificationTypeEntity> lstNotiTypes = notificationTypeRepository.findByNotificationId(dto.getId());
+			List<Integer> lstTypes = new ArrayList<>();
+			for (NotificationTypeEntity notificationTypeEntity : lstNotiTypes) {
+				lstTypes.add(notificationTypeEntity.getType());
+			}
+			dto.setTypes(lstTypes);
+			dto.setParkingId(notificationParkingPlaceEntity.getParkingId());
+
+			return dto;
+		}).forEachOrdered((dto) -> {
+			rtn.add(dto);
+		});
+		return rtn;
 	}
 
 }
