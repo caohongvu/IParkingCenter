@@ -16,78 +16,90 @@ import javax.annotation.PostConstruct;
 
 @Service
 public class FuncServiceImpl implements FuncService {
-    protected final Logger LOGGER = Logger.getLogger(getClass());
+	protected final Logger LOGGER = Logger.getLogger(getClass());
 
-    @Autowired
-    private FuncRepository funcRepository;
+	@Autowired
+	private FuncRepository funcRepository;
 
-    ModelMapper mapper;
+	ModelMapper mapper;
 
-    @PostConstruct
-    public void initialize() {
-        mapper = new ModelMapper();
-    }
+	@PostConstruct
+	public void initialize() {
+		mapper = new ModelMapper();
+	}
 
-    @Override
-    public FuncDto create(FuncDto dto) throws Exception {
-        dto.setId(null);
-        FuncEntity newEntity = funcRepository.save(mapper.map(dto, FuncEntity.class));
-        return mapper.map(newEntity, FuncDto.class);
-    }
+	@Override
+	public FuncDto create(FuncDto dto) throws Exception {
+		dto.setId(null);
+		FuncEntity newEntity = funcRepository.save(mapper.map(dto, FuncEntity.class));
+		return mapper.map(newEntity, FuncDto.class);
+	}
 
-    @Override
-    public List<FuncDto> findAll() throws Exception {
-        List<FuncEntity> funcEntities = funcRepository.findAll();
-        return this.map(funcEntities);
-    }
+	@Override
+	public List<FuncDto> findAll() throws Exception {
+		List<FuncEntity> funcEntities = funcRepository.findAll();
+		return this.map(funcEntities);
+	}
 
-    @Override
-    public List<FuncDto> findByStatus(Integer status) throws Exception {
-        return this.map(funcRepository.findByStatus(status));
-    }
+	@Override
+	public List<FuncDto> findByStatus(Integer status) throws Exception {
+		return this.map(funcRepository.findByStatus(status));
+	}
 
-    @Override
-    public FuncDto findById(Long id) throws Exception {
-        FuncEntity ett = funcRepository.findOne(id);
+	@Override
+	public FuncDto findById(Long id) throws Exception {
+		FuncEntity ett = funcRepository.findOne(id);
 
-        if (ett == null) { return null; }
-        return mapper.map(ett, FuncDto.class);
-    }
+		if (ett == null) {
+			return null;
+		}
+		return mapper.map(ett, FuncDto.class);
+	}
 
-    @Override
-    public void update(FuncDto dto) throws Exception {
-        FuncEntity entity = funcRepository.findOne(dto.getId());
-        if (entity != null) {
-            entity.setName(dto.getName());
-            entity.setDesc(dto.getDesc());
-            entity.setStatus(dto.getStatus());
-            funcRepository.save(entity);
-        }
-    }
+	@Override
+	public void update(FuncDto dto) throws Exception {
+		FuncEntity entity = funcRepository.findOne(dto.getId());
+		if (entity != null) {
+			entity.setName(dto.getName());
+			entity.setDescription(dto.getDescription());
+			entity.setStatus(dto.getStatus());
+			funcRepository.save(entity);
+		}
+	}
 
-    @Override
-    public FuncDto findOneByName(String name) throws Exception {
-        FuncEntity ett = funcRepository.findOneByName(name);
+	@Override
+	public FuncDto findOneByName(String name) throws Exception {
+		FuncEntity ett = funcRepository.findOneByName(name);
 
-        if (ett == null) { return null; }
-        return mapper.map(ett, FuncDto.class);
-    }
+		if (ett == null) {
+			return null;
+		}
+		return mapper.map(ett, FuncDto.class);
+	}
 
-    @Override
-    public FuncDto findOneByNameAndIdNot(String name, Long id) throws Exception {
-        FuncEntity ett = funcRepository.findOneByNameAndIdNot(name, id);
+	@Override
+	public FuncDto findOneByNameAndIdNot(String name, Long id) throws Exception {
+		FuncEntity ett = funcRepository.findOneByNameAndIdNot(name, id);
 
-        if (ett == null) { return null; }
-        return mapper.map(ett, FuncDto.class);
-    }
+		if (ett == null) {
+			return null;
+		}
+		return mapper.map(ett, FuncDto.class);
+	}
 
-    private List<FuncDto> map(List<FuncEntity> source) {
-        List<FuncDto> rtn = new ArrayList<>();
-        for (FuncEntity entity : source) {
-            FuncDto dto = new FuncDto();
-            mapper.map(entity, dto);
-            rtn.add(dto);
-        }
-        return rtn;
-    }
+	private List<FuncDto> map(List<FuncEntity> source) {
+		List<FuncDto> rtn = new ArrayList<>();
+		for (FuncEntity entity : source) {
+			FuncDto dto = new FuncDto();
+			mapper.map(entity, dto);
+			rtn.add(dto);
+		}
+		return rtn;
+	}
+
+	@Override
+	public List<FuncDto> findAllFuncParent() throws Exception {
+		List<FuncEntity> funcEntities = funcRepository.findByParentIdIsNull();
+		return this.map(funcEntities);
+	}
 }
