@@ -13,4 +13,8 @@ public interface EmailService {
 
 	public void checkAndsendMailActiveASynchronous(long customer, String phone, String email) throws Exception;
 
+	public void sendEmailResendPassword(String title, String content, String emailTo) throws Exception;
+
+	public void sendEmailChangePasswordSuccess(String title, String content, String emailTo) throws Exception;
+
 }

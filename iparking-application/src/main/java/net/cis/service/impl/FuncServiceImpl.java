@@ -3,16 +3,18 @@ package net.cis.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.cis.dto.FuncDto;
-import net.cis.jpa.entity.FuncEntity;
-import net.cis.repository.FuncRepository;
-import net.cis.service.FuncService;
+import javax.annotation.PostConstruct;
+
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import net.cis.constants.UserConstans;
+import net.cis.dto.FuncDto;
+import net.cis.jpa.entity.FuncEntity;
+import net.cis.repository.FuncRepository;
+import net.cis.service.FuncService;
 
 @Service
 public class FuncServiceImpl implements FuncService {
@@ -30,9 +32,10 @@ public class FuncServiceImpl implements FuncService {
 
 	@Override
 	public FuncDto create(FuncDto dto) throws Exception {
-		dto.setId(null);
-		FuncEntity newEntity = funcRepository.save(mapper.map(dto, FuncEntity.class));
-		return mapper.map(newEntity, FuncDto.class);
+		FuncEntity newEntity = new FuncEntity();
+		mapper.map(dto, newEntity);
+		mapper.map(funcRepository.save(newEntity), dto);
+		return dto;
 	}
 
 	@Override
@@ -57,20 +60,16 @@ public class FuncServiceImpl implements FuncService {
 	}
 
 	@Override
-	public void update(FuncDto dto) throws Exception {
-		FuncEntity entity = funcRepository.findOne(dto.getId());
-		if (entity != null) {
-			entity.setName(dto.getName());
-			entity.setDescription(dto.getDescription());
-			entity.setStatus(dto.getStatus());
-			funcRepository.save(entity);
-		}
+	public FuncDto update(FuncDto dto) throws Exception {
+		FuncEntity newEntity = new FuncEntity();
+		mapper.map(dto, newEntity);
+		mapper.map(funcRepository.save(newEntity), dto);
+		return dto;
 	}
 
 	@Override
 	public FuncDto findOneByName(String name) throws Exception {
-		FuncEntity ett = funcRepository.findOneByName(name);
-
+		FuncEntity ett = funcRepository.findOneByNameIgnoreCase(name);
 		if (ett == null) {
 			return null;
 		}
@@ -99,7 +98,7 @@ public class FuncServiceImpl implements FuncService {
 
 	@Override
 	public List<FuncDto> findAllFuncParent() throws Exception {
-		List<FuncEntity> funcEntities = funcRepository.findByParentIdIsNull();
+		List<FuncEntity> funcEntities = funcRepository.findByStatusAndParentIdIsNull(UserConstans.FUNC_STATUS_ENABLE);
 		return this.map(funcEntities);
 	}
 }

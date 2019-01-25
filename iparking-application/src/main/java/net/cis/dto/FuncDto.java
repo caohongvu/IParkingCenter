@@ -9,6 +9,33 @@ public class FuncDto {
 	private Integer parentId;
 	private Integer sort;
 	private Integer status;
+	private String icon;
+	private String link;
+	private Integer type;
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
+	}
 
 	public Long getId() {
 		return id;

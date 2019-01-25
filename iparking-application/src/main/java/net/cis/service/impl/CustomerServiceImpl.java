@@ -53,14 +53,27 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Map<String, Object> saveCustomerInPoseidonDb(String phone) throws Exception {
+	public Map<String, Object> createCustomerInShardDb(String phone) throws Exception {
 		// TODO Auto-generated method stub
 		String finalURL = URLConstants.URL_CREATE_CUSTOMER;
 		List<NameValuePair> formParams = new ArrayList<>();
 		formParams.add(new BasicNameValuePair("phone", phone));
 		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
 				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-		LOGGER.info("createCustomerInPoseidonDb Response: " + responseContent);
+		LOGGER.info("createCustomerInShardDb Response: " + responseContent);
+		return parseJSonToCreatePoseidonResponseObject(responseContent);
+	}
+
+	@Override
+	public Map<String, Object> updateCustomerInShardDb(String cusId, String password) throws Exception {
+		// TODO Auto-generated method stub
+		String finalURL = URLConstants.URL_UPDATE_CUSTOMER;
+		List<NameValuePair> formParams = new ArrayList<>();
+		formParams.add(new BasicNameValuePair("customerID", cusId));
+		formParams.add(new BasicNameValuePair("password", password));
+		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		LOGGER.info("updateCustomerInShardDb Response: " + responseContent);
 		return parseJSonToCreatePoseidonResponseObject(responseContent);
 	}
 
@@ -216,7 +229,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Map<String, Object> saveCustomerCarInPoseidonDb(long cusId, String numberPlate, int carType)
+	public Map<String, Object> createCustomerCarInShardDb(long cusId, String numberPlate, int carType)
 			throws Exception {
 		// TODO Auto-generated method stub
 		String finalURL = URLConstants.URL_CREATE_CUSTOMER_CAR;
@@ -414,13 +427,11 @@ public class CustomerServiceImpl implements CustomerService {
 		return result;
 	}
 
-	/**
-	 * thuc hien tao customer bên iparking center va customer info
-	 */
-
 	@Override
-	public boolean saveCustomerFromPortal(CustomerDto customerDto, String fullName, String email) {
-		// TODO Auto-generated method stub
-		return false;
+	public CustomerInfoDto findCustomerInfoByEmail(String email) throws Exception {
+		CustomerInfoEntity entity = customerInfoRepository.findByEmailIgnoreCase(email);
+		CustomerInfoDto dto = new CustomerInfoDto();
+		mapper.map(entity, dto);
+		return dto;
 	}
 }

@@ -11,6 +11,7 @@ public class ParkingContractOutOfDateDto {
 	private long validTo;
 	private int numberOfMonth;
 	private long totalAmount;
+	private long remainAmount;
 	private long paidAmount;
 	private long validEnd;
 	private long monthlyUnitPrice;
@@ -18,6 +19,14 @@ public class ParkingContractOutOfDateDto {
 	private String phone2;
 	private String fullName;
 	private String email;
+
+	public long getRemainAmount() {
+		return remainAmount;
+	}
+
+	public void setRemainAmount(long remainAmount) {
+		this.remainAmount = remainAmount;
+	}
 
 	public long getId() {
 		return id;

@@ -116,22 +116,40 @@ public class EmailServiceImpl implements EmailService {
 
 	@Override
 	public void sendASynchronousMail(String title, String content, String[] emailTos) throws Exception {
-//		SimpleMailMessage mail = new SimpleMailMessage();
-//		mail.setFrom("automailer@cis.net.vn");
-//		mail.setTo("operation_iparking@cis.net.vn");
-//		mail.setBcc(emailTos);
-//		mail.setSubject(title);
-//		mail.setText(content);
-//		quickService.submit(new Runnable() {
-//			@Override
-//			public void run() {
-//				try {
-//					mailSender.send(mail);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
+		SimpleMailMessage mail = new SimpleMailMessage();
+		mail.setFrom("automailer@cis.net.vn");
+		mail.setTo("operation_iparking@cis.net.vn");
+		mail.setBcc(emailTos);
+		mail.setSubject(title);
+		mail.setText(content);
+		quickService.submit(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					// mailSender.send(mail);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+	}
+
+	/**
+	 * liemnh thuc hien gui email den KH để KH nhận thông tin đổi mật khẩu
+	 */
+	@Override
+	public void sendEmailResendPassword(String title, String content, String emailTo) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * liemnh thuc hiện gửi thông báo đổi mật khẩu thành công
+	 */
+	@Override
+	public void sendEmailChangePasswordSuccess(String title, String content, String emailTo) throws Exception {
+		// TODO Auto-generated method stub
 
 	}
 }
