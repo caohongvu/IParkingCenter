@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,7 +80,9 @@ public class ParkingContractEndpoint {
 	@ApiOperation("Dach sach ve thang qua han")
 	public @ResponseBody ResponseApi getParkingContractOutOfDate(@RequestParam("parking_code") String parkingCode,
 			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-			@RequestParam(name = "size", required = false, defaultValue = "500") int size) {
+			@RequestParam(name = "size", required = false, defaultValue = "500") int size,
+			@RequestParam(name = "sort", required = false, defaultValue = "contractNo") String sort,
+			@RequestParam(name = "sort_type", required = false, defaultValue = "DESC") String sortType) {
 		ResponseApi response = new ResponseApi();
 		ErrorDto error = new ErrorDto();
 		error.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -89,7 +92,8 @@ public class ParkingContractEndpoint {
 			if (page < 0) {
 				page = 0;
 			}
-			Pageable pageable = new PageRequest(page, size);
+			Sort sortDB = new Sort("DESC".equals(sortType) ? Sort.Direction.DESC : Sort.Direction.ASC, sort);
+			Pageable pageable = new PageRequest(page, size, sortDB);
 			ParkingContractCriteria objParkingContractCriteria = new ParkingContractCriteria();
 			objParkingContractCriteria.setCppCode(parkingCode);
 			List<ParkingContractOutOfDateDto> lstParkingContractDto = parkingContractService
