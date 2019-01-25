@@ -51,6 +51,11 @@ public class UserEndpoint extends BaseEndpoint {
 		try {
 			// thuc hien tim kiem theo username
 			UserSecurityDto objUserSecurityDto = userSecurityService.findByUsername(username);
+			if (objUserSecurityDto == null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_NOT_EXITS);
+				return responseDto;
+			}
 			// thuc hien verify pass
 			if (!PasswordGenerator.verifyPassword(password, new String(objUserSecurityDto.getPassword()))) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
@@ -70,6 +75,7 @@ public class UserEndpoint extends BaseEndpoint {
 			return responseDto;
 		} catch (Exception e) {
 			// TODO: handle exception
+			e.printStackTrace();
 			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
 			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 			return responseDto;
