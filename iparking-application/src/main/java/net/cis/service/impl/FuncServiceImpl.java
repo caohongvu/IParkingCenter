@@ -69,8 +69,7 @@ public class FuncServiceImpl implements FuncService {
 
 	@Override
 	public FuncDto findOneByName(String name) throws Exception {
-		FuncEntity ett = funcRepository.findOneByName(name);
-
+		FuncEntity ett = funcRepository.findOneByNameIgnoreCase(name);
 		if (ett == null) {
 			return null;
 		}
