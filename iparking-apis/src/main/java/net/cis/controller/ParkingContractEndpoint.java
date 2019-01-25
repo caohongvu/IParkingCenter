@@ -87,7 +87,6 @@ public class ParkingContractEndpoint {
 		ErrorDto error = new ErrorDto();
 		error.setCode(ResponseErrorCodeConstants.StatusOK);
 		try {
-
 			page = page - 1;
 			if (page < 0) {
 				page = 0;
