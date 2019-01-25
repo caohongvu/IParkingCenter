@@ -17,7 +17,7 @@ public interface FuncService {
 
 	FuncDto create(FuncDto dto) throws Exception;
 
-	void update(FuncDto dto) throws Exception;
+	FuncDto update(FuncDto dto) throws Exception;
 
 	List<FuncDto> findAllFuncParent() throws Exception;
 }

@@ -14,5 +14,5 @@ public interface FuncRepository extends JpaRepository<FuncEntity, Long> {
 	@Query("SELECT f FROM FuncEntity f WHERE f.name = ?1 AND f.id <> ?2")
 	FuncEntity findOneByNameAndIdNot(String name, Long id);
 
-	List<FuncEntity> findByParentIdIsNull();
+	List<FuncEntity> findByStatusAndParentIdIsNull(Integer status);
 }
