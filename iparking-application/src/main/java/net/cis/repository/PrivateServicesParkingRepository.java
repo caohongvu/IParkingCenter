@@ -10,4 +10,8 @@ public interface PrivateServicesParkingRepository extends JpaRepository<PrivateS
 	List<PrivateServicesParkingEntity> findByParkingIdAndStatus(Long parkingId, Integer status);
 
 	List<PrivateServicesParkingEntity> findByParkingId(Long parkingId);
+
+	PrivateServicesParkingEntity findByParkingIdAndPrivateServiceIdAndStatus(Long parkingId, Long privateServiceId,
+			Integer status);
+
 }

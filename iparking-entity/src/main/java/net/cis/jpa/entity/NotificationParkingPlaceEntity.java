@@ -26,9 +26,6 @@ public class NotificationParkingPlaceEntity {
 	@Column(name = "company_id")
 	private Integer companyId;
 
-	@Column(name = "type")
-	private Integer type;
-
 	@Column(name = "created_at")
 	private Date createdAt;
 
@@ -54,14 +51,6 @@ public class NotificationParkingPlaceEntity {
 
 	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
-	}
-
-	public Integer getType() {
-		return type;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
 	}
 
 	public long getId() {

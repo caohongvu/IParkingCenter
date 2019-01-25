@@ -7,16 +7,7 @@ public class NotificationParkingPlaceDto {
 	private Long notificationId;
 	private Long parkingId;
 	private Integer companyId;
-	private Integer type;
 	private Date createdAt;
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
 
 	public Date getCreatedAt() {
 		return createdAt;
@@ -56,10 +47,6 @@ public class NotificationParkingPlaceDto {
 
 	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
 	}
 
 }

@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import net.cis.dto.CompanyDto;
@@ -134,9 +135,11 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 	}
 
 	@Override
-	public List<ParkingContractOutOfDateDto> findParkingContractOutOfDate(ParkingContractCriteria ticketCriteria) {
+	public List<ParkingContractOutOfDateDto> findParkingContractOutOfDate(ParkingContractCriteria ticketCriteria,
+			Pageable pageable) {
 		List<ParkingContractOutOfDateEntity> ticketEntities = null;
-		ticketEntities = parkingContractOutOfDateRepository.findParkingContractOutOfDate(ticketCriteria.getCppCode());
+		ticketEntities = parkingContractOutOfDateRepository.findParkingContractOutOfDate(ticketCriteria.getCppCode(),
+				pageable);
 		List<ParkingContractOutOfDateDto> ticketDtos = this.map2(ticketEntities);
 		return ticketDtos;
 	}

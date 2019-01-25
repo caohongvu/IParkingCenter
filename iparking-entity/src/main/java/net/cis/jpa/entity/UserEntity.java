@@ -2,8 +2,6 @@ package net.cis.jpa.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -12,49 +10,44 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user")
 public class UserEntity {
-	
+
 	@Id
-    @Column(name="id")
-//    @GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "id")
 	private int id;
-	
-	@Column(name="username")
+
+	@Column(name = "username")
 	private String username;
-	
-	@Column(name="fullname")
+
+	@Column(name = "fullname")
 	private String fullname;
-	
-	@Column(name="title")
+
+	@Column(name = "title")
 	private String title;
-	
-	@Column(name="status")
+
+	@Column(name = "status")
 	private int status;
-	
-	@Column(name="created_at")
+
+	@Column(name = "created_at")
 	private String created_at;
-	
-	@Column(name="updated_at")
+
+	@Column(name = "updated_at")
 	private String updated_at;
-	
-	@Column(name="checksum")
+
+	@Column(name = "checksum")
 	private String checksum;
-	
-	@Column(name="pwd_counter")
+
+	@Column(name = "pwd_counter")
 	private int pwd_counter;
-	
-	@Column(name="type")
+
+	@Column(name = "type")
 	private int type;
-	
-	@OneToOne(mappedBy="userEntity")
+
+	@OneToOne(mappedBy = "userEntity")
 	private UserMetadataEntity userMetadata;
-	
+
 	@OneToOne
-	@JoinColumn(name="username", referencedColumnName="username", insertable = false, updatable = false, nullable = false)
+	@JoinColumn(name = "username", referencedColumnName = "username", insertable = false, updatable = false, nullable = false)
 	private UserSecurityEntity userSecurityEntity;
-	
-	
-
-
 
 	public UserSecurityEntity getUserSecurityEntity() {
 		return userSecurityEntity;
@@ -151,7 +144,5 @@ public class UserEntity {
 	public void setType(int type) {
 		this.type = type;
 	}
-	
-	
 
 }

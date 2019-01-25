@@ -1,46 +1,23 @@
-package net.cis.jpa.entity;
+package net.cis.dto;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "private_services_parking_customer")
-public class PrivateServicesParkingCustomerEntity {
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PrivateServicesParkingCusDto {
 	private long id;
-
-	@Column(name = "parking_service_parking_id")
 	private Long parkingServiceParkingId;
-
-	@Column(name = "cus_id")
 	private Long cusId;
-
-	@Column(name = "created_at")
 	private Date createdAt;
-
-	@Column(name = "updated_at")
 	private Date updatedAt;
-
-	@Column(name = "info")
 	private String info;
-
-	@Column(name = "status")
 	private Integer status;
+	private PrivateServicesParkingDto privateServicesParkingDto;
 
-	public Integer getStatus() {
-		return status;
+	public PrivateServicesParkingDto getPrivateServicesParkingDto() {
+		return privateServicesParkingDto;
 	}
 
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setPrivateServicesParkingDto(PrivateServicesParkingDto privateServicesParkingDto) {
+		this.privateServicesParkingDto = privateServicesParkingDto;
 	}
 
 	public long getId() {
@@ -67,14 +44,6 @@ public class PrivateServicesParkingCustomerEntity {
 		this.cusId = cusId;
 	}
 
-	public String getInfo() {
-		return info;
-	}
-
-	public void setInfo(String info) {
-		this.info = info;
-	}
-
 	public Date getCreatedAt() {
 		return createdAt;
 	}
@@ -89,6 +58,22 @@ public class PrivateServicesParkingCustomerEntity {
 
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
 }
