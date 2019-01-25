@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -78,6 +80,8 @@ public class CustomerEndpoint {
 			List<CustomerCarDto> lstCustomerCarDto = customerService.findCustomerCarByNumberPlate(numberPlate);
 
 			if (lstCustomerCarDto == null || lstCustomerCarDto.size() == 0) {
+				responseDto.setError(errorDto);
+				responseDto.setData(lstCustomerCarDto);
 				return responseDto;
 			}
 			List<Object> lstResult = new ArrayList<Object>();
@@ -751,6 +755,48 @@ public class CustomerEndpoint {
 			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
 			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 			return responseDto;
+		}
+	}
+
+	/**
+	 * liemnh thuc hien tao capcha
+	 * 
+	 * @param captchaID
+	 * @return
+	 */
+	@RequestMapping(value = "/getCustomerDetail", method = RequestMethod.GET)
+	@ApiOperation("signup customer")
+	public @ResponseBody ResponseApi getCustomerDetail(HttpServletRequest request) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			String cusId = TokenAuthenticationService.getAuthenticationInfo(request);
+			if (StringUtils.isEmpty(cusId)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			CustomerDto objCustomerDto = customerService.findCustomerByOldId(Long.parseLong(cusId));
+			CustomerInfoDto objCustomerInfoDto = customerService.findCustomerInfoByCusId(objCustomerDto.getOldId());
+			Object dataObject = new Object() {
+				public long id = objCustomerDto.getOldId();
+				public String phone = objCustomerDto.getPhone();
+				public String phone2 = objCustomerDto.getPhone2();
+				public int status = objCustomerDto.getStatus();
+				public String email = objCustomerInfoDto == null ? null : objCustomerInfoDto.getEmail();
+			};
+			responseApi.setError(errorDto);
+			responseApi.setData(dataObject);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
 		}
 	}
 

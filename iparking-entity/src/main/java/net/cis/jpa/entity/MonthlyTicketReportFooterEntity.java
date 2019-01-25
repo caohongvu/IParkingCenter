@@ -74,7 +74,7 @@ public class MonthlyTicketReportFooterEntity {
 	@Column(name = "created_at")
 	private Date created_at;
 	
-	@Formula("COUNT(*)")
+	@Formula("COUNT(DISTINCT ticket_id)")
 	private long total_row;
 	@Formula("COUNT(DISTINCT parking_place)")
 	private long countCpp_code;
@@ -82,9 +82,9 @@ public class MonthlyTicketReportFooterEntity {
 	private long countPayment_code;
 	@Formula("COUNT(DISTINCT phone2)")
 	private long countPhone;
-	@Formula("SUM(paid_amount)")
+	@Formula("SUM(paid_amount)*count(DISTINCT ticket_id)/count(*)")
 	private double totalPayment_amount;
-	@Formula("SUM(total_amount)")
+	@Formula("SUM(total_amount)*count(DISTINCT ticket_id)/count(*)")
 	private double totalTicket_amount;
 	
 	public String getId() {
