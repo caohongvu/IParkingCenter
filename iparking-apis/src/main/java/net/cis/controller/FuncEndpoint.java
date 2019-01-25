@@ -84,7 +84,8 @@ public class FuncEndpoint {
 	public @ResponseBody ResponseDto create(@RequestParam(value = "name") String name,
 			@RequestParam(value = "label") String label, @RequestParam(value = "desc") String desc,
 			@RequestParam(value = "status") Integer status,
-			@RequestParam(value = "parent_id", required = false) Long parentId) {
+			@RequestParam(value = "parent_id", required = false) Long parentId,
+			@RequestParam(name = "type", defaultValue = "1") Integer type) {
 		ResponseDto responseDto = new ResponseDto();
 		try {
 			if (StringUtils.isEmpty(name)) {
@@ -135,9 +136,11 @@ public class FuncEndpoint {
 				dto.setLevel(UserConstans.FUNC_LEVEL_2);
 			} else
 				dto.setLevel(UserConstans.FUNC_LEVEL_1);
-			FuncDto newDto = funcService.create(dto);
+
+			dto.setType(type);
+			dto = funcService.create(dto);
 			responseDto.setCode(HttpStatus.OK.toString());
-			responseDto.setData(newDto);
+			responseDto.setData(dto);
 			return responseDto;
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
@@ -154,7 +157,8 @@ public class FuncEndpoint {
 			@RequestParam(value = "label", required = false) String label,
 			@RequestParam(value = "desc", required = false) String desc,
 			@RequestParam(value = "status", required = false) Integer status,
-			@RequestParam(value = "parent_id", required = false) Long parentId) {
+			@RequestParam(value = "parent_id", required = false) Long parentId,
+			@RequestParam(name = "type", defaultValue = "1") Integer type) {
 		ResponseDto responseDto = new ResponseDto();
 		try {
 			if (id == null) {
@@ -204,6 +208,7 @@ public class FuncEndpoint {
 			if (status != null) {
 				dto.setStatus(status);
 			}
+			dto.setType(type);
 			dto = funcService.update(dto);
 			responseDto.setCode(HttpStatus.OK.toString());
 			responseDto.setData(dto);
