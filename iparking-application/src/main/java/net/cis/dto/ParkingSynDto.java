@@ -23,6 +23,53 @@ public class ParkingSynDto {
 	 private String oldId;
 	 private String phone;
 	 private String parkingName;
+	 private String listService;
+	 private String listPerm;
+	 private String listFeature;
+	 private String listPayment;
+	 private int updateCompany;
+	 private int updatePerms;
+	 private int updateFeature;
+	 private int updatePayment;
+	 
+	 
+	 
+	public String getListFeature() {
+		return listFeature;
+	}
+	public void setListFeature(String listFeature) {
+		this.listFeature = listFeature;
+	}
+	public int getUpdateFeature() {
+		return updateFeature;
+	}
+	public void setUpdateFeature(int updateFeature) {
+		this.updateFeature = updateFeature;
+	}
+	public int getUpdatePerms() {
+		return updatePerms;
+	}
+	public void setUpdatePerms(int updatePerms) {
+		this.updatePerms = updatePerms;
+	}
+	public int getUpdateCompany() {
+		return updateCompany;
+	}
+	public void setUpdateCompany(int updateCompany) {
+		this.updateCompany = updateCompany;
+	}
+	public String getListPerm() {
+		return listPerm;
+	}
+	public void setListPerm(String listPerm) {
+		this.listPerm = listPerm;
+	}
+	public String getListService() {
+		return listService;
+	}
+	public void setListService(String listService) {
+		this.listService = listService;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -143,11 +190,18 @@ public class ParkingSynDto {
 	public void setParkingName(String parkingName) {
 		this.parkingName = parkingName;
 	}
-	 
-	 
-	 
-	 
-	 
+	public String getListPayment() {
+		return listPayment;
+	}
+	public void setListPayment(String listPayment) {
+		this.listPayment = listPayment;
+	}
+	public int getUpdatePayment() {
+		return updatePayment;
+	}
+	public void setUpdatePayment(int updatePayment) {
+		this.updatePayment = updatePayment;
+	}
 	
 	
 }
