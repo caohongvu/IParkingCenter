@@ -2,6 +2,8 @@ package net.cis.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
 import net.cis.dto.ParkingContractDto;
 import net.cis.dto.ParkingContractInfoDto;
 import net.cis.dto.ParkingContractOutOfDateDto;
@@ -23,11 +25,12 @@ public interface ParkingContractService {
 
 	List<ParkingContractDto> findAll(ParkingContractCriteria ticketCriteria);
 
-	List<ParkingContractOutOfDateDto> findParkingContractOutOfDate(ParkingContractCriteria ticketCriteria);
+	List<ParkingContractOutOfDateDto> findParkingContractOutOfDate(ParkingContractCriteria ticketCriteria,
+			Pageable pageable);
 
 	List<ParkingContractInfoDto> findParkingContractInfo(ParkingContractCriteria ticketCriteria);
 
 	List<ParkingContractEntity> findByParkingPlace(String code);
-	
+
 	List<ParkingContractEntity> findByCompany(String company);
 }

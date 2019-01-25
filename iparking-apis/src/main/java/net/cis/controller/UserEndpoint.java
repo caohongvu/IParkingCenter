@@ -43,7 +43,7 @@ public class UserEndpoint extends BaseEndpoint {
 	 * @param password
 	 * @return
 	 */
-	@RequestMapping(value = "/signin", method = RequestMethod.POST)
+	@RequestMapping(value = "/signin", method = RequestMethod.GET)
 	@ApiOperation("signup user")
 	public @ResponseBody ResponseDto appSignIn(@RequestParam(name = "username") String username,
 			@RequestParam(name = "password") String password) {
