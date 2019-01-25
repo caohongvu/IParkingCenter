@@ -3,6 +3,9 @@ package net.cis.dto;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class NotificationDto {
 	private long id;
 	private String title;
@@ -10,9 +13,22 @@ public class NotificationDto {
 	private String contentSms;
 	private Date createdAt;
 	private Long createdBy;
+
+	@JsonInclude(Include.NON_NULL)
 	private String createdByUserName;
+	@JsonInclude(Include.NON_NULL)
 	private String createdByFullName;
+	@JsonInclude(Include.NON_NULL)
+	private Long parkingId;
 	private List<Integer> types;
+
+	public Long getParkingId() {
+		return parkingId;
+	}
+
+	public void setParkingId(Long parkingId) {
+		this.parkingId = parkingId;
+	}
 
 	public String getContentSms() {
 		return contentSms;

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -78,6 +80,8 @@ public class CustomerEndpoint {
 			List<CustomerCarDto> lstCustomerCarDto = customerService.findCustomerCarByNumberPlate(numberPlate);
 
 			if (lstCustomerCarDto == null || lstCustomerCarDto.size() == 0) {
+				responseDto.setError(errorDto);
+				responseDto.setData(lstCustomerCarDto);
 				return responseDto;
 			}
 			List<Object> lstResult = new ArrayList<Object>();
@@ -91,7 +95,7 @@ public class CustomerEndpoint {
 					public String phone2 = objCustomerDto.getPhone2();
 					public int status = objCustomerDto.getStatus();
 					public String numberPlate = objCustomerCarDto.getNumberPlate();
-					public String email = objCustomerInfoDto.getEmail();
+					public String email = objCustomerInfoDto == null ? null : objCustomerInfoDto.getEmail();
 				};
 				lstResult.add(dataObject);
 			}
@@ -109,7 +113,8 @@ public class CustomerEndpoint {
 	}
 
 	/**
-	 * liemnh
+	 * liemnh Thuc hien goi sang golang service de cap nhat hoac them moi
+	 * customer info sau do cap nhat hoac them moi ben iparking
 	 * 
 	 * @param cusId
 	 * @param email
@@ -189,6 +194,18 @@ public class CustomerEndpoint {
 		}
 	}
 
+	/**
+	 * Phuc vu ben golang goi truc tiep sang ben iparking de cap nhat hoac them
+	 * moi
+	 * 
+	 * @param cusId
+	 * @param email
+	 * @param verificationCode
+	 * @param gender
+	 * @param full_name
+	 * @param status
+	 * @return
+	 */
 	@RequestMapping(value = "/customer-info-update", method = RequestMethod.POST)
 	@ApiOperation("Create or update customer info")
 	public @ResponseBody ResponseApi updateCustomerInfo(@RequestParam(name = "cus_id") long cusId,
@@ -242,7 +259,8 @@ public class CustomerEndpoint {
 	}
 
 	/**
-	 * liemnh
+	 * liemnh Thuc hien goi golang service de cap nhat hoac them moi sau do cap
+	 * nhat hoac them moi ben iparking
 	 * 
 	 * @param id
 	 * @param cusId
@@ -264,7 +282,6 @@ public class CustomerEndpoint {
 		try {
 			// tim kiem customer
 			CustomerDto objCustomerDto = customerService.findCustomerByOldId(cusId);
-			// tim kiem CustomerInfo from db
 			if (objCustomerDto == null) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage("Không tồn tại customer");
@@ -286,7 +303,7 @@ public class CustomerEndpoint {
 					pClass);
 
 			if (objCarProfileDto == null) {
-				// thuc hien tap car profile
+				// thuc hien tao car profile
 				objCarProfileDto = new CarProfileDto();
 				objCarProfileDto.setNumberPlate(numberPlate);
 				objCarProfileDto.setSeats(seat);
@@ -316,7 +333,8 @@ public class CustomerEndpoint {
 	}
 
 	/**
-	 * liemnh
+	 * liemnh Ben golang service se thuc hien goi truc tiep de cap nhat hoac
+	 * them moi customer car
 	 * 
 	 * @param id
 	 * @param cusId
@@ -338,14 +356,12 @@ public class CustomerEndpoint {
 		try {
 			// tim kiem customer
 			CustomerDto objCustomerDto = customerService.findCustomerByOldId(cusId);
-			// tim kiem CustomerInfo from db
 			if (objCustomerDto == null) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage("Không tồn tại customer");
 				responseDto.setError(errorDto);
 				return responseDto;
 			}
-
 			// thuc hien kiem tra car_profile
 			CarProfileDto objCarProfileDto = carProfileService.findByNumberPlateAndSeatsAndPClass(numberPlate, seat,
 					pClass);
@@ -388,7 +404,7 @@ public class CustomerEndpoint {
 	}
 
 	/**
-	 * liemnh
+	 * liemnh Thuc hien goi de danh dau xoa customer car ben iparking
 	 * 
 	 * @param id
 	 * @param cusId
@@ -423,7 +439,7 @@ public class CustomerEndpoint {
 	}
 
 	/**
-	 * liemnh
+	 * liemnh Thuc hien tao customer ben iparking
 	 * 
 	 * @param cusId
 	 * @param email
@@ -488,6 +504,12 @@ public class CustomerEndpoint {
 		}
 	}
 
+	/**
+	 * liemnh thuc hien tao capcha
+	 * 
+	 * @param captchaID
+	 * @return
+	 */
 	@RequestMapping(value = "/capcha", method = RequestMethod.GET)
 	@ApiOperation("signup customer")
 	public @ResponseBody Object getCapcha(@RequestParam(name = "captchaID", required = true) String captchaID) {
@@ -515,6 +537,14 @@ public class CustomerEndpoint {
 		}
 	}
 
+	/**
+	 * liemnh thuc hien gui otp den khach hang
+	 * 
+	 * @param phone
+	 * @param captcha
+	 * @param captchaID
+	 * @return
+	 */
 	@RequestMapping(value = "/otp/signup", method = RequestMethod.POST)
 	@ApiOperation("signup customer")
 	public @ResponseBody Object otpSignUp(@RequestParam(name = "phone") String phone,
@@ -549,6 +579,14 @@ public class CustomerEndpoint {
 		}
 	}
 
+	/**
+	 * liemnh thuc hien verify otp cua khach hang nhap
+	 * 
+	 * @param phone
+	 * @param otp
+	 * @param ticket
+	 * @return
+	 */
 	@RequestMapping(value = "/otp/verify/signup", method = RequestMethod.POST)
 	@ApiOperation("signup customer")
 	public @ResponseBody Object otpVerifySignUp(@RequestParam(name = "phone") String phone,
@@ -582,6 +620,14 @@ public class CustomerEndpoint {
 		}
 	}
 
+	/**
+	 * liemnh thuc hien dang ky customer va tao customer info neu co
+	 * 
+	 * @param phone
+	 * @param email
+	 * @param pasword
+	 * @return
+	 */
 	@RequestMapping(value = "/nap/signup", method = RequestMethod.POST)
 	@ApiOperation("signup customer")
 	public @ResponseBody Object napSignUp(@RequestParam(name = "phone") String phone,
@@ -659,6 +705,13 @@ public class CustomerEndpoint {
 		}
 	}
 
+	/**
+	 * liemnh customer dang nhap he thong
+	 * 
+	 * @param phone
+	 * @param password
+	 * @return
+	 */
 	@RequestMapping(value = "/nap/signin", method = RequestMethod.POST)
 	@ApiOperation("signup customer")
 	public @ResponseBody Object napSignIn(@RequestParam(name = "phone") String phone,
@@ -702,6 +755,48 @@ public class CustomerEndpoint {
 			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
 			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 			return responseDto;
+		}
+	}
+
+	/**
+	 * liemnh thuc hien tao capcha
+	 * 
+	 * @param captchaID
+	 * @return
+	 */
+	@RequestMapping(value = "/getCustomerDetail", method = RequestMethod.GET)
+	@ApiOperation("signup customer")
+	public @ResponseBody ResponseApi getCustomerDetail(HttpServletRequest request) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			String cusId = TokenAuthenticationService.getAuthenticationInfo(request);
+			if (StringUtils.isEmpty(cusId)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			CustomerDto objCustomerDto = customerService.findCustomerByOldId(Long.parseLong(cusId));
+			CustomerInfoDto objCustomerInfoDto = customerService.findCustomerInfoByCusId(objCustomerDto.getOldId());
+			Object dataObject = new Object() {
+				public long id = objCustomerDto.getOldId();
+				public String phone = objCustomerDto.getPhone();
+				public String phone2 = objCustomerDto.getPhone2();
+				public int status = objCustomerDto.getStatus();
+				public String email = objCustomerInfoDto == null ? null : objCustomerInfoDto.getEmail();
+			};
+			responseApi.setError(errorDto);
+			responseApi.setData(dataObject);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
 		}
 	}
 
