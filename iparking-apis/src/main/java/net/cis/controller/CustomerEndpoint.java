@@ -38,6 +38,7 @@ import net.cis.repository.CustomerInfoRepository;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CarProfileService;
 import net.cis.service.CustomerService;
+import net.cis.service.EmailService;
 
 /**
  * 
@@ -56,6 +57,9 @@ public class CustomerEndpoint {
 
 	@Autowired
 	CarProfileService carProfileService;
+
+	@Autowired
+	EmailService emailService;
 
 	/**
 	 * liemnh
@@ -289,7 +293,7 @@ public class CustomerEndpoint {
 				return responseDto;
 			}
 			// thuc hien goi sang API golang de tao customer_car
-			Map<String, Object> map = customerService.saveCustomerCarInPoseidonDb(cusId, numberPlate, carType);
+			Map<String, Object> map = customerService.createCustomerCarInShardDb(cusId, numberPlate, carType);
 
 			if (map == null || !HttpStatus.OK.toString().equals(map.get("Code"))) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
@@ -759,7 +763,7 @@ public class CustomerEndpoint {
 	}
 
 	/**
-	 * liemnh thuc hien tao capcha
+	 * liemnh chi tiêt customer
 	 * 
 	 * @param captchaID
 	 * @return
@@ -789,6 +793,95 @@ public class CustomerEndpoint {
 			};
 			responseApi.setError(errorDto);
 			responseApi.setData(dataObject);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
+
+	/**
+	 * liemnh resendPassword
+	 * 
+	 * @param captchaID
+	 * @return
+	 */
+	@RequestMapping(value = "/resendPassword", method = RequestMethod.POST)
+	@ApiOperation("resendPassword")
+	public @ResponseBody ResponseApi resendPassword(HttpServletRequest request,
+			@RequestParam(name = "email") String email) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			if (Utils.validateEmail(email)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage(MessageUtil.MESSAGE_EMAIL_WRONG_FORMAT);
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			CustomerInfoDto objCustomerInfoDto = customerService.findCustomerInfoByEmail(email);
+			if (objCustomerInfoDto == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_NOT_EXITS);
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// gui email den KH
+			emailService.sendEmailResendPassword("", "", email);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
+
+	/**
+	 * liemnh changePassword
+	 * 
+	 * @param captchaID
+	 * @return
+	 */
+	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+	@ApiOperation("changePassword")
+	public @ResponseBody ResponseApi changePassword(HttpServletRequest request,
+			@RequestParam(name = "cus-id") long cusId, @RequestParam(name = "email") String email,
+			@RequestParam(name = "new-password") String newPassword) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			CustomerDto objCustomerDto = customerService.findCustomerByOldId(cusId);
+			if (objCustomerDto == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_NOT_EXITS);
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// thuc hien cap nhat pasword
+			String passwordEncrypt = PasswordGenerator.encryptPassword(newPassword);
+			// thuc hien goi sang shardDB cap nhat
+			Map<String, Object> resut = customerService.updateCustomerInShardDb(String.valueOf(cusId), passwordEncrypt);
+			if (resut == null || !HttpStatus.OK.toString().equals(resut.get("Code"))) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Cập nhật mật khẩu thất bại");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			objCustomerDto.setPassword(passwordEncrypt.getBytes());
+			objCustomerDto.setCheckSum((String) resut.get("Checksum"));
+			objCustomerDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			customerService.saveCustomerInIparkingCenter(objCustomerDto);
+			// gui email thông bao đổi thành công
+			emailService.sendEmailChangePasswordSuccess("", "", email);
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();
