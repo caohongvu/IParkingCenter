@@ -6,6 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,22 +71,32 @@ public class ParkingContractEndpoint {
 	}
 
 	/**
-	 * liemnh
+	 * liemnh lay danh sach hop dong thang qua han
 	 * 
 	 * @param parkingCode
 	 * @return
 	 */
 	@RequestMapping(value = "/getParkingContractOutOfDate", method = RequestMethod.GET)
 	@ApiOperation("Dach sach ve thang qua han")
-	public @ResponseBody ResponseApi getParkingContractOutOfDate(@RequestParam("parking_code") String parkingCode) {
+	public @ResponseBody ResponseApi getParkingContractOutOfDate(@RequestParam("parking_code") String parkingCode,
+			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+			@RequestParam(name = "size", required = false, defaultValue = "500") int size,
+			@RequestParam(name = "sort", required = false, defaultValue = "contractNo") String sort,
+			@RequestParam(name = "sort_type", required = false, defaultValue = "DESC") String sortType) {
 		ResponseApi response = new ResponseApi();
 		ErrorDto error = new ErrorDto();
 		error.setCode(ResponseErrorCodeConstants.StatusOK);
 		try {
+			page = page - 1;
+			if (page < 0) {
+				page = 0;
+			}
+			Sort sortDB = new Sort("DESC".equals(sortType) ? Sort.Direction.DESC : Sort.Direction.ASC, sort);
+			Pageable pageable = new PageRequest(page, size, sortDB);
 			ParkingContractCriteria objParkingContractCriteria = new ParkingContractCriteria();
 			objParkingContractCriteria.setCppCode(parkingCode);
 			List<ParkingContractOutOfDateDto> lstParkingContractDto = parkingContractService
-					.findParkingContractOutOfDate(objParkingContractCriteria);
+					.findParkingContractOutOfDate(objParkingContractCriteria, pageable);
 			response.setData(lstParkingContractDto);
 			response.setError(error);
 			return response;
@@ -96,7 +109,7 @@ public class ParkingContractEndpoint {
 		}
 
 	}
-	
+
 	@RequestMapping(value = "/get_by_cpp/", method = RequestMethod.GET)
 	@ApiOperation("Get Ticket By Parking Place")
 	public @ResponseBody Object getByCppId(@RequestParam("code") String code) throws Exception {
@@ -108,7 +121,7 @@ public class ParkingContractEndpoint {
 		} catch (Exception e) {
 			responseApi.setData(null);
 			responseApi.setError(new ErrorDto(ResponseErrorCodeConstants.StatusInternalServerError, ""));
-		} 
+		}
 		return responseApi;
 	}
 }

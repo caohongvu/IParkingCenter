@@ -1,14 +1,22 @@
 package net.cis.dto;
 
-public class FuncDto {
-	private Long id;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+public class MenuDto {
+	private long id;
 	private String name;
 	private String label;
 	private String description;
 	private Integer level;
-	private Integer parentId;
+	private long parent_id;
+	@JsonInclude(Include.NON_NULL)
 	private Integer sort;
-	private Integer status;
+	@JsonInclude(Include.NON_NULL)
+	private List<MenuDto> menuChilds;
+
 	private String icon;
 	private String link;
 
@@ -28,11 +36,11 @@ public class FuncDto {
 		this.link = link;
 	}
 
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -68,12 +76,12 @@ public class FuncDto {
 		this.level = level;
 	}
 
-	public Integer getParentId() {
-		return parentId;
+	public long getParent_id() {
+		return parent_id;
 	}
 
-	public void setParentId(Integer parentId) {
-		this.parentId = parentId;
+	public void setParent_id(long parent_id) {
+		this.parent_id = parent_id;
 	}
 
 	public Integer getSort() {
@@ -84,12 +92,12 @@ public class FuncDto {
 		this.sort = sort;
 	}
 
-	public Integer getStatus() {
-		return status;
+	public List<MenuDto> getMenuChilds() {
+		return menuChilds;
 	}
 
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setMenuChilds(List<MenuDto> menuChilds) {
+		this.menuChilds = menuChilds;
 	}
 
 }

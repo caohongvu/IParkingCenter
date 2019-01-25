@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.paypal.api.payments.Phone;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +35,6 @@ import net.cis.dto.TicketDto;
 import net.cis.dto.UserDto;
 import net.cis.jpa.criteria.TicketCriteria;
 import net.cis.jpa.entity.CompanyInforEntity;
-import net.cis.jpa.entity.UserEntity;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CompanyService;
 import net.cis.service.HistoryParkingService;
@@ -67,10 +63,10 @@ public class ParkingPlaceEndpoint {
 
 	@Autowired
 	ParkingActorService parkingActorService;
-	
+
 	@Autowired
 	HistoryParkingService parkingPlaceHistoryService;
-	
+
 	@Autowired
 	UserService userService;
 
@@ -123,7 +119,7 @@ public class ParkingPlaceEndpoint {
 	}
 
 	/**
-	 * liemnh
+	 * liemnh danh sach diem do theo cong ty
 	 * 
 	 * @param request
 	 * @param company
@@ -247,52 +243,50 @@ public class ParkingPlaceEndpoint {
 			return responseApi;
 		}
 		HistoryParkingDto history = new HistoryParkingDto();
-		String infoChange ="";
+		String infoChange = "";
 		//
-		if(!objParkingDto.getAddress().equals(address)) {
-			infoChange += address+",";
-		}else if(address =="" && objParkingDto.getAddress() !="" ) {
-			infoChange += "Đã xoá "+address+",";
+		if (!objParkingDto.getAddress().equals(address)) {
+			infoChange += address + ",";
+		} else if (address == "" && objParkingDto.getAddress() != "") {
+			infoChange += "Đã xoá " + address + ",";
 		}
 		//
-		if(objParkingDto.getPhone().equals(hotline)) {
-			infoChange += hotline+",";
-		}else if(hotline == "" && objParkingDto.getPhone() != "") {
-			infoChange += "Đã xoá "+hotline+",";
+		if (objParkingDto.getPhone().equals(hotline)) {
+			infoChange += hotline + ",";
+		} else if (hotline == "" && objParkingDto.getPhone() != "") {
+			infoChange += "Đã xoá " + hotline + ",";
 		}
-		//cppName
-		if(!objParkingDto.getParkingName().equals(cppName)) {
-			infoChange += cppName+",";
-		}else if(cppName =="" && objParkingDto.getParkingName() !="" ) {
-			infoChange += "Đã xoá "+cppName+",";
+		// cppName
+		if (!objParkingDto.getParkingName().equals(cppName)) {
+			infoChange += cppName + ",";
+		} else if (cppName == "" && objParkingDto.getParkingName() != "") {
+			infoChange += "Đã xoá " + cppName + ",";
 		}
 		System.out.println(infoChange);
-		
+
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
-		
-		//get username update
+
+		// get username update
 		UserDto res = userService.findById(Integer.parseInt(supervisorId));
-		
-		
+
 		String userName = res.getUsername();
-		
+
 		history.setOldId(objParkingDto.getOldId());
 		history.setInfoUpdate(infoChange);
 		history.setUpdatedAt(dateFormat.format(date));
 		history.setUserName(userName);
-		
+
 		objParkingDto.setAddress(address);
 		objParkingDto.setParkingName(cppName);
 		objParkingDto.setPhone(hotline);
-		
-		
+
 		ParkingDto obj = new ParkingDto();
 		try {
 			obj = parkingService.updateParkingPlace(objParkingDto);
 			parkingPlaceHistoryService.save(history);
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage("");
@@ -303,11 +297,11 @@ public class ParkingPlaceEndpoint {
 		errorDto.setMessage("");
 		responseApi.setError(errorDto);
 		responseApi.setData(obj);
-		
+
 		return responseApi;
 
 	}
-	
+
 	// GET LIST HISTORY UPDATE FOR PORTAL
 	@RequestMapping(value = "/history/cpp", method = RequestMethod.GET)
 	public @ResponseBody ResponseApi getListHistoryByCppId(HttpServletRequest request) throws Exception {
@@ -339,8 +333,9 @@ public class ParkingPlaceEndpoint {
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
-		
-		List<HistoryParkingDto> listHistory = parkingPlaceHistoryService.findByOldId(String.valueOf(objParkingDto.getOldId()));
+
+		List<HistoryParkingDto> listHistory = parkingPlaceHistoryService
+				.findByOldId(String.valueOf(objParkingDto.getOldId()));
 
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		errorDto.setMessage("");
@@ -349,18 +344,18 @@ public class ParkingPlaceEndpoint {
 
 		return responseApi;
 	}
-	
-	//CREATE PARKING PLACE
-	@RequestMapping(value = "/create",method = RequestMethod.POST)
+
+	// CREATE PARKING PLACE
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@ApiOperation("create parking place")
-	public @ResponseBody Object create(ParkingSynDto parkingSynDto)throws Exception {
-		
+	public @ResponseBody Object create(ParkingSynDto parkingSynDto) throws Exception {
+
 		ResponseApi endpoint = new ResponseApi();
-		
+
 		ParkingDto parkingDto = new ParkingDto();
-		
+
 		ParkingSynDto parking = parkingService.create(parkingSynDto);
-		
+
 		endpoint.setData(parking);
 
 		return endpoint;

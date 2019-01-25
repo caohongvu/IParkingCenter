@@ -46,7 +46,7 @@ public class NotificationEndpoint {
 	ParkingActorService parkingActorService;
 
 	/**
-	 * Lay thong tin khach hang cua ve thang cua 1 diem do
+	 * liemnh Thuc hien gui thong bao den customer cua 1 diem dich vu
 	 * 
 	 * @param request
 	 * @param parkingCode
@@ -106,9 +106,16 @@ public class NotificationEndpoint {
 		}
 	}
 
+	/**
+	 * liemnh lay lich su gui thong bao
+	 * 
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/getNotificationHistory", method = RequestMethod.GET)
 	@ApiOperation("Nhat ky gui notification")
-	public @ResponseBody ResponseApi getCompany(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResponseApi getNotificationHistory(HttpServletRequest request) throws Exception {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -132,6 +139,43 @@ public class NotificationEndpoint {
 					.findAllByCreatedBy(parkingActorDtos.get(0).getCppId(), Long.parseLong(supervisorId));
 			responseApi.setData(lstNotificationHistoryDto);
 			responseApi.setError(errorDto);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
+
+	/**
+	 * liemnh lay lich su gui thong bao
+	 * 
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/getNotificationCustomerHistory", method = RequestMethod.GET)
+	@ApiOperation("Nhat ky gui notification")
+	public @ResponseBody ResponseApi getNotificationCustomerHistory(HttpServletRequest request) throws Exception {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			String cusId = TokenAuthenticationService.getAuthenticationInfo(request);
+			if (StringUtils.isEmpty(cusId)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// lay thong tin notification cua customer
+			List<NotificationDto> lstResult = notificationHistoryService
+					.findNotificationCustomer(Long.parseLong(cusId));
+			responseApi.setError(errorDto);
+			responseApi.setData(lstResult);
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();

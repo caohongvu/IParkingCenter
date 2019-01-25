@@ -14,7 +14,7 @@ import net.cis.common.util.DateTimeUtil;
 import net.cis.constants.CustomerConstans;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
-import net.cis.dto.PrivateServicesParkingCustomerDto;
+import net.cis.dto.PrivateServicesParkingCusDto;
 import net.cis.dto.PrivateServicesParkingDto;
 import net.cis.dto.ResponseApi;
 import net.cis.service.PrivateServicesService;
@@ -29,7 +29,7 @@ public class PrivateServicesEndpoint {
 	PrivateServicesService privateServicesService;
 
 	/**
-	 * Lấy danh sach dịch vụ tại 1 điểm đỗ
+	 * liemnh Lấy danh sach dịch vụ tại 1 điểm đỗ
 	 * 
 	 * @param oldId
 	 * @return
@@ -56,7 +56,7 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * Lấy danh sach dịch vụ của 1 customer
+	 * liemnh Lấy danh sach dịch vụ của 1 customer
 	 * 
 	 * @param oldId
 	 * @return
@@ -71,7 +71,7 @@ public class PrivateServicesEndpoint {
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		responseApi.setError(errorDto);
 		try {
-			responseApi.setData(privateServicesService.getPrivateServicesParkingCustomers(customerId));
+			responseApi.setData(privateServicesService.getPrivateServicesParkingCus(customerId));
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -84,7 +84,7 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * Tạo 1 dịch vụ của customer
+	 * liemnh Tạo 1 dịch vụ của customer
 	 * 
 	 * @param oldId
 	 * @return
@@ -110,14 +110,14 @@ public class PrivateServicesEndpoint {
 				return responseApi;
 			}
 			// thuc hien them moi dich vu cho customer
-			PrivateServicesParkingCustomerDto dto = new PrivateServicesParkingCustomerDto();
+			PrivateServicesParkingCusDto dto = new PrivateServicesParkingCusDto();
 			dto.setParkingServiceParkingId(objPrivateServicesParkingDto.getId());
 			dto.setCusId(customerId);
 			dto.setInfo(info);
 			dto.setStatus(CustomerConstans.CUSTOMER_SERVICE_ENABLE);
 			dto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 			dto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
-			dto = privateServicesService.savePrivateServicesParkingCustomer(dto);
+			dto = privateServicesService.savePrivateServicesParkingCus(dto);
 			responseApi.setData(dto);
 			return responseApi;
 		} catch (Exception ex) {
@@ -130,7 +130,7 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * Xoa dich vu của 1 customer
+	 * liemnh Xoa dich vu của 1 customer
 	 * 
 	 * @param oldId
 	 * @return
@@ -145,8 +145,8 @@ public class PrivateServicesEndpoint {
 		responseApi.setError(errorDto);
 		try {
 			// tim kiem dịch vụ cho customer
-			PrivateServicesParkingCustomerDto objPrivateServicesParkingCustomerDto = privateServicesService
-					.findPrivateServicesParkingCustomerById(id);
+			PrivateServicesParkingCusDto objPrivateServicesParkingCustomerDto = privateServicesService
+					.findPrivateServicesParkingCusById(id);
 			if (objPrivateServicesParkingCustomerDto == null) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage("Không tồn tại dịch vụ của customer");
@@ -155,7 +155,7 @@ public class PrivateServicesEndpoint {
 			}
 			// thuc hien cap nhat dich vu của customer thanh disable
 			objPrivateServicesParkingCustomerDto.setStatus(CustomerConstans.CUSTOMER_SERVICE_DISABLE);
-			privateServicesService.savePrivateServicesParkingCustomer(objPrivateServicesParkingCustomerDto);
+			privateServicesService.savePrivateServicesParkingCus(objPrivateServicesParkingCustomerDto);
 			return responseApi;
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());
