@@ -73,34 +73,31 @@ public class UserSecurityServiceImpl implements UserSecurityService {
 		MenuDto objMenuDto = new MenuDto();
 		List<MenuDto> menuChilds = new ArrayList<MenuDto>();
 		for (Object[] value : lst) {
-			if (temp_parent != (int) value[0]) {
-				if (start != 0) {
-					objMenuDto.setMenuChilds(menuChilds);
-					result.add(objMenuDto);
-				}
+			if (temp_parent != (int) value[0] && temp_parent != 0) {
+				objMenuDto.setMenuChilds(menuChilds);
+				result.add(objMenuDto);
 
 				objMenuDto = new MenuDto();
 				menuChilds = new ArrayList<MenuDto>();
-			} else {
-				objMenuDto.setId((int) value[0]);
-				objMenuDto.setName(value[1] != null ? value[1].toString() : null);
-				objMenuDto.setLabel(value[2] != null ? value[2].toString() : null);
-				objMenuDto.setDescription(value[3] != null ? value[3].toString() : null);
-				objMenuDto.setLevel((int) value[4]);
-
-				MenuDto menuChild = new MenuDto();
-				menuChild.setId((int) value[5]);
-				menuChild.setName(value[6] != null ? value[6].toString() : null);
-				menuChild.setLabel(value[7] != null ? value[7].toString() : null);
-				menuChild.setDescription(value[8] != null ? value[8].toString() : null);
-				menuChild.setLevel((int) value[9]);
-				menuChild.setParent_id((int) value[0]);
-
-				menuChild.setIcon(value[10] != null ? value[10].toString() : null);
-				menuChild.setLink(value[11] != null ? value[11].toString() : null);
-
-				menuChilds.add(menuChild);
 			}
+
+			objMenuDto.setId((int) value[0]);
+			objMenuDto.setName(value[1] != null ? value[1].toString() : null);
+			objMenuDto.setLabel(value[2] != null ? value[2].toString() : null);
+			objMenuDto.setDescription(value[3] != null ? value[3].toString() : null);
+			objMenuDto.setLevel((int) value[4]);
+
+			MenuDto menuChild = new MenuDto();
+			menuChild.setId((int) value[5]);
+			menuChild.setName(value[6] != null ? value[6].toString() : null);
+			menuChild.setLabel(value[7] != null ? value[7].toString() : null);
+			menuChild.setDescription(value[8] != null ? value[8].toString() : null);
+			menuChild.setLevel((int) value[9]);
+			menuChild.setParent_id((int) value[0]);
+			menuChild.setIcon(value[10] != null ? value[10].toString() : null);
+			menuChild.setLink(value[11] != null ? value[11].toString() : null);
+			menuChilds.add(menuChild);
+
 			if (start == lst.size() - 1) {
 				objMenuDto.setMenuChilds(menuChilds);
 				result.add(objMenuDto);

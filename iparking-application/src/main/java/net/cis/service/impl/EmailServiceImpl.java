@@ -140,7 +140,21 @@ public class EmailServiceImpl implements EmailService {
 	 */
 	@Override
 	public void sendEmailResendPassword(String title, String content, String emailTo) throws Exception {
-		// TODO Auto-generated method stub
+		SimpleMailMessage mail = new SimpleMailMessage();
+		mail.setFrom("automailer@cis.net.vn");
+		mail.setTo(emailTo);
+		mail.setSubject(title);
+		mail.setText(content);
+		quickService.submit(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					mailSender.send(mail);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 	}
 
@@ -149,7 +163,21 @@ public class EmailServiceImpl implements EmailService {
 	 */
 	@Override
 	public void sendEmailChangePasswordSuccess(String title, String content, String emailTo) throws Exception {
-		// TODO Auto-generated method stub
+		SimpleMailMessage mail = new SimpleMailMessage();
+		mail.setFrom("automailer@cis.net.vn");
+		mail.setTo(emailTo);
+		mail.setSubject(title);
+		mail.setText(content);
+		quickService.submit(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					mailSender.send(mail);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 	}
 }

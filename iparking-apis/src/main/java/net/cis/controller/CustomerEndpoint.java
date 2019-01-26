@@ -818,7 +818,7 @@ public class CustomerEndpoint {
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		try {
-			if (Utils.validateEmail(email)) {
+			if (!Utils.validateEmail(email)) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage(MessageUtil.MESSAGE_EMAIL_WRONG_FORMAT);
 				responseApi.setError(errorDto);
@@ -832,7 +832,8 @@ public class CustomerEndpoint {
 				return responseApi;
 			}
 			// gui email den KH
-			emailService.sendEmailResendPassword("", "", email);
+			emailService.sendEmailResendPassword(CustomerConstans.CUSTOMER_TITLE_EMAIL_RESET_PASSWORD,
+					CustomerConstans.CUSTOMER_CONTENT_EMAIL_RESET_PASSWORD, "liemnh267@gmail.com");
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -881,7 +882,9 @@ public class CustomerEndpoint {
 			objCustomerDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
 			customerService.saveCustomerInIparkingCenter(objCustomerDto);
 			// gui email thông bao đổi thành công
-			emailService.sendEmailChangePasswordSuccess("", "", email);
+			emailService.sendEmailChangePasswordSuccess(
+					CustomerConstans.CUSTOMER_TITLE_EMAIL_THONGBAO_CHANGE_PASS_SUCCESS,
+					CustomerConstans.CUSTOMER_CONTENT_EMAIL_THONGBAO_CHANGE_PASS_SUCCESS, "liemnh267@gmail.com");
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();
