@@ -37,6 +37,17 @@ public class FuncEntity {
 	@Column(name = "link")
 	private String link;
 
+	@Column(name = "type")
+	private Integer type;
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
 	public String getIcon() {
 		return icon;
 	}

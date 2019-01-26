@@ -20,6 +20,19 @@ public class ParkingInfoEntity {
 
 	@Column(name = "time_avg")
 	private Integer timeAvg;
+	
+	@Column(name="building")
+	private Integer building;
+	
+	@Column(name="longs")
+	private Double longs;
+	
+	@Column(name="width")
+	private Double width;
+	
+	@Column (name="area")
+	private Double area;
+
 
 	public long getId() {
 		return id;

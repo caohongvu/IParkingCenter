@@ -31,6 +31,11 @@ public interface ParkingService {
 	
 	ParkingDto updateParkingPlace(ParkingDto parkingDto) throws JSONException;
 	
-	ParkingSynDto create(ParkingSynDto parkingSynDto);
+	ParkingSynDto create(ParkingSynDto parkingSynDto) throws JSONException;
+	
+	ParkingSynDto updateAssignProvider(ParkingSynDto parkingSynDto) throws JSONException;
+	
+	ParkingSynDto updateParkingPlace(ParkingSynDto parkingSynDto) throws JSONException;
+
 
 }

@@ -43,6 +43,9 @@ public class ParkingContractOutOfDateEntity {
 	@Column(name = "total_amount")
 	private long totalAmount;
 
+	@Column(name = "remain_amount")
+	private long remainAmount;
+
 	@Column(name = "paid_amount")
 	private long paidAmount;
 
@@ -57,6 +60,14 @@ public class ParkingContractOutOfDateEntity {
 
 	@Column(name = "email")
 	private String email;
+
+	public long getRemainAmount() {
+		return remainAmount;
+	}
+
+	public void setRemainAmount(long remainAmount) {
+		this.remainAmount = remainAmount;
+	}
 
 	public long getId() {
 		return id;

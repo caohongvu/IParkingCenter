@@ -83,8 +83,9 @@ public class FuncEndpoint {
 	@ApiOperation("Tạo chức năng của hệ thống")
 	public @ResponseBody ResponseDto create(@RequestParam(value = "name") String name,
 			@RequestParam(value = "label") String label, @RequestParam(value = "desc") String desc,
-			@RequestParam(value = "status") Integer status,
-			@RequestParam(value = "parent_id", required = false) Long parentId) {
+			@RequestParam(value = "status") int status,
+			@RequestParam(value = "parent_id", required = false) Long parentId,
+			@RequestParam(name = "type") Integer type) {
 		ResponseDto responseDto = new ResponseDto();
 		try {
 			if (StringUtils.isEmpty(name)) {
@@ -93,6 +94,13 @@ public class FuncEndpoint {
 				return responseDto;
 			}
 			name = name.trim();
+			FuncDto temp = funcService.findOneByName(name);
+			if (temp != null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Tên chức năng đã tồn tại");
+				return responseDto;
+			}
+
 			if (StringUtils.isEmpty(label)) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 				responseDto.setMessage("Label của chức năng");
@@ -115,29 +123,20 @@ public class FuncEndpoint {
 					return responseDto;
 				}
 			}
-
-			FuncDto temp = funcService.findOneByName(name);
-			if (temp != null) {
-				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage("Tên chức năng đã tồn tại");
-				return responseDto;
-			}
 			FuncDto dto = new FuncDto();
 			dto.setName(name);
 			dto.setDescription(desc);
 			dto.setLabel(label);
-			if (status == null) {
-				status = UserConstans.FUNC_STATUS_DISABLE;
-			}
 			dto.setStatus(status);
 			if (objFuncParent != null) {
 				dto.setParentId(objFuncParent.getId().intValue());
 				dto.setLevel(UserConstans.FUNC_LEVEL_2);
 			} else
 				dto.setLevel(UserConstans.FUNC_LEVEL_1);
-			FuncDto newDto = funcService.create(dto);
+			dto.setType(type);
+			dto = funcService.create(dto);
 			responseDto.setCode(HttpStatus.OK.toString());
-			responseDto.setData(newDto);
+			responseDto.setData(dto);
 			return responseDto;
 		} catch (Exception ex) {
 			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
@@ -154,7 +153,8 @@ public class FuncEndpoint {
 			@RequestParam(value = "label", required = false) String label,
 			@RequestParam(value = "desc", required = false) String desc,
 			@RequestParam(value = "status", required = false) Integer status,
-			@RequestParam(value = "parent_id", required = false) Long parentId) {
+			@RequestParam(value = "parent_id", required = false) Long parentId,
+			@RequestParam(name = "type", required = false) Integer type) {
 		ResponseDto responseDto = new ResponseDto();
 		try {
 			if (id == null) {
@@ -167,20 +167,20 @@ public class FuncEndpoint {
 				responseDto.setMessage("Chức năng không tồn tại.");
 				return responseDto;
 			}
-			if (name != null) {
-				name = name.trim();
-				if (name.isEmpty()) {
-					responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-					responseDto.setMessage("Tên chức năng không được trống.");
-					return responseDto;
-				}
-
+			if (!StringUtils.isEmpty(name)) {
 				FuncDto tmp = funcService.findOneByNameAndIdNot(name, id);
 				if (tmp != null) {
 					responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 					responseDto.setMessage("Tên chức năng đã tồn tại.");
 					return responseDto;
 				}
+				dto.setName(name);
+			}
+			if (!StringUtils.isEmpty(name)) {
+				dto.setDescription(desc);
+			}
+			if (status != null) {
+				dto.setStatus(status);
 			}
 			// kiem tra chuc nang cha
 			FuncDto objFuncParent = null;
@@ -194,16 +194,7 @@ public class FuncEndpoint {
 				dto.setParentId(objFuncParent.getId().intValue());
 				dto.setLevel(UserConstans.FUNC_LEVEL_2);
 			}
-
-			if (name != null) {
-				dto.setName(name);
-			}
-			if (desc != null) {
-				dto.setDescription(desc);
-			}
-			if (status != null) {
-				dto.setStatus(status);
-			}
+			dto.setType(type);
 			dto = funcService.update(dto);
 			responseDto.setCode(HttpStatus.OK.toString());
 			responseDto.setData(dto);

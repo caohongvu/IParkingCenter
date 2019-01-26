@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.cis.constants.UserConstans;
 import net.cis.dto.MenuDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.UserSecurityDto;
@@ -57,10 +58,12 @@ public class UserSecurityServiceImpl implements UserSecurityService {
 	private EntityManager entityManager;
 
 	@Override
-	public List<MenuDto> getMenuByRole(Integer roleId) {
+	public List<MenuDto> getMenuByRoleForWeb(Integer roleId) {
 		StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("sp_menu");
 		storedProcedureQuery.registerStoredProcedureParameter("role", Integer.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("type_func", Integer.class, ParameterMode.IN);
 		storedProcedureQuery.setParameter("role", roleId);
+		storedProcedureQuery.setParameter("type_func", UserConstans.FUNC_TYPE_WEB);
 		storedProcedureQuery.execute();
 		List<MenuDto> result = new ArrayList<>();
 		@SuppressWarnings("unchecked")
@@ -104,6 +107,32 @@ public class UserSecurityServiceImpl implements UserSecurityService {
 			}
 			start++;
 			temp_parent = (int) value[0];
+		}
+		return result;
+	}
+
+	@Override
+	public List<MenuDto> getMenuByRoleForApp(Integer roleId) {
+		StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("sp_menu");
+		storedProcedureQuery.registerStoredProcedureParameter("role", Integer.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("type_func", Integer.class, ParameterMode.IN);
+		storedProcedureQuery.setParameter("role", roleId);
+		storedProcedureQuery.setParameter("type_func", UserConstans.FUNC_TYPE_APP);
+		storedProcedureQuery.execute();
+		List<MenuDto> result = new ArrayList<>();
+		@SuppressWarnings("unchecked")
+		List<Object[]> lst = storedProcedureQuery.getResultList();
+		for (Object[] value : lst) {
+			if ((int) value[9] == UserConstans.FUNC_LEVEL_2) {
+				MenuDto objMenuDto = new MenuDto();
+				objMenuDto.setId((int) value[5]);
+				objMenuDto.setName(value[6] != null ? value[6].toString() : null);
+				objMenuDto.setLabel(value[7] != null ? value[7].toString() : null);
+				objMenuDto.setDescription(value[8] != null ? value[8].toString() : null);
+				objMenuDto.setLevel((int) value[9]);
+				objMenuDto.setParent_id((int) value[0]);
+				result.add(objMenuDto);
+			}
 		}
 		return result;
 	}
