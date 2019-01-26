@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import net.cis.common.util.MessageUtil;
 import net.cis.common.util.Utils;
+import net.cis.common.util.constant.URLConstants;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.AccountUserDto;
 import net.cis.dto.ErrorDto;
@@ -108,8 +109,9 @@ public class UserServiceImpl implements UserService {
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseApi save(UserDto userDto) throws JSONException {
 
-		String createUserURL = "https://admapi.live.iparkingstg.com/p/create/account";
-		// String createUserURL = "http://localhost:8800/p/create/account";
+		//String createUserURL = "https://admapi.live.iparkingstg.com/p/create/account";
+		String createUserURL = URLConstants.URL_CREATE_USER;
+
 
 		List<NameValuePair> formParams = new ArrayList<>();
 
@@ -240,9 +242,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseApi update(UserDto userDto) throws JSONException {
-
-		String updateUserURL = "https://admapi.live.iparkingstg.com/p/update/account";
-		// String updateUserURL = "http://localhost:8800/p/update/account";
+		
+		String updateUserURL = URLConstants.URL_UPDATE_USER;
 
 		List<NameValuePair> formParams = new ArrayList<>();
 
@@ -418,9 +419,8 @@ public class UserServiceImpl implements UserService {
 		String responseContent = RestfulUtil.postFormData(updateUserURL, formParams,
 				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 		JSONObject jsonObject = new JSONObject(responseContent);
-		
-		UserEntity userExits = userRepository.findOne(user.getId());
 
+		UserEntity userExits = userRepository.findOne(user.getId());
 
 		// get checksum and password from golang
 		String checksumUser = jsonObject.getJSONObject("Data").getString("ChecksumUser");
