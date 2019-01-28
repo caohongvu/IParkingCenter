@@ -24,6 +24,9 @@ import net.cis.dto.MonthlyTicketRevenueDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.MonthlyTicketPaymentCriteria;
 import net.cis.jpa.entity.MonthlyTicketPaymentEntity;
+import net.cis.jpa.entity.MonthlyTicketPaymentFooterEntity;
+import net.cis.jpa.entity.MonthlyTicketReportFooterEntity;
+import net.cis.repository.MonthlyTicketPaymentFooterRepository;
 import net.cis.repository.MonthlyTicketPaymentRepository;
 import net.cis.service.MonthlyTicketPaymentService;
 
@@ -32,6 +35,9 @@ public class MonthlyTicketPaymentServiceImpl implements MonthlyTicketPaymentServ
 
 	@Autowired
 	MonthlyTicketPaymentRepository monthlyTicketPaymentRepository;
+	
+	@Autowired
+	MonthlyTicketPaymentFooterRepository monthlyTicketPaymentFooterRepository;
 
 	ModelMapper mapper;
 
@@ -83,6 +89,19 @@ public class MonthlyTicketPaymentServiceImpl implements MonthlyTicketPaymentServ
 		source.stream().map((entity) -> {
 			MonthlyTicketPaymentDto dto = new MonthlyTicketPaymentDto();
 			mapper.map(entity, dto);
+			SimpleDateFormat formatTimeParse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat formatTime = new SimpleDateFormat("dd-MM-yyyy");
+			try {
+				Date applyFr = formatTimeParse.parse(dto.getApply_from_time());
+				Date applyTo = formatTimeParse.parse(dto.getApply_to_time());
+
+				String peroid_payment = formatTime.format(applyFr) + " - " + formatTime.format(applyTo);
+				dto.setPeriodPayment(peroid_payment);
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			
 			return dto;
 		}).forEachOrdered((dto) -> {
 			rtn.add(dto);
@@ -116,21 +135,38 @@ public class MonthlyTicketPaymentServiceImpl implements MonthlyTicketPaymentServ
 					monthlyTicketPaymentCriteria.getPhone(), monthlyTicketPaymentCriteria.getCardNumber(),
 					monthlyTicketPaymentCriteria.getStart_time(), monthlyTicketPaymentCriteria.getEnd_time(), month,
 					year, pageable);
-
 			if (ticketEntities == null || ticketEntities.size() == 0) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 				errorDto.setMessage("");
 				responseApi.setError(errorDto);
 				return responseApi;
 			}
-
-			ticketEndPointDtos = this.mapEndpoint(ticketEntities);
-			responseApi.setData(ticketEndPointDtos);
-			errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
-			errorDto.setMessage("");
-			responseApi.setError(errorDto);
-			return responseApi;
-
+			List<MonthlyTicketPaymentDto> monthlyTicketPaymentDtos = this.map(ticketEntities);
+			MonthlyTicketPaymentFooterEntity monthlyTicketPaymentFooterEntity = null;
+			try {
+				monthlyTicketPaymentFooterEntity = monthlyTicketPaymentFooterRepository.findAll(monthlyTicketPaymentCriteria.getTransId(),
+						monthlyTicketPaymentCriteria.getCppCode(), monthlyTicketPaymentCriteria.getContract_no(),
+						monthlyTicketPaymentCriteria.getContract_code(), monthlyTicketPaymentCriteria.getNumberplate(),
+						monthlyTicketPaymentCriteria.getPhone(), monthlyTicketPaymentCriteria.getCardNumber(),
+						monthlyTicketPaymentCriteria.getStart_time(), monthlyTicketPaymentCriteria.getEnd_time(), month,
+						year);
+				if (monthlyTicketPaymentFooterEntity == null) {
+					monthlyTicketPaymentFooterEntity = new MonthlyTicketPaymentFooterEntity();
+				}
+				mapper.map(monthlyTicketPaymentFooterEntity, ticketEndPointDtos);
+				ticketEndPointDtos.setMonthlyTicketPayment(monthlyTicketPaymentDtos);
+				responseApi.setData(ticketEndPointDtos);
+				errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+				errorDto.setMessage("");
+				responseApi.setError(errorDto);
+				return responseApi;
+			} catch (Exception e) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusInternalServerError);
+				errorDto.setMessage(ResponseErrorCodeConstants.DBAccessErr);
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			
 		} catch (Exception e) {
 			errorDto.setCode(ResponseErrorCodeConstants.StatusInternalServerError);
 			errorDto.setMessage(ResponseErrorCodeConstants.DBAccessErr);
