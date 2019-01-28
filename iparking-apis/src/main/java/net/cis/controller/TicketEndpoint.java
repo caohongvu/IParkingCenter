@@ -315,7 +315,7 @@ public class TicketEndpoint extends BaseEndpoint {
 					if (objCustomerCarDto == null) {
 						// thuc hien tao moi customer_car với verified = 1
 						Map<String, Object> resultCreateCustomerCar = customerService
-								.saveCustomerCarInPoseidonDb(objCustomerDto.getOldId(), carNumberPlate, carType);
+								.createCustomerCarInShardDb(objCustomerDto.getOldId(), carNumberPlate, carType);
 						if (resultCreateCustomerCar == null
 								|| !HttpStatus.OK.toString().equals(resultCreateCustomerCar.get("Code"))) {
 							responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
@@ -328,7 +328,7 @@ public class TicketEndpoint extends BaseEndpoint {
 						objCustomerCarDto.setCustomer((long) resultCreateCustomerCar.get("cus_id"));
 						objCustomerCarDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 						objCustomerCarDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
-						objCustomerCarDto.setStatus((int)resultCreateCustomerCar.get("status"));
+						objCustomerCarDto.setStatus((int) resultCreateCustomerCar.get("status"));
 						customerService.saveCustomerCarEntity(objCustomerCarDto);
 					}
 				}
@@ -338,7 +338,7 @@ public class TicketEndpoint extends BaseEndpoint {
 					customerId = objCustomerDto.getOldId();
 				} else {
 					// thuc hien tao customer bên db shard
-					Map<String, Object> resultCreateCustomer = customerService.saveCustomerInPoseidonDb(customerPhone);
+					Map<String, Object> resultCreateCustomer = customerService.createCustomerInShardDb(customerPhone);
 					if (resultCreateCustomer == null
 							|| !HttpStatus.OK.toString().equals(resultCreateCustomer.get("Code"))) {
 						responseDto.setCode(HttpStatus.BAD_REQUEST.toString());

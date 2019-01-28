@@ -11,6 +11,15 @@ public class FuncDto {
 	private Integer status;
 	private String icon;
 	private String link;
+	private Integer type;
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
 
 	public String getIcon() {
 		return icon;

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -345,7 +346,6 @@ public class ParkingPlaceEndpoint {
 	}
 
 	// CREATE PARKING PLACE
-
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@ApiOperation("create parking place")
 	public @ResponseBody Object create(ParkingSynDto parkingSynDto) throws Exception {
@@ -360,4 +360,39 @@ public class ParkingPlaceEndpoint {
 
 		return endpoint;
 	}
+	
+	//UPDATE ASSIGN PROVIDER PARKING PLACE
+		@RequestMapping(value = "/assign/provider",method = RequestMethod.POST)
+		@ApiOperation("assign parking place")
+		public @ResponseBody Object assignProvider(ParkingSynDto parkingSynDto)throws Exception {
+			
+			ResponseApi endpoint = new ResponseApi();
+			
+			ParkingDto parkingDto = new ParkingDto();
+			
+			ParkingSynDto parking = parkingService.updateAssignProvider(parkingSynDto);
+			
+			endpoint.setData(parking);
+
+			return endpoint;
+		}
+		//UPDATE PARKING PLACE
+		@RequestMapping(value = "/update/parking_place",method = RequestMethod.POST)
+		@ApiOperation("add perm parking place")
+		public @ResponseBody Object addPerm(@RequestBody(required = false) ParkingSynDto parkingSynDtoRes, ParkingSynDto parkingSynDto)throws Exception {
+			
+			ResponseApi endpoint = new ResponseApi();
+			if(parkingSynDtoRes != null) {
+				if(parkingSynDtoRes.getListPayment() != null) {
+					parkingSynDto.setListPayment(parkingSynDtoRes.getListPayment());
+				}
+			}
+			
+					
+			ParkingSynDto parking = parkingService.updateParkingPlace(parkingSynDto);
+			
+			endpoint.setData(parking);
+
+			return endpoint;
+		}
 }
