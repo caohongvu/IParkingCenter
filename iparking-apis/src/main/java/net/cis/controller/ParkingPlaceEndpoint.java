@@ -379,13 +379,15 @@ public class ParkingPlaceEndpoint {
 		//UPDATE PARKING PLACE
 		@RequestMapping(value = "/update/parking_place",method = RequestMethod.POST)
 		@ApiOperation("add perm parking place")
-		public @ResponseBody Object addPerm(@RequestBody ParkingSynDto parkingSynDtoRes, ParkingSynDto parkingSynDto)throws Exception {
+		public @ResponseBody Object addPerm(@RequestBody(required = false) ParkingSynDto parkingSynDtoRes, ParkingSynDto parkingSynDto)throws Exception {
 			
 			ResponseApi endpoint = new ResponseApi();
-			
-			if(parkingSynDtoRes.getListPayment() != null) {
-				parkingSynDto.setListPayment(parkingSynDtoRes.getListPayment());
+			if(parkingSynDtoRes != null) {
+				if(parkingSynDtoRes.getListPayment() != null) {
+					parkingSynDto.setListPayment(parkingSynDtoRes.getListPayment());
+				}
 			}
+			
 					
 			ParkingSynDto parking = parkingService.updateParkingPlace(parkingSynDto);
 			

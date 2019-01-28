@@ -31,6 +31,17 @@ public class ParkingSynDto {
 	 private int updatePerms;
 	 private int updateFeature;
 	 private int updatePayment;
+	 private int updateMetadata;
+	 
+	 private String price;
+	 private String building;
+	 private String tmpNote;
+	 private String tmpPrice;
+	 private String startTime;
+	 private String endTime;
+	 private String direction;
+	 private String hotline;
+	 
 	 
 	 
 	 
@@ -201,6 +212,60 @@ public class ParkingSynDto {
 	}
 	public void setUpdatePayment(int updatePayment) {
 		this.updatePayment = updatePayment;
+	}
+	public int getUpdateMetadata() {
+		return updateMetadata;
+	}
+	public void setUpdateMetadata(int updateMetadata) {
+		this.updateMetadata = updateMetadata;
+	}
+	public String getPrice() {
+		return price;
+	}
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	public String getBuilding() {
+		return building;
+	}
+	public void setBuilding(String building) {
+		this.building = building;
+	}
+	public String getTmpNote() {
+		return tmpNote;
+	}
+	public void setTmpNote(String tmpNote) {
+		this.tmpNote = tmpNote;
+	}
+	public String getTmpPrice() {
+		return tmpPrice;
+	}
+	public void setTmpPrice(String tmpPrice) {
+		this.tmpPrice = tmpPrice;
+	}
+	public String getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+	public String getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+	public String getDirection() {
+		return direction;
+	}
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
+	public String getHotline() {
+		return hotline;
+	}
+	public void setHotline(String hotline) {
+		this.hotline = hotline;
 	}
 	
 	
