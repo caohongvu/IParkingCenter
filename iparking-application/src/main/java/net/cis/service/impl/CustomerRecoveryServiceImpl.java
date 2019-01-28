@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.cis.dto.CustomerRecoveryDto;
-import net.cis.jpa.entity.CustomerEntity;
+import net.cis.jpa.entity.CustomerRecoveryEntity;
 import net.cis.repository.CustomerRecoveryRepository;
 import net.cis.service.CustomerRecoveryService;
 
@@ -24,7 +24,7 @@ public class CustomerRecoveryServiceImpl implements CustomerRecoveryService {
 
 	@Override
 	public CustomerRecoveryDto save(CustomerRecoveryDto customerRecoveryDto) {
-		CustomerEntity entity = new CustomerEntity();
+		CustomerRecoveryEntity entity = new CustomerRecoveryEntity();
 		mapper.map(customerRecoveryDto, entity);
 		mapper.map(customerRecoveryRepository.save(entity), customerRecoveryDto);
 		return customerRecoveryDto;
