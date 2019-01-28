@@ -1,34 +1,13 @@
-package net.cis.jpa.entity;
+package net.cis.dto;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "customer_recovery")
-public class CustomerRecoveryEntity {
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CustomerRecoveryDto {
 	private long id;
-	@Column(name = "cus_id")
 	private long cusId;
-
-	@Column(name = "checksum")
-	private String checkSum;
-
-	@Column(name = "expire")
+	private Long checkSum;
 	private Date expire;
-
-	@Column(name = "created_at")
 	private Date createdAt;
-
-	@Column(name = "updated_at")
 	private Date updatedAt;
 
 	public Date getUpdatedAt() {
@@ -55,11 +34,11 @@ public class CustomerRecoveryEntity {
 		this.cusId = cusId;
 	}
 
-	public String getCheckSum() {
+	public Long getCheckSum() {
 		return checkSum;
 	}
 
-	public void setCheckSum(String checkSum) {
+	public void setCheckSum(Long checkSum) {
 		this.checkSum = checkSum;
 	}
 
