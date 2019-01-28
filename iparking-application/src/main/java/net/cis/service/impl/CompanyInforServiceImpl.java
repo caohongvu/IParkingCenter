@@ -35,7 +35,9 @@ public class CompanyInforServiceImpl implements CompanyInforService {
 	private void init() {
 		List<CompanyInforEntity> companyInforEntities = companyInforRepository.findAll();
 		for(CompanyInforEntity entity : companyInforEntities) {
-			companyInfoCache.put(entity.getId(), entity);
+			if(entity != null) {
+				companyInfoCache.put(entity.getId(), entity);
+			}
 		}
 	}
 

@@ -55,7 +55,7 @@ public class ParkingEntity {
 	private Date updatedAt;
 	
 	@Column(name="company")
-	private long company;
+	private Long company;
 	
 	@Column(name="lat")
 	private String lat;
@@ -187,11 +187,11 @@ public class ParkingEntity {
 		this.updatedAt = updatedAt;
 	}
 
-	public long getCompany() {
+	public Long getCompany() {
 		return company;
 	}
 
-	public void setCompany(long company) {
+	public void setCompany(Long company) {
 		this.company = company;
 	}
 
