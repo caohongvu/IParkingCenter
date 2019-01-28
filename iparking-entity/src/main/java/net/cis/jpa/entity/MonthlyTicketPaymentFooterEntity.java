@@ -61,7 +61,7 @@ public class MonthlyTicketPaymentFooterEntity {
 	@Column(name="apply_to_time")
 	private String apply_to_time;
 	
-	@Formula("COUNT(*)")
+	@Formula("COUNT(DISTINCT transaction_id)")
 	private long total_row;
 	
 	@Formula("COUNT(DISTINCT parking_place)")
