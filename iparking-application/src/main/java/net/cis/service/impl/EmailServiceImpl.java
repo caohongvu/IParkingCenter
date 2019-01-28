@@ -140,19 +140,14 @@ public class EmailServiceImpl implements EmailService {
 	 */
 	@Override
 	public void sendEmailResendPassword(String title, String content, String emailTo) throws Exception {
-		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setFrom("automailer@cis.net.vn");
-		mail.setTo(emailTo);
-		mail.setSubject(title);
-		mail.setText(content);
-		quickService.submit(new Runnable() {
+		mailSender.send(new MimeMessagePreparator() {
 			@Override
-			public void run() {
-				try {
-					mailSender.send(mail);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			public void prepare(MimeMessage mimeMessage) throws Exception {
+				MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+				messageHelper.setFrom("automailer@cis.net.vn");
+				messageHelper.setTo(emailTo);
+				messageHelper.setSubject(title);
+				messageHelper.setText(content, true);
 			}
 		});
 
@@ -163,21 +158,15 @@ public class EmailServiceImpl implements EmailService {
 	 */
 	@Override
 	public void sendEmailChangePasswordSuccess(String title, String content, String emailTo) throws Exception {
-		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setFrom("automailer@cis.net.vn");
-		mail.setTo(emailTo);
-		mail.setSubject(title);
-		mail.setText(content);
-		quickService.submit(new Runnable() {
+		mailSender.send(new MimeMessagePreparator() {
 			@Override
-			public void run() {
-				try {
-					mailSender.send(mail);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			public void prepare(MimeMessage mimeMessage) throws Exception {
+				MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+				messageHelper.setFrom("automailer@cis.net.vn");
+				messageHelper.setTo(emailTo);
+				messageHelper.setSubject(title);
+				messageHelper.setText(content, true);
 			}
 		});
-
 	}
 }
