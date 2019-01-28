@@ -373,8 +373,16 @@ public class ParkingServiceImpl implements ParkingService {
 		
 		
 			parkingInfoRepository.save(infoEntity);
-			
 
+		}
+		//MAN HINH UPDATE METADATA
+		if(parkingSynDto.getUpdateMetadata() == 1) {
+			ParkingInfoEntity infoEntity = new ParkingInfoEntity();
+			JSONObject jsonObject = new JSONObject(parkingSynDto);
+			System.out.println(jsonObject);
+			parkingInfoRepository.save(infoEntity);
+
+			
 		}
 
 		return null;

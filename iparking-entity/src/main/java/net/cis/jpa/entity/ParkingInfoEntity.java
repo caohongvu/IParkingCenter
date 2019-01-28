@@ -32,6 +32,13 @@ public class ParkingInfoEntity {
 	
 	@Column (name="area")
 	private Double area;
+	
+	@Column(name="price")
+	private String price;
+	
+	@Column(name="tmp_note")
+	private String tmpNote;
+
 
 
 	public long getId() {
