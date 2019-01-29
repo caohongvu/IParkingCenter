@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-        <groupId>net.cis</groupId>
+		<groupId>net.cis</groupId>
 		<artifactId>iparking-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-    </parent>
-    
+	</parent>
+
 	<artifactId>iparking-application</artifactId>
 	<packaging>jar</packaging>
 
@@ -22,17 +22,17 @@
 
 	<dependencies>
 		<dependency>
-            <groupId>net.cis</groupId>
+			<groupId>net.cis</groupId>
 			<artifactId>cis-common</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.cis</groupId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.cis</groupId>
 			<artifactId>iparking-entity</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>net.cis</groupId>
@@ -40,103 +40,102 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
-        <dependency>
+
+		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>5.1.0.Final</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.2.4.Final</version>
 		</dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-        </dependency>
-        
-        <dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 			<version>1.9.4.RELEASE</version>
 		</dependency>
 
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>${spring.security.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        
-        <dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring.security.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>
 			<version>2.0.9.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
-        <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>0.7.5</version>
-        </dependency>
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>0.7.5</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.warrenstrange</groupId>
-            <artifactId>googleauth</artifactId>
-            <version>1.1.1</version>
-        </dependency>
+		<dependency>
+			<groupId>com.warrenstrange</groupId>
+			<artifactId>googleauth</artifactId>
+			<version>1.1.1</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.paypal.sdk</groupId>
-            <artifactId>rest-api-sdk</artifactId>
-            <version>1.13.0</version>
-        </dependency>
+		<dependency>
+			<groupId>com.paypal.sdk</groupId>
+			<artifactId>rest-api-sdk</artifactId>
+			<version>1.13.0</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.google.api-client</groupId>
-            <artifactId>google-api-client</artifactId>
-            <version>1.22.0</version>
-        </dependency>
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>1.22.0</version>
+		</dependency>
 
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+	</dependencies>
 
-    </dependencies>
-	
 	<build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

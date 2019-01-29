@@ -32,7 +32,7 @@
 			<artifactId>iparking-application</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.cis</groupId>
 			<artifactId>cis-thirdparty</artifactId>
@@ -44,7 +44,7 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
@@ -154,6 +154,11 @@
 						<warSourceDirectory>src/main/webapp</warSourceDirectory>
 						<warName>iparking-apis</warName>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>3.6.0.1398</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>

@@ -55,7 +55,7 @@ public class VerifyUserServiceImpl implements VerifyUserService {
 	@Override
 	public void pushNotification() {
 		try {
-			pushNotificationService.sendInAppMessage("", "", "");
+			
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());
 		}
