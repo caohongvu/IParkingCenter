@@ -58,7 +58,7 @@ public class NotificationEndpoint {
 	public @ResponseBody ResponseApi getCompany(HttpServletRequest request, @RequestParam(name = "title") String title,
 			@RequestParam(name = "content", required = false) String content,
 			@RequestParam(name = "content_sms", required = false) String contentSms,
-			@RequestParam(name = "type") List<Integer> type) throws Exception {
+			@RequestParam(name = "type") List<Integer> type) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -115,7 +115,7 @@ public class NotificationEndpoint {
 	 */
 	@RequestMapping(value = "/getNotificationHistory", method = RequestMethod.GET)
 	@ApiOperation("Nhat ky gui notification")
-	public @ResponseBody ResponseApi getNotificationHistory(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResponseApi getNotificationHistory(HttpServletRequest request) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -159,7 +159,7 @@ public class NotificationEndpoint {
 	 */
 	@RequestMapping(value = "/getNotificationCustomerHistory", method = RequestMethod.GET)
 	@ApiOperation("Nhat ky gui notification")
-	public @ResponseBody ResponseApi getNotificationCustomerHistory(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResponseApi getNotificationCustomerHistory(HttpServletRequest request) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);

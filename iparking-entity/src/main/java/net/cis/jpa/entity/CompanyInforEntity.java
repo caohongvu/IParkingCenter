@@ -16,11 +16,11 @@ public class CompanyInforEntity {
 	@JsonProperty("Id")
 	@Id
     @Column(name="id")
-	private int id;
+	private Integer id;
 	
 	@JsonProperty("CompanyId")
 	@Column(name="company_id")
-	private int companyId;
+	private Integer companyId;
 	
 	@JsonProperty("CompanyName")
 	@Column(name="company_name")
@@ -62,19 +62,19 @@ public class CompanyInforEntity {
 	@Column(name="monthly_invoice")
 	private int monthlyInvoice;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public int getCompanyId() {
+	public Integer getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(int companyId) {
+	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
 	}
 

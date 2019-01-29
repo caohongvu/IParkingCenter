@@ -140,7 +140,16 @@ public class EmailServiceImpl implements EmailService {
 	 */
 	@Override
 	public void sendEmailResendPassword(String title, String content, String emailTo) throws Exception {
-		// TODO Auto-generated method stub
+		mailSender.send(new MimeMessagePreparator() {
+			@Override
+			public void prepare(MimeMessage mimeMessage) throws Exception {
+				MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+				messageHelper.setFrom("automailer@cis.net.vn");
+				messageHelper.setTo(emailTo);
+				messageHelper.setSubject(title);
+				messageHelper.setText(content, true);
+			}
+		});
 
 	}
 
@@ -149,7 +158,15 @@ public class EmailServiceImpl implements EmailService {
 	 */
 	@Override
 	public void sendEmailChangePasswordSuccess(String title, String content, String emailTo) throws Exception {
-		// TODO Auto-generated method stub
-
+		mailSender.send(new MimeMessagePreparator() {
+			@Override
+			public void prepare(MimeMessage mimeMessage) throws Exception {
+				MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+				messageHelper.setFrom("automailer@cis.net.vn");
+				messageHelper.setTo(emailTo);
+				messageHelper.setSubject(title);
+				messageHelper.setText(content, true);
+			}
+		});
 	}
 }

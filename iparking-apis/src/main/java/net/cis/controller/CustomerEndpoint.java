@@ -1,7 +1,14 @@
 package net.cis.controller;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +18,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.DateTimeUtil;
+import net.cis.common.util.MD5Util;
 import net.cis.common.util.MessageUtil;
 import net.cis.common.util.PasswordGenerator;
 import net.cis.common.util.Utils;
@@ -31,12 +41,14 @@ import net.cis.dto.CarProfileDto;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
+import net.cis.dto.CustomerRecoveryDto;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.ResponseDto;
 import net.cis.repository.CustomerInfoRepository;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CarProfileService;
+import net.cis.service.CustomerRecoveryService;
 import net.cis.service.CustomerService;
 import net.cis.service.EmailService;
 
@@ -60,6 +72,9 @@ public class CustomerEndpoint {
 
 	@Autowired
 	EmailService emailService;
+
+	@Autowired
+	CustomerRecoveryService customerRecoveryService;
 
 	/**
 	 * liemnh
@@ -804,6 +819,9 @@ public class CustomerEndpoint {
 		}
 	}
 
+	@Value("classpath:email.html")
+	Resource resourceFile;
+
 	/**
 	 * liemnh resendPassword
 	 * 
@@ -818,7 +836,7 @@ public class CustomerEndpoint {
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		try {
-			if (Utils.validateEmail(email)) {
+			if (!Utils.validateEmail(email)) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage(MessageUtil.MESSAGE_EMAIL_WRONG_FORMAT);
 				responseApi.setError(errorDto);
@@ -831,8 +849,33 @@ public class CustomerEndpoint {
 				responseApi.setError(errorDto);
 				return responseApi;
 			}
+			// thuc hien tao checksum va customer recovery
+			Date curentDate = DateTimeUtil.getCurrentDateTime();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(curentDate);
+			cal.add(Calendar.MINUTE, 15);
+			Date expire = cal.getTime();
+			BigInteger checkSum = createCheckSumHashString(String.valueOf(objCustomerInfoDto.getCusId()), expire);
+			CustomerRecoveryDto dto = new CustomerRecoveryDto();
+			dto.setCusId(objCustomerInfoDto.getCusId());
+			dto.setCreatedAt(curentDate);
+			dto.setUpdatedAt(curentDate);
+			dto.setCheckSum(checkSum.longValue());
+			dto.setExpire(expire);
+			customerRecoveryService.save(dto);
 			// gui email den KH
-			emailService.sendEmailResendPassword("", "", email);
+			InputStream in = resourceFile.getInputStream();
+			BufferedReader br = null;
+			StringBuilder sb = new StringBuilder();
+			if (in != null) {
+				br = new BufferedReader(new InputStreamReader(in));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line).append("\n");
+				}
+			}
+			emailService.sendEmailResendPassword(CustomerConstans.CUSTOMER_TITLE_EMAIL_RESET_PASSWORD, sb.toString(),
+					"liemnh267@gmail.com");
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -881,7 +924,9 @@ public class CustomerEndpoint {
 			objCustomerDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
 			customerService.saveCustomerInIparkingCenter(objCustomerDto);
 			// gui email thông bao đổi thành công
-			emailService.sendEmailChangePasswordSuccess("", "", email);
+			emailService.sendEmailChangePasswordSuccess(
+					CustomerConstans.CUSTOMER_TITLE_EMAIL_THONGBAO_CHANGE_PASS_SUCCESS,
+					CustomerConstans.CUSTOMER_CONTENT_EMAIL_THONGBAO_CHANGE_PASS_SUCCESS, "liemnh267@gmail.com");
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -891,6 +936,20 @@ public class CustomerEndpoint {
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
+	}
+
+	private BigInteger createCheckSumHashString(String cusId, Date dateExpire) {
+		StringBuilder sb = new StringBuilder();
+		SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			sb.append("secretkey1");
+			sb.append(cusId);
+			sb.append(simple.format(dateExpire));
+			return MD5Util.encryptLong(sb.toString());
+		} catch (NoSuchAlgorithmException e) {
+			return null;
+		}
+
 	}
 
 }
