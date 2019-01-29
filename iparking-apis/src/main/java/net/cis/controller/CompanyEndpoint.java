@@ -35,7 +35,7 @@ public class CompanyEndpoint {
 	 */
 	@RequestMapping(value = "/getCompanyDetail", method = RequestMethod.GET)
 	@ApiOperation("Chi tiet cong ty")
-	public @ResponseBody ResponseApi getCompany(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResponseApi getCompany(HttpServletRequest request) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
