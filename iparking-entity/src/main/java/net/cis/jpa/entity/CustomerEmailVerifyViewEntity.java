@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "customer_email_verify_view")
-public class CustomerEmailVerifyEntity {
+public class CustomerEmailVerifyViewEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,28 @@ public class CustomerEmailVerifyEntity {
 
 	@Column(name = "status")
 	private String status;
+
+	@Column(name = "device_id")
+	private String deviceId;
+
+	@Column(name = "token")
+	private String token;
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
 
 	public String getPhone2() {
 		return phone2;
