@@ -183,7 +183,8 @@ public class NotificationServiceImpl implements NotificationService {
 			saveNotificationType(objNotificationTypeDto);
 			if (NotificationType.NOTIFICATION == type) {
 				// notification
-				pushNotificationService.sendNotificationForPlayerIds(lstDeviceId, NotificationTypeEnum.OTHER, content);
+				pushNotificationService.sendNotificationForPlayerIds(lstDeviceId, NotificationTypeEnum.OTHER, title,
+						content);
 			} else if (NotificationType.EMAIL == type) {
 				// email
 				emailService.sendASynchronousMail(title, content, lstEmail.toArray(new String[lstEmail.size()]));

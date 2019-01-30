@@ -79,8 +79,8 @@ public class VerifyUserServiceImpl implements VerifyUserService {
 				lstPlayerIds.add(obj.getToken().split(";")[0]);
 			}
 			if (lstPlayerIds.size() > 0) {
-				pushNotificationService.sendNotificationForPlayerIds(lstPlayerIds, NotificationTypeEnum.VERIFY,
-						"Đề nghị KH cập nhật thông tin tài khoản iParking");
+				pushNotificationService.sendNotificationForPlayerIds(lstPlayerIds, NotificationTypeEnum.VERIFY_EMAIL,
+						"Thông tin tài khoản", "Đề nghị KH cập nhật thông tin tài khoản iParking");
 			}
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());

@@ -733,8 +733,8 @@ public class CustomerEndpoint {
 	 * @param password
 	 * @return
 	 */
-	@RequestMapping(value = "/nap/signin", method = RequestMethod.POST)
-	@ApiOperation("signup customer")
+	@RequestMapping(value = "/nap/signin", method = RequestMethod.GET)
+	@ApiOperation("signup customer app")
 	public @ResponseBody Object napSignIn(@RequestParam(name = "phone") String phone,
 			@RequestParam(name = "password") String password) {
 		ResponseDto responseDto = new ResponseDto();
@@ -786,8 +786,8 @@ public class CustomerEndpoint {
 	 * @param password
 	 * @return
 	 */
-	@RequestMapping(value = "/web/signin", method = RequestMethod.POST)
-	@ApiOperation("signup customer")
+	@RequestMapping(value = "/web/signin", method = RequestMethod.GET)
+	@ApiOperation("signup customer web")
 	public @ResponseBody Object webSignIn(@RequestParam(name = "phone") String phone,
 			@RequestParam(name = "password") String password) {
 		ResponseDto responseDto = new ResponseDto();
