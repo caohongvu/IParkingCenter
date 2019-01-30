@@ -28,7 +28,8 @@ import net.cis.utils.ParkingCenterConstants;
 public class PushNotificationServiceImpl implements PushNotificationService {
 	protected final Logger LOGGER = Logger.getLogger(getClass());
 
-	public void sendNotificationForPlayerIds(List<String> playerIds, String message) throws IOException {
+	public void sendNotificationForPlayerIds(List<String> playerIds, NotificationTypeEnum enumType, String message)
+			throws IOException {
 		URL url = new URL(ParkingCenterConstants.API_URL_FCM);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setUseCaches(false);
@@ -40,7 +41,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 		try {
 			NotificationRequestModel notificationRequestModel = new NotificationRequestModel();
 			NotificationData notificationData = new NotificationData();
-			notificationData.setType(NotificationTypeEnum.VERIFY);
+			notificationData.setType(enumType);
 			NotificationContent content = new NotificationContent();
 			content.setEn(message);
 			notificationRequestModel.setAppId(ParkingCenterConstants.APP_ID);
@@ -67,7 +68,8 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 	}
 
 	@Override
-	public void sendNotificationForPlayerId(String playerId, String message) throws Exception {
+	public void sendNotificationForPlayerId(String playerId, NotificationTypeEnum enumType, String message)
+			throws Exception {
 		URL url = new URL(ParkingCenterConstants.API_URL_FCM);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setUseCaches(false);
@@ -79,7 +81,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 		try {
 			NotificationRequestModel notificationRequestModel = new NotificationRequestModel();
 			NotificationData notificationData = new NotificationData();
-			notificationData.setType(NotificationTypeEnum.VERIFY);
+			notificationData.setType(enumType);
 			NotificationContent content = new NotificationContent();
 			content.setEn(message);
 			notificationRequestModel.setAppId(ParkingCenterConstants.APP_ID);
@@ -110,7 +112,8 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 	}
 
 	@Override
-	public void sendNotificationForSpecificSegment(String segment, String message) throws Exception {
+	public void sendNotificationForSpecificSegment(String segment, NotificationTypeEnum enumType, String message)
+			throws Exception {
 		URL url = new URL(ParkingCenterConstants.API_URL_FCM);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setUseCaches(false);
@@ -122,7 +125,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 		try {
 			NotificationRequestModel notificationRequestModel = new NotificationRequestModel();
 			NotificationData notificationData = new NotificationData();
-			notificationData.setType(NotificationTypeEnum.VERIFY);
+			notificationData.setType(enumType);
 			NotificationContent content = new NotificationContent();
 			content.setEn(message);
 			notificationRequestModel.setAppId(ParkingCenterConstants.APP_ID);
@@ -149,7 +152,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 	}
 
 	@Override
-	public void sendNotificationForAllSubscribers(String message) throws Exception {
+	public void sendNotificationForAllSubscribers(NotificationTypeEnum enumType, String message) throws Exception {
 		URL url = new URL(ParkingCenterConstants.API_URL_FCM);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setUseCaches(false);
@@ -161,7 +164,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 		try {
 			NotificationRequestModel notificationRequestModel = new NotificationRequestModel();
 			NotificationData notificationData = new NotificationData();
-			notificationData.setType(NotificationTypeEnum.VERIFY);
+			notificationData.setType(enumType);
 			NotificationContent content = new NotificationContent();
 			content.setEn(message);
 			notificationRequestModel.setAppId(ParkingCenterConstants.APP_ID);
