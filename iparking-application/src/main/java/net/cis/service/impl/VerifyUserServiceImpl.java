@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import net.cis.common.util.constant.URLConstants;
 import net.cis.common.util.constant.UserConstant;
+import net.cis.constants.NotificationTypeEnum;
 import net.cis.jpa.entity.CustomerEmailVerifyViewEntity;
 import net.cis.jpa.entity.CustomerNonInfoViewEntity;
 import net.cis.repository.CustomerEmailVerifyRepository;
@@ -78,7 +79,7 @@ public class VerifyUserServiceImpl implements VerifyUserService {
 				lstPlayerIds.add(obj.getToken().split(";")[0]);
 			}
 			if (lstPlayerIds.size() > 0) {
-				pushNotificationService.sendNotificationForPlayerIds(lstPlayerIds,
+				pushNotificationService.sendNotificationForPlayerIds(lstPlayerIds, NotificationTypeEnum.VERIFY,
 						"Đề nghị KH cập nhật thông tin tài khoản iParking");
 			}
 		} catch (Exception ex) {

@@ -7,6 +7,7 @@ import java.util.Map;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
+import net.cis.dto.MenuDto;
 
 public interface CustomerService {
 	Map<String, Object> createCustomerInShardDb(String phone) throws Exception;
@@ -51,4 +52,6 @@ public interface CustomerService {
 
 	Map<String, Object> saveCustomerInfoInPoseidonDbReturnObject(long cusId, String phone, String email)
 			throws Exception;
+
+	List<MenuDto> getMenuByRoleForWeb(Integer roleId);
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import net.cis.common.util.DateTimeUtil;
 import net.cis.constants.NotificationType;
+import net.cis.constants.NotificationTypeEnum;
 import net.cis.dto.NotificationCustomerDto;
 import net.cis.dto.NotificationDto;
 import net.cis.dto.NotificationParkingPlaceDto;
@@ -32,6 +33,7 @@ import net.cis.service.EmailService;
 import net.cis.service.NotificationService;
 import net.cis.service.ParkingContractService;
 import net.cis.service.ParkingService;
+import net.cis.service.PushNotificationService;
 import net.cis.service.SmsService;
 import net.cis.service.UserService;
 
@@ -63,6 +65,9 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Autowired
 	ParkingService parkingService;
+
+	@Autowired
+	private PushNotificationService pushNotificationService;
 
 	ModelMapper mapper;
 
@@ -130,6 +135,7 @@ public class NotificationServiceImpl implements NotificationService {
 		// lay danh sach khach hang ve thang theo diem do
 		List<ParkingContractInfoDto> lstParkingContractInfoDto = parkingContractService
 				.findParkingContractInfo(ticketCriteria);
+		List<String> lstDeviceId = new ArrayList<>();
 		List<String> lstPhone = new ArrayList<>();
 		List<String> lstEmail = new ArrayList<>();
 		// thuc hien luu history Notification
@@ -155,6 +161,9 @@ public class NotificationServiceImpl implements NotificationService {
 			if (!StringUtils.isEmpty(objParkingContractInfoDto.getPhone2())) {
 				lstPhone.add(objParkingContractInfoDto.getPhone2());
 			}
+			if (!StringUtils.isEmpty(objParkingContractInfoDto.getToken())) {
+				lstDeviceId.add(objParkingContractInfoDto.getToken().split(";")[0]);
+			}
 		}
 
 		// thuc hien tao NotificationParkingPlace
@@ -174,6 +183,7 @@ public class NotificationServiceImpl implements NotificationService {
 			saveNotificationType(objNotificationTypeDto);
 			if (NotificationType.NOTIFICATION == type) {
 				// notification
+				pushNotificationService.sendNotificationForPlayerIds(lstDeviceId, NotificationTypeEnum.OTHER, content);
 			} else if (NotificationType.EMAIL == type) {
 				// email
 				emailService.sendASynchronousMail(title, content, lstEmail.toArray(new String[lstEmail.size()]));

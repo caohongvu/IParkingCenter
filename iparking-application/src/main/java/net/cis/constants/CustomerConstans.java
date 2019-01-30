@@ -12,4 +12,7 @@ public class CustomerConstans {
 
 	public static String CUSTOMER_TITLE_EMAIL_THONGBAO_CHANGE_PASS_SUCCESS = "Thông báo đổi thành công";
 	public static String CUSTOMER_CONTENT_EMAIL_THONGBAO_CHANGE_PASS_SUCCESS = "Bạn đã đổi thành công";
+	
+	
+	public static final int CUSTOMER_ROLE_DEFAULT = 13;
 }

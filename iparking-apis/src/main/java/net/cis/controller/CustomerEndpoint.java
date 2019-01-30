@@ -43,8 +43,10 @@ import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
 import net.cis.dto.CustomerRecoveryDto;
 import net.cis.dto.ErrorDto;
+import net.cis.dto.MenuDto;
 import net.cis.dto.ResponseApi;
 import net.cis.dto.ResponseDto;
+import net.cis.dto.UserInfo;
 import net.cis.repository.CustomerInfoRepository;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CarProfileService;
@@ -768,6 +770,64 @@ public class CustomerEndpoint {
 			responseDto.setCode(HttpStatus.OK.toString());
 			responseDto.setData(TokenAuthenticationService
 					.createTokenCustomer(String.valueOf(objCustomerDto.getOldId()), objCustomerDto.getPhone2()));
+			return responseDto;
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
+			responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+			return responseDto;
+		}
+	}
+
+	/**
+	 * liemnh customer dang nhap he thong
+	 * 
+	 * @param phone
+	 * @param password
+	 * @return
+	 */
+	@RequestMapping(value = "/web/signin", method = RequestMethod.POST)
+	@ApiOperation("signup customer")
+	public @ResponseBody Object webSignIn(@RequestParam(name = "phone") String phone,
+			@RequestParam(name = "password") String password) {
+		ResponseDto responseDto = new ResponseDto();
+		try {
+
+			if (StringUtils.isEmpty(phone)) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
+				return responseDto;
+			}
+			if (!Utils.validateVNPhoneNumber(String.valueOf(phone))) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage("Phone Malformed");
+				return responseDto;
+			}
+			if (phone.startsWith(Utils.phone_prefix)) {
+				phone = phone.replaceFirst(Utils.phone_prefix, Utils.phone_prefix_84);
+			}
+			CustomerDto objCustomerDto = customerService.findByPhone2(phone);
+
+			if (objCustomerDto == null) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_NOT_EXITS);
+				return responseDto;
+			}
+			// kiem tra pass
+			if (!PasswordGenerator.verifyPassword(password, new String(objCustomerDto.getPassword()))) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_WRONG_PASS);
+				return responseDto;
+			}
+			// thuc hien tạo token
+			responseDto.setCode(HttpStatus.OK.toString());
+
+			UserInfo userInfo = new UserInfo();
+			userInfo.setToken(TokenAuthenticationService.createTokenCustomer(String.valueOf(objCustomerDto.getOldId()),
+					objCustomerDto.getPhone2()));
+			List<MenuDto> menus = customerService.getMenuByRoleForWeb(CustomerConstans.CUSTOMER_ROLE_DEFAULT);
+			userInfo.setMenus(menus);
+			responseDto.setData(userInfo);
 			return responseDto;
 		} catch (Exception e) {
 			// TODO: handle exception
