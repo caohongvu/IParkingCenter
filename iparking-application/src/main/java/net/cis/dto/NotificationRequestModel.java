@@ -7,6 +7,8 @@ import com.google.gson.annotations.SerializedName;
 public class NotificationRequestModel {
 	@SerializedName("data")
 	private NotificationData data;
+	@SerializedName("headings")
+	private NotificationHeading headings;
 	@SerializedName("contents")
 	private NotificationContent contents;
 	@SerializedName("app_id")
@@ -16,6 +18,14 @@ public class NotificationRequestModel {
 
 	@SerializedName("included_segments")
 	private String includedSegments;
+
+	public NotificationHeading getHeadings() {
+		return headings;
+	}
+
+	public void setHeadings(NotificationHeading headings) {
+		this.headings = headings;
+	}
 
 	public String getIncludedSegments() {
 		return includedSegments;

@@ -20,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import net.cis.constants.NotificationTypeEnum;
 import net.cis.dto.NotificationContent;
 import net.cis.dto.NotificationData;
+import net.cis.dto.NotificationHeading;
 import net.cis.dto.NotificationRequestModel;
 import net.cis.service.PushNotificationService;
 import net.cis.utils.ParkingCenterConstants;
@@ -28,8 +29,8 @@ import net.cis.utils.ParkingCenterConstants;
 public class PushNotificationServiceImpl implements PushNotificationService {
 	protected final Logger LOGGER = Logger.getLogger(getClass());
 
-	public void sendNotificationForPlayerIds(List<String> playerIds, NotificationTypeEnum enumType, String message)
-			throws IOException {
+	public void sendNotificationForPlayerIds(List<String> playerIds, NotificationTypeEnum enumType, String title,
+			String message) throws IOException {
 		URL url = new URL(ParkingCenterConstants.API_URL_FCM);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setUseCaches(false);
@@ -68,8 +69,8 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 	}
 
 	@Override
-	public void sendNotificationForPlayerId(String playerId, NotificationTypeEnum enumType, String message)
-			throws Exception {
+	public void sendNotificationForPlayerId(String playerId, NotificationTypeEnum enumType, String title,
+			String message) throws Exception {
 		URL url = new URL(ParkingCenterConstants.API_URL_FCM);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setUseCaches(false);
@@ -112,8 +113,8 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 	}
 
 	@Override
-	public void sendNotificationForSpecificSegment(String segment, NotificationTypeEnum enumType, String message)
-			throws Exception {
+	public void sendNotificationForSpecificSegment(String segment, NotificationTypeEnum enumType, String title,
+			String message) throws Exception {
 		URL url = new URL(ParkingCenterConstants.API_URL_FCM);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setUseCaches(false);
@@ -152,7 +153,8 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 	}
 
 	@Override
-	public void sendNotificationForAllSubscribers(NotificationTypeEnum enumType, String message) throws Exception {
+	public void sendNotificationForAllSubscribers(NotificationTypeEnum enumType, String title, String message)
+			throws Exception {
 		URL url = new URL(ParkingCenterConstants.API_URL_FCM);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setUseCaches(false);
@@ -165,12 +167,17 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 			NotificationRequestModel notificationRequestModel = new NotificationRequestModel();
 			NotificationData notificationData = new NotificationData();
 			notificationData.setType(enumType);
+			
+			NotificationHeading heading = new NotificationHeading();
+			heading.setEn(title);
+			
 			NotificationContent content = new NotificationContent();
 			content.setEn(message);
 			notificationRequestModel.setAppId(ParkingCenterConstants.APP_ID);
 			notificationRequestModel.setData(notificationData);
 			notificationRequestModel.setIncludedSegments("All");
 			notificationRequestModel.setContents(content);
+			notificationRequestModel.setHeadings(heading);
 			Gson gson = new Gson();
 			Type type = new TypeToken<NotificationRequestModel>() {
 			}.getType();
@@ -206,13 +213,19 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 		try {
 			NotificationRequestModel notificationRequestModel = new NotificationRequestModel();
 			NotificationData notificationData = new NotificationData();
-			notificationData.setType(NotificationTypeEnum.VERIFY);
+			notificationData.setType(NotificationTypeEnum.VERIFY_EMAIL);
+			
 			NotificationContent content = new NotificationContent();
 			content.setEn("test msg");
+			
+			NotificationHeading heading = new NotificationHeading();
+			heading.setEn("title tesst");
+			
 			notificationRequestModel.setAppId(ParkingCenterConstants.APP_ID);
 			notificationRequestModel.setData(notificationData);
 			notificationRequestModel.setPlayerIds(playerIds);
 			notificationRequestModel.setContents(content);
+			notificationRequestModel.setHeadings(heading);
 			Gson gson = new Gson();
 			Type type = new TypeToken<NotificationRequestModel>() {
 			}.getType();
