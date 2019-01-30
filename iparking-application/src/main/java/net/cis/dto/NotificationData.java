@@ -2,27 +2,18 @@ package net.cis.dto;
 
 import com.google.gson.annotations.SerializedName;
 
+import net.cis.constants.NotificationTypeEnum;
+
 public class NotificationData {
-	@SerializedName("detail")
-	private String detail;
+	@SerializedName("type")
+	private NotificationTypeEnum type;
 
-	@SerializedName("title")
-	private String title;
-
-	public String getDetail() {
-		return detail;
+	public NotificationTypeEnum getType() {
+		return type;
 	}
 
-	public void setDetail(String detail) {
-		this.detail = detail;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
+	public void setType(NotificationTypeEnum type) {
+		this.type = type;
 	}
 
 }
