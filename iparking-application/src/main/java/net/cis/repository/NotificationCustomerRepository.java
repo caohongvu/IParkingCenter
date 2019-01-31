@@ -8,4 +8,6 @@ import net.cis.jpa.entity.NotificationCustomerEntity;
 
 public interface NotificationCustomerRepository extends JpaRepository<NotificationCustomerEntity, Long> {
 	List<NotificationCustomerEntity> findByCusId(long cusId);
+
+	NotificationCustomerEntity findByCusIdAndNotificationId(Long cusId, Long notificationId);
 }

@@ -6,4 +6,6 @@ import net.cis.jpa.entity.CustomerInfoEntity;
 
 public interface CustomerInfoRepository extends JpaRepository<CustomerInfoEntity, Long> {
 	CustomerInfoEntity findByCusId(long cusId);
+
+	CustomerInfoEntity findByEmailIgnoreCase(String email);
 }

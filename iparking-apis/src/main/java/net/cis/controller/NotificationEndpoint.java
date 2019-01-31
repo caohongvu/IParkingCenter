@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
+import net.cis.dto.NotificationCustomerDto;
 import net.cis.dto.NotificationDto;
 import net.cis.dto.ParkingActorDto;
 import net.cis.dto.ParkingDto;
@@ -58,7 +59,7 @@ public class NotificationEndpoint {
 	public @ResponseBody ResponseApi getCompany(HttpServletRequest request, @RequestParam(name = "title") String title,
 			@RequestParam(name = "content", required = false) String content,
 			@RequestParam(name = "content_sms", required = false) String contentSms,
-			@RequestParam(name = "type") List<Integer> type) throws Exception {
+			@RequestParam(name = "type") List<Integer> type) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -115,7 +116,7 @@ public class NotificationEndpoint {
 	 */
 	@RequestMapping(value = "/getNotificationHistory", method = RequestMethod.GET)
 	@ApiOperation("Nhat ky gui notification")
-	public @ResponseBody ResponseApi getNotificationHistory(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResponseApi getNotificationHistory(HttpServletRequest request) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -159,7 +160,7 @@ public class NotificationEndpoint {
 	 */
 	@RequestMapping(value = "/getNotificationCustomerHistory", method = RequestMethod.GET)
 	@ApiOperation("Nhat ky gui notification")
-	public @ResponseBody ResponseApi getNotificationCustomerHistory(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResponseApi getNotificationCustomerHistory(HttpServletRequest request) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -176,6 +177,97 @@ public class NotificationEndpoint {
 					.findNotificationCustomer(Long.parseLong(cusId));
 			responseApi.setError(errorDto);
 			responseApi.setData(lstResult);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
+
+	/**
+	 * liemnh cap nhat customer notification
+	 * 
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/updateCustomerNofitication", method = RequestMethod.POST)
+	@ApiOperation("Cap nhat customer notification")
+	public @ResponseBody ResponseApi updateNotificationRead(HttpServletRequest request,
+			@RequestParam(name = "notification-id") Long notificationId,
+			@RequestParam(name = "isRead") Integer isRead) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			String cusId = TokenAuthenticationService.getAuthenticationInfo(request);
+			if (StringUtils.isEmpty(cusId)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// tim kiem thong tin customer notification
+			NotificationCustomerDto objNotificationCustomer = notificationHistoryService
+					.findNotificationCustomer(Long.parseLong(cusId), notificationId);
+			if (objNotificationCustomer == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Notification not found");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// thu hien cap nhat
+			objNotificationCustomer.setIsRead(isRead);
+			objNotificationCustomer = notificationHistoryService.saveNotificationCustomer(objNotificationCustomer);
+			responseApi.setError(errorDto);
+			responseApi.setData(objNotificationCustomer);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
+
+	/**
+	 * liemnh Thuc hien gui thong bao den customer cua 1 diem dich vu
+	 * 
+	 * @param request
+	 * @param parkingCode
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/push-to-customer", method = RequestMethod.POST)
+	@ApiOperation("push (Notification, Email, Sms)")
+	public @ResponseBody ResponseApi getCompany(HttpServletRequest request, @RequestParam(name = "title") String title,
+			@RequestParam(name = "content", required = false) String content,
+			@RequestParam(name = "cus-id") Long cusId) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
+			if (StringUtils.isEmpty(supervisorId)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			if (StringUtils.isEmpty(title)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Title empty");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			notificationHistoryService.pushNotificationToCustomer(title, content, supervisorId, cusId);
+			responseApi.setError(errorDto);
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();

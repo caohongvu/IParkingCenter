@@ -1,7 +1,19 @@
 package net.cis.service;
 
+import java.util.List;
+
+import net.cis.constants.NotificationTypeEnum;
+
 public interface PushNotificationService {
 
-	void sendInAppMessage(String fcmToken, String title, String message) throws Exception;
+	void sendNotificationForPlayerIds(List<String> playerIds, NotificationTypeEnum enumType,String title, String message)
+			throws Exception;
+
+	void sendNotificationForPlayerId(String playerId, NotificationTypeEnum enumType,String title,  String message) throws Exception;
+
+	void sendNotificationForSpecificSegment(String segment, NotificationTypeEnum enumType,String title,  String message)
+			throws Exception;
+
+	void sendNotificationForAllSubscribers(NotificationTypeEnum enumType,String title,  String message) throws Exception;
 
 }

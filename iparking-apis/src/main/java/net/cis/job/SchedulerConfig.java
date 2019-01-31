@@ -35,16 +35,16 @@ public class SchedulerConfig implements SchedulingConfigurer {
 	@Autowired
 	JobService jobService;
 
-	private String cronJobEmailConfig() {
-		String cronTabExpression = PropertiesUtils.getProperty("JOB_EMAIL");
+	private String cronJobVerifyEmailConfig() {
+		String cronTabExpression = PropertiesUtils.getProperty("JOB_VERIFY_EMAIL");
 		if (StringUtils.isEmpty(cronTabExpression))
 			cronTabExpression = "0/5 * * * * *";
 		LOGGER.info("Cron job email partten:" + cronTabExpression);
 		return cronTabExpression;
 	}
 
-	private boolean cronJobEmailEnableConfig() {
-		String strEnable = PropertiesUtils.getProperty("JOB_EMAIL_ENABLE");
+	private boolean cronJobVerifyEmailEnableConfig() {
+		String strEnable = PropertiesUtils.getProperty("JOB_VERIFY_EMAIL_ENABLE");
 		LOGGER.info("cronJobEmailEnableConfig: " + strEnable);
 		if (StringUtils.isEmpty(strEnable)) {
 			return Boolean.FALSE;
@@ -178,22 +178,26 @@ public class SchedulerConfig implements SchedulingConfigurer {
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
 
-		// job send email verify
+		/**
+		 * job send email verify den customer
+		 */
 		taskRegistrar.addTriggerTask(new Runnable() {
 			@Override
 			public void run() {
-				if (cronJobEmailEnableConfig())
+				if (cronJobVerifyEmailEnableConfig())
 					verifyUserService.verifyEmail();
 			}
 		}, new Trigger() {
 			@Override
 			public Date nextExecutionTime(TriggerContext triggerContext) {
-				CronTrigger trigger = new CronTrigger(cronJobEmailConfig());
+				CronTrigger trigger = new CronTrigger(cronJobVerifyEmailConfig());
 				Date nextExec = trigger.nextExecutionTime(triggerContext);
 				return nextExec;
 			}
 		});
-		// job push notifcation
+		/**
+		 * job push notifcation
+		 */
 		taskRegistrar.addTriggerTask(new Runnable() {
 			@Override
 			public void run() {

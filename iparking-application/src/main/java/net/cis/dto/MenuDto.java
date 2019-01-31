@@ -20,6 +20,16 @@ public class MenuDto {
 	private String icon;
 	private String link;
 
+	private Integer isMenu;
+
+	public Integer getIsMenu() {
+		return isMenu;
+	}
+
+	public void setIsMenu(Integer isMenu) {
+		this.isMenu = isMenu;
+	}
+
 	public String getIcon() {
 		return icon;
 	}

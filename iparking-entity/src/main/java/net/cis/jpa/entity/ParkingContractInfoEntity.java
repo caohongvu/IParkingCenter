@@ -36,6 +36,28 @@ public class ParkingContractInfoEntity {
 	@Column(name = "email")
 	private String email;
 
+	@Column(name = "device_id")
+	private String deviceId;
+
+	@Column(name = "token")
+	private String token;
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 	public long getId() {
 		return id;
 	}

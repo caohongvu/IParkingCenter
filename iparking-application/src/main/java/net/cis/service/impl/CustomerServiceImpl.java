@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureQuery;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -19,14 +22,19 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import net.cis.common.util.constant.URLConstants;
+import net.cis.constants.UserConstans;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
+import net.cis.dto.CustomerNotificationDto;
+import net.cis.dto.MenuDto;
 import net.cis.jpa.entity.CustomerCarEntity;
 import net.cis.jpa.entity.CustomerEntity;
 import net.cis.jpa.entity.CustomerInfoEntity;
+import net.cis.jpa.entity.CustomerNotificationEntity;
 import net.cis.repository.CustomerCarRepository;
 import net.cis.repository.CustomerInfoRepository;
+import net.cis.repository.CustomerNotificationRepository;
 import net.cis.repository.CustomerRepository;
 import net.cis.service.CustomerService;
 import net.cis.utils.RestfulUtil;
@@ -45,6 +53,9 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	CustomerInfoRepository customerInfoRepository;
 
+	@Autowired
+	CustomerNotificationRepository customerNotificationRepository;
+
 	ModelMapper mapper;
 
 	@PostConstruct
@@ -53,14 +64,27 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Map<String, Object> saveCustomerInPoseidonDb(String phone) throws Exception {
+	public Map<String, Object> createCustomerInShardDb(String phone) throws Exception {
 		// TODO Auto-generated method stub
 		String finalURL = URLConstants.URL_CREATE_CUSTOMER;
 		List<NameValuePair> formParams = new ArrayList<>();
 		formParams.add(new BasicNameValuePair("phone", phone));
 		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
 				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-		LOGGER.info("createCustomerInPoseidonDb Response: " + responseContent);
+		LOGGER.info("createCustomerInShardDb Response: " + responseContent);
+		return parseJSonToCreatePoseidonResponseObject(responseContent);
+	}
+
+	@Override
+	public Map<String, Object> updateCustomerInShardDb(String cusId, String password) throws Exception {
+		// TODO Auto-generated method stub
+		String finalURL = URLConstants.URL_UPDATE_CUSTOMER;
+		List<NameValuePair> formParams = new ArrayList<>();
+		formParams.add(new BasicNameValuePair("customerID", cusId));
+		formParams.add(new BasicNameValuePair("password", password));
+		String responseContent = RestfulUtil.postFormData(finalURL, formParams,
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		LOGGER.info("updateCustomerInShardDb Response: " + responseContent);
 		return parseJSonToCreatePoseidonResponseObject(responseContent);
 	}
 
@@ -216,7 +240,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Map<String, Object> saveCustomerCarInPoseidonDb(long cusId, String numberPlate, int carType)
+	public Map<String, Object> createCustomerCarInShardDb(long cusId, String numberPlate, int carType)
 			throws Exception {
 		// TODO Auto-generated method stub
 		String finalURL = URLConstants.URL_CREATE_CUSTOMER_CAR;
@@ -414,13 +438,89 @@ public class CustomerServiceImpl implements CustomerService {
 		return result;
 	}
 
-	/**
-	 * thuc hien tao customer bên iparking center va customer info
-	 */
+	@Override
+	public CustomerInfoDto findCustomerInfoByEmail(String email) throws Exception {
+		CustomerInfoEntity entity = customerInfoRepository.findByEmailIgnoreCase(email);
+		CustomerInfoDto dto = new CustomerInfoDto();
+		mapper.map(entity, dto);
+		return dto;
+	}
+
+	@Autowired
+	private EntityManager entityManager;
 
 	@Override
-	public boolean saveCustomerFromPortal(CustomerDto customerDto, String fullName, String email) {
-		// TODO Auto-generated method stub
-		return false;
+	public List<MenuDto> getMenuByRoleForWeb(Integer roleId) {
+		StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("sp_menu");
+		storedProcedureQuery.registerStoredProcedureParameter("role", Integer.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("type_func", Integer.class, ParameterMode.IN);
+		storedProcedureQuery.setParameter("role", roleId);
+		storedProcedureQuery.setParameter("type_func", UserConstans.FUNC_TYPE_WEB);
+		storedProcedureQuery.execute();
+		List<MenuDto> result = new ArrayList<>();
+		@SuppressWarnings("unchecked")
+		List<Object[]> lst = storedProcedureQuery.getResultList();
+		Integer temp_parent = 0;
+		int start = 0;
+		MenuDto objMenuDto = new MenuDto();
+		List<MenuDto> menuChilds = new ArrayList<MenuDto>();
+		for (Object[] value : lst) {
+			if (temp_parent != (int) value[0] && temp_parent != 0) {
+				objMenuDto.setMenuChilds(menuChilds);
+				result.add(objMenuDto);
+
+				objMenuDto = new MenuDto();
+				menuChilds = new ArrayList<MenuDto>();
+			}
+
+			objMenuDto.setId((int) value[0]);
+			objMenuDto.setName(value[1] != null ? value[1].toString() : null);
+			objMenuDto.setLabel(value[2] != null ? value[2].toString() : null);
+			objMenuDto.setDescription(value[3] != null ? value[3].toString() : null);
+			objMenuDto.setLevel((int) value[4]);
+			objMenuDto.setIcon(value[5] != null ? value[5].toString() : null);
+			objMenuDto.setLink(value[6] != null ? value[6].toString() : null);
+
+			MenuDto menuChild = new MenuDto();
+			menuChild.setId((int) value[7]);
+			menuChild.setName(value[8] != null ? value[8].toString() : null);
+			menuChild.setLabel(value[9] != null ? value[9].toString() : null);
+			menuChild.setDescription(value[10] != null ? value[10].toString() : null);
+			menuChild.setLevel((int) value[11]);
+			menuChild.setParent_id((int) value[0]);
+			menuChild.setIcon(value[12] != null ? value[12].toString() : null);
+			menuChild.setLink(value[13] != null ? value[13].toString() : null);
+			menuChilds.add(menuChild);
+
+			if (start == lst.size() - 1) {
+				objMenuDto.setMenuChilds(menuChilds);
+				result.add(objMenuDto);
+			}
+			start++;
+			temp_parent = (int) value[0];
+		}
+		return result;
 	}
+
+	@Override
+	public List<CustomerNotificationDto> findCustomerNotificationByCusId(long cusId, Integer subscrice)
+			throws Exception {
+		List<CustomerNotificationEntity> entity = customerNotificationRepository.findByCusIdAndSubscrice(cusId,
+				subscrice);
+		if (entity == null) {
+			return null;
+		}
+		return this.mapCustomerNotification(entity);
+	}
+
+	private List<CustomerNotificationDto> mapCustomerNotification(List<CustomerNotificationEntity> source) {
+		List<CustomerNotificationDto> rtn = new ArrayList<>();
+		for (CustomerNotificationEntity entity : source) {
+			CustomerNotificationDto dto = new CustomerNotificationDto();
+			mapper.map(entity, dto);
+			rtn.add(dto);
+		}
+		return rtn;
+	}
+
 }

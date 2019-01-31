@@ -11,14 +11,17 @@ import org.springframework.stereotype.Service;
 
 import net.cis.constants.CustomerConstans;
 import net.cis.dto.PrivateServicesParkingCusDto;
+import net.cis.dto.PrivateServicesParkingCusViewDto;
 import net.cis.dto.PrivateServicesParkingDto;
 import net.cis.jpa.entity.ParkingEntity;
 import net.cis.jpa.entity.PrivateServicesEntity;
 import net.cis.jpa.entity.PrivateServicesParkingCusEntity;
+import net.cis.jpa.entity.PrivateServicesParkingCusViewEntity;
 import net.cis.jpa.entity.PrivateServicesParkingEntity;
 import net.cis.repository.ParkingRepository;
 import net.cis.repository.PrivateServiceRepository;
 import net.cis.repository.PrivateServicesParkingCusRepository;
+import net.cis.repository.PrivateServicesParkingCusViewRepository;
 import net.cis.repository.PrivateServicesParkingRepository;
 import net.cis.service.PrivateServicesService;
 
@@ -32,6 +35,9 @@ public class PrivateServicesServiceImpl implements PrivateServicesService {
 	PrivateServicesParkingRepository privateServicesParkingRepository;
 
 	@Autowired
+	PrivateServicesParkingCusViewRepository privateServicesParkingCusViewRepository;
+
+	@Autowired
 	ParkingRepository parkingRepository;
 
 	ModelMapper mapper;
@@ -42,7 +48,7 @@ public class PrivateServicesServiceImpl implements PrivateServicesService {
 	}
 
 	/**
-	 * Danh sach dich vu theo diem do va trang thang
+	 * Danh sach dich vu theo diem do va trang thai
 	 */
 	@Override
 	public List<PrivateServicesParkingDto> getPrivateServiceParkings(Long parkingId, Integer status) {
@@ -71,54 +77,21 @@ public class PrivateServicesServiceImpl implements PrivateServicesService {
 	 * Danh sach dich vu theo customer
 	 */
 	@Override
-	public List<PrivateServicesParkingCusDto> getPrivateServicesParkingCus(Long cusId) {
-		List<PrivateServicesParkingCusEntity> lst = privateServicesParkingCustomerRepository.findByCusIdAndStatus(cusId,
-				CustomerConstans.CUSTOMER_SERVICE_ENABLE);
+	public List<PrivateServicesParkingCusViewDto> getPrivateServicesParkingCus(Long cusId) {
+		List<PrivateServicesParkingCusViewEntity> lst = privateServicesParkingCusViewRepository.findByCusId(cusId);
 		return this.map2(lst);
 	}
 
-	private List<PrivateServicesParkingCusDto> map2(List<PrivateServicesParkingCusEntity> source) {
-		List<PrivateServicesParkingCusDto> rtn = new ArrayList<>();
+	private List<PrivateServicesParkingCusViewDto> map2(List<PrivateServicesParkingCusViewEntity> source) {
+		List<PrivateServicesParkingCusViewDto> rtn = new ArrayList<>();
 		source.stream().map((entity) -> {
-			PrivateServicesParkingCusDto dto = new PrivateServicesParkingCusDto();
+			PrivateServicesParkingCusViewDto dto = new PrivateServicesParkingCusViewDto();
 			mapper.map(entity, dto);
-			dto.setPrivateServicesParkingDto(getPrivateServicesParkingDetail(dto.getId()));
 			return dto;
 		}).forEachOrdered((dto) -> {
 			rtn.add(dto);
 		});
 		return rtn;
-	}
-
-	/**
-	 * Chi tiet dich vu diem do
-	 * 
-	 * @param parkingServiceParkingId
-	 * @return
-	 */
-	private PrivateServicesParkingDto getPrivateServicesParkingDetail(Long parkingServiceParkingId) {
-		PrivateServicesParkingEntity objPrivateServicesParkingEntity = privateServicesParkingRepository
-				.findOne(parkingServiceParkingId);
-
-		PrivateServicesParkingDto objPrivateServicesParkingDto = new PrivateServicesParkingDto();
-		if (objPrivateServicesParkingEntity != null) {
-			// lay thong tin diem dich vu
-			ParkingEntity objParkingEntity = parkingRepository
-					.findByOldId(String.valueOf(objPrivateServicesParkingEntity.getParkingId()));
-
-			PrivateServicesEntity objPrivateServicesEntity = privateServiceRepository
-					.findOne(objPrivateServicesParkingEntity.getPrivateServiceId());
-
-			objPrivateServicesParkingDto.setId(objPrivateServicesParkingEntity.getId());
-			objPrivateServicesParkingDto.setParkingId(objPrivateServicesParkingEntity.getParkingId());
-			objPrivateServicesParkingDto.setParkingCode(objParkingEntity.getParkingCode());
-			objPrivateServicesParkingDto.setPrivateServiceId(objPrivateServicesParkingEntity.getPrivateServiceId());
-			objPrivateServicesParkingDto.setParkingServiceName(objPrivateServicesEntity.getName());
-			objPrivateServicesParkingDto.setCreatedAt(objPrivateServicesParkingEntity.getCreatedAt());
-			objPrivateServicesParkingDto.setStatus(objPrivateServicesParkingEntity.getStatus());
-
-		}
-		return objPrivateServicesParkingDto;
 	}
 
 	/**

@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.cis.common.util.DateTimeUtil;
+import net.cis.constants.CustomerConstans;
 import net.cis.constants.NotificationType;
+import net.cis.constants.NotificationTypeEnum;
+import net.cis.dto.CustomerNotificationDto;
 import net.cis.dto.NotificationCustomerDto;
 import net.cis.dto.NotificationDto;
 import net.cis.dto.NotificationParkingPlaceDto;
@@ -28,10 +31,12 @@ import net.cis.repository.NotificationCustomerRepository;
 import net.cis.repository.NotificationParkingPlaceRepository;
 import net.cis.repository.NotificationRepository;
 import net.cis.repository.NotificationTypeRepository;
+import net.cis.service.CustomerService;
 import net.cis.service.EmailService;
 import net.cis.service.NotificationService;
 import net.cis.service.ParkingContractService;
 import net.cis.service.ParkingService;
+import net.cis.service.PushNotificationService;
 import net.cis.service.SmsService;
 import net.cis.service.UserService;
 
@@ -64,6 +69,11 @@ public class NotificationServiceImpl implements NotificationService {
 	@Autowired
 	ParkingService parkingService;
 
+	@Autowired
+	private PushNotificationService pushNotificationService;
+
+	@Autowired
+	CustomerService customerService;
 	ModelMapper mapper;
 
 	@PostConstruct
@@ -130,6 +140,7 @@ public class NotificationServiceImpl implements NotificationService {
 		// lay danh sach khach hang ve thang theo diem do
 		List<ParkingContractInfoDto> lstParkingContractInfoDto = parkingContractService
 				.findParkingContractInfo(ticketCriteria);
+		List<String> lstDeviceId = new ArrayList<>();
 		List<String> lstPhone = new ArrayList<>();
 		List<String> lstEmail = new ArrayList<>();
 		// thuc hien luu history Notification
@@ -155,6 +166,9 @@ public class NotificationServiceImpl implements NotificationService {
 			if (!StringUtils.isEmpty(objParkingContractInfoDto.getPhone2())) {
 				lstPhone.add(objParkingContractInfoDto.getPhone2());
 			}
+			if (!StringUtils.isEmpty(objParkingContractInfoDto.getToken())) {
+				lstDeviceId.add(objParkingContractInfoDto.getToken().split(";")[0]);
+			}
 		}
 
 		// thuc hien tao NotificationParkingPlace
@@ -174,6 +188,8 @@ public class NotificationServiceImpl implements NotificationService {
 			saveNotificationType(objNotificationTypeDto);
 			if (NotificationType.NOTIFICATION == type) {
 				// notification
+				pushNotificationService.sendNotificationForPlayerIds(lstDeviceId, NotificationTypeEnum.OTHER, title,
+						content);
 			} else if (NotificationType.EMAIL == type) {
 				// email
 				emailService.sendASynchronousMail(title, content, lstEmail.toArray(new String[lstEmail.size()]));
@@ -222,6 +238,8 @@ public class NotificationServiceImpl implements NotificationService {
 		List<NotificationDto> rtn = new ArrayList<>();
 		source.stream().map((entity) -> {
 			NotificationDto dto = new NotificationDto();
+			// isRead
+			dto.setIsRead(entity.getIsRead());
 			// lay thong tin notfication
 			NotificationEntity notification = notificationRepository.findOne(entity.getNotificationId());
 			mapper.map(notification, dto);
@@ -233,13 +251,62 @@ public class NotificationServiceImpl implements NotificationService {
 				lstTypes.add(notificationTypeEntity.getType());
 			}
 			dto.setTypes(lstTypes);
-			dto.setParkingId(notificationParkingPlaceEntity.getParkingId());
+			dto.setParkingId(
+					notificationParkingPlaceEntity != null ? notificationParkingPlaceEntity.getParkingId() : 0L);
 
 			return dto;
 		}).forEachOrdered((dto) -> {
 			rtn.add(dto);
 		});
 		return rtn;
+	}
+
+	@Override
+	public NotificationCustomerDto findNotificationCustomer(Long cusId, Long notificationId) {
+		NotificationCustomerEntity entity = notificationCustomerRepository.findByCusIdAndNotificationId(cusId,
+				notificationId);
+		if (entity == null)
+			return null;
+		NotificationCustomerDto notificationCustomerDto = new NotificationCustomerDto();
+		mapper.map(entity, notificationCustomerDto);
+		return notificationCustomerDto;
+	}
+
+	@Override
+	public void pushNotificationToCustomer(String title, String content, String createdBy, Long cusId)
+			throws Exception {
+		// thuc hien tim kiem devive cuar cusId
+		List<CustomerNotificationDto> lstCustomerNotificationDto = customerService
+				.findCustomerNotificationByCusId(cusId, CustomerConstans.CUSTOMER_NOTIFICATION_SUBSCRICE);
+		if (lstCustomerNotificationDto == null || lstCustomerNotificationDto.size() == 0) {
+			throw new Exception("Không tồn tại device của customer");
+		}
+		List<String> playerIds = new ArrayList<>();
+
+		for (CustomerNotificationDto dto : lstCustomerNotificationDto) {
+			playerIds.add(dto.getToken().split(";")[0]);
+		}
+		// thuc hien luu history Notification
+		NotificationDto objNotificationHistoryDto = new NotificationDto();
+		objNotificationHistoryDto.setTitle(title);
+		objNotificationHistoryDto.setContent(content);
+		objNotificationHistoryDto.setCreatedBy(Long.parseLong(createdBy));
+		objNotificationHistoryDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+		objNotificationHistoryDto = saveNotification(objNotificationHistoryDto);
+		// thuc hien luu danh sach customer nhan tin
+		NotificationCustomerDto objNotificationCustomerDto = new NotificationCustomerDto();
+		objNotificationCustomerDto.setNotificationId(objNotificationHistoryDto.getId());
+		objNotificationCustomerDto.setCusId(cusId);
+		objNotificationCustomerDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+		objNotificationCustomerDto.setIsRead(CustomerConstans.CUSTOMER_NOTIFICATION_UN_READ);
+		saveNotificationCustomer(objNotificationCustomerDto);
+		// thuc hien save notification_type
+		NotificationTypeDto objNotificationTypeDto = new NotificationTypeDto();
+		objNotificationTypeDto.setNotificationId(objNotificationHistoryDto.getId());
+		objNotificationTypeDto.setType(NotificationType.NOTIFICATION);
+		objNotificationTypeDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+		saveNotificationType(objNotificationTypeDto);
+		pushNotificationService.sendNotificationForPlayerIds(playerIds, NotificationTypeEnum.OTHER, title, content);
 	}
 
 }

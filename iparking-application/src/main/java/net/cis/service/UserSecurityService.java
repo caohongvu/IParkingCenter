@@ -11,5 +11,7 @@ public interface UserSecurityService {
 
 	UserSecurityDto findByUsername(String username);
 
-	List<MenuDto> getMenuByRole(Integer roleId);
+	List<MenuDto> getMenuByRoleForWeb(Integer roleId);
+
+	List<MenuDto> getMenuByRoleForApp(Integer roleId);
 }
