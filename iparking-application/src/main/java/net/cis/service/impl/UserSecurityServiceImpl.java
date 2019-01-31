@@ -98,6 +98,7 @@ public class UserSecurityServiceImpl implements UserSecurityService {
 			menuChild.setParent_id((int) value[0]);
 			menuChild.setIcon(value[12] != null ? value[12].toString() : null);
 			menuChild.setLink(value[13] != null ? value[13].toString() : null);
+			menuChild.setIsMenu(value[15] == Boolean.TRUE ? 1 : 0);
 			menuChilds.add(menuChild);
 
 			if (start == lst.size() - 1) {
