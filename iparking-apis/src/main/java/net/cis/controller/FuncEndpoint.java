@@ -102,7 +102,7 @@ public class FuncEndpoint {
 			@RequestParam(value = "label") String label, @RequestParam(value = "desc") String desc,
 			@RequestParam(value = "status") int status,
 			@RequestParam(value = "parent_id", required = false) Long parentId,
-			@RequestParam(name = "type") Integer type) {
+			@RequestParam(name = "type") Integer type, @RequestParam(name = "is-menu") Integer isMenu) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -158,6 +158,7 @@ public class FuncEndpoint {
 			} else
 				dto.setLevel(UserConstans.FUNC_LEVEL_1);
 			dto.setType(type);
+			dto.setIsMenu(isMenu);
 			dto = funcService.create(dto);
 			responseApi.setData(dto);
 			responseApi.setError(errorDto);
@@ -179,7 +180,8 @@ public class FuncEndpoint {
 			@RequestParam(value = "desc", required = false) String desc,
 			@RequestParam(value = "status", required = false) Integer status,
 			@RequestParam(value = "parent_id", required = false) Long parentId,
-			@RequestParam(name = "type", required = false) Integer type) {
+			@RequestParam(name = "type", required = false) Integer type,
+			@RequestParam(name = "is-menu") Integer isMenu) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
@@ -226,6 +228,7 @@ public class FuncEndpoint {
 				dto.setLevel(UserConstans.FUNC_LEVEL_2);
 			}
 			dto.setType(type);
+			dto.setIsMenu(isMenu);
 			dto = funcService.update(dto);
 			responseApi.setError(errorDto);
 			responseApi.setData(dto);

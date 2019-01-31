@@ -12,6 +12,15 @@ public class FuncDto {
 	private String icon;
 	private String link;
 	private Integer type;
+	private Integer isMenu;
+
+	public Integer getIsMenu() {
+		return isMenu;
+	}
+
+	public void setIsMenu(Integer isMenu) {
+		this.isMenu = isMenu;
+	}
 
 	public Integer getType() {
 		return type;
