@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
+import net.cis.dto.NotificationCustomerDto;
 import net.cis.dto.NotificationDto;
 import net.cis.dto.ParkingActorDto;
 import net.cis.dto.ParkingDto;
@@ -176,6 +177,54 @@ public class NotificationEndpoint {
 					.findNotificationCustomer(Long.parseLong(cusId));
 			responseApi.setError(errorDto);
 			responseApi.setData(lstResult);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
+
+	/**
+	 * liemnh cap nhat customer notification
+	 * 
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/updateCustomerNofitication", method = RequestMethod.POST)
+	@ApiOperation("Cap nhat customer notification")
+	public @ResponseBody ResponseApi updateNotificationRead(HttpServletRequest request,
+			@RequestParam(name = "notification-id") Long notificationId,
+			@RequestParam(name = "isRead") Integer isRead) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			String cusId = TokenAuthenticationService.getAuthenticationInfo(request);
+			if (StringUtils.isEmpty(cusId)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// tim kiem thong tin customer notification
+			NotificationCustomerDto objNotificationCustomer = notificationHistoryService
+					.findNotificationCustomer(Long.parseLong(cusId), notificationId);
+			if (objNotificationCustomer == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Notification not found");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// thu hien cap nhat
+			objNotificationCustomer.setIsRead(isRead);
+			objNotificationCustomer = notificationHistoryService.saveNotificationCustomer(objNotificationCustomer);
+			responseApi.setError(errorDto);
+			responseApi.setData(objNotificationCustomer);
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();

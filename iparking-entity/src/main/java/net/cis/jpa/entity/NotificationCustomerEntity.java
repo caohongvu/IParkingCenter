@@ -26,6 +26,17 @@ public class NotificationCustomerEntity {
 	@Column(name = "created_at")
 	private Date createdAt;
 
+	@Column(name = "isRead")
+	private Integer isRead;
+
+	public Integer getIsRead() {
+		return isRead;
+	}
+
+	public void setIsRead(Integer isRead) {
+		this.isRead = isRead;
+	}
+
 	public Long getNotificationId() {
 		return notificationId;
 	}

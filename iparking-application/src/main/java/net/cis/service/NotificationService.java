@@ -25,4 +25,6 @@ public interface NotificationService {
 
 	NotificationTypeDto saveNotificationType(NotificationTypeDto notificationTypeDto);
 
+	NotificationCustomerDto findNotificationCustomer(Long cusId, Long notificationId);
+
 }
