@@ -29,3 +29,4 @@ iparking-apis/.settings/org.eclipse.wst.common.component
 *.pom.xml
 /target
 /target
+/iparking-application/.settings
