@@ -235,4 +235,47 @@ public class NotificationEndpoint {
 			return responseApi;
 		}
 	}
+
+	/**
+	 * liemnh Thuc hien gui thong bao den customer cua 1 diem dich vu
+	 * 
+	 * @param request
+	 * @param parkingCode
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/push-to-customer", method = RequestMethod.POST)
+	@ApiOperation("push (Notification, Email, Sms)")
+	public @ResponseBody ResponseApi getCompany(HttpServletRequest request, @RequestParam(name = "title") String title,
+			@RequestParam(name = "content", required = false) String content,
+			@RequestParam(name = "cus-id") Long cusId) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			String supervisorId = TokenAuthenticationService.getAuthenticationInfo(request);
+			if (StringUtils.isEmpty(supervisorId)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			if (StringUtils.isEmpty(title)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Title empty");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			notificationHistoryService.pushNotificationToCustomer(title, content, supervisorId, cusId);
+			responseApi.setError(errorDto);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
 }

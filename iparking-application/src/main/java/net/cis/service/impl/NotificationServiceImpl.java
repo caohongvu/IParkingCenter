@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.cis.common.util.DateTimeUtil;
+import net.cis.constants.CustomerConstans;
 import net.cis.constants.NotificationType;
 import net.cis.constants.NotificationTypeEnum;
+import net.cis.dto.CustomerNotificationDto;
 import net.cis.dto.NotificationCustomerDto;
 import net.cis.dto.NotificationDto;
 import net.cis.dto.NotificationParkingPlaceDto;
@@ -29,6 +31,7 @@ import net.cis.repository.NotificationCustomerRepository;
 import net.cis.repository.NotificationParkingPlaceRepository;
 import net.cis.repository.NotificationRepository;
 import net.cis.repository.NotificationTypeRepository;
+import net.cis.service.CustomerService;
 import net.cis.service.EmailService;
 import net.cis.service.NotificationService;
 import net.cis.service.ParkingContractService;
@@ -69,6 +72,8 @@ public class NotificationServiceImpl implements NotificationService {
 	@Autowired
 	private PushNotificationService pushNotificationService;
 
+	@Autowired
+	CustomerService customerService;
 	ModelMapper mapper;
 
 	@PostConstruct
@@ -264,6 +269,43 @@ public class NotificationServiceImpl implements NotificationService {
 		NotificationCustomerDto notificationCustomerDto = new NotificationCustomerDto();
 		mapper.map(entity, notificationCustomerDto);
 		return notificationCustomerDto;
+	}
+
+	@Override
+	public void pushNotificationToCustomer(String title, String content, String createdBy, Long cusId)
+			throws Exception {
+		// thuc hien tim kiem devive cuar cusId
+		List<CustomerNotificationDto> lstCustomerNotificationDto = customerService
+				.findCustomerNotificationByCusId(cusId, CustomerConstans.CUSTOMER_NOTIFICATION_SUBSCRICE);
+		if (lstCustomerNotificationDto == null || lstCustomerNotificationDto.size() == 0) {
+			throw new Exception("Không tồn tại device của customer");
+		}
+		List<String> playerIds = new ArrayList<>();
+
+		for (CustomerNotificationDto dto : lstCustomerNotificationDto) {
+			playerIds.add(dto.getToken().split(";")[0]);
+		}
+		// thuc hien luu history Notification
+		NotificationDto objNotificationHistoryDto = new NotificationDto();
+		objNotificationHistoryDto.setTitle(title);
+		objNotificationHistoryDto.setContent(content);
+		objNotificationHistoryDto.setCreatedBy(Long.parseLong(createdBy));
+		objNotificationHistoryDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+		objNotificationHistoryDto = saveNotification(objNotificationHistoryDto);
+		// thuc hien luu danh sach customer nhan tin
+		NotificationCustomerDto objNotificationCustomerDto = new NotificationCustomerDto();
+		objNotificationCustomerDto.setNotificationId(objNotificationHistoryDto.getId());
+		objNotificationCustomerDto.setCusId(cusId);
+		objNotificationCustomerDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+		objNotificationCustomerDto.setIsRead(CustomerConstans.CUSTOMER_NOTIFICATION_UN_READ);
+		saveNotificationCustomer(objNotificationCustomerDto);
+		// thuc hien save notification_type
+		NotificationTypeDto objNotificationTypeDto = new NotificationTypeDto();
+		objNotificationTypeDto.setNotificationId(objNotificationHistoryDto.getId());
+		objNotificationTypeDto.setType(NotificationType.NOTIFICATION);
+		objNotificationTypeDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+		saveNotificationType(objNotificationTypeDto);
+		pushNotificationService.sendNotificationForPlayerIds(playerIds, NotificationTypeEnum.OTHER, title, content);
 	}
 
 }
