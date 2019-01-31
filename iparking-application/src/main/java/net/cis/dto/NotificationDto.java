@@ -11,6 +11,7 @@ public class NotificationDto {
 	private String title;
 	private String content;
 	private String contentSms;
+	private String data;
 	private Date createdAt;
 	private Long createdBy;
 
@@ -24,6 +25,14 @@ public class NotificationDto {
 	private List<Integer> types;
 	@JsonInclude(Include.NON_NULL)
 	private Integer isRead;
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
 
 	public Integer getIsRead() {
 		return isRead;
