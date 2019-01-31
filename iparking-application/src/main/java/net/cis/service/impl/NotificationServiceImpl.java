@@ -251,7 +251,8 @@ public class NotificationServiceImpl implements NotificationService {
 				lstTypes.add(notificationTypeEntity.getType());
 			}
 			dto.setTypes(lstTypes);
-			dto.setParkingId(notificationParkingPlaceEntity.getParkingId());
+			dto.setParkingId(
+					notificationParkingPlaceEntity != null ? notificationParkingPlaceEntity.getParkingId() : 0L);
 
 			return dto;
 		}).forEachOrdered((dto) -> {
