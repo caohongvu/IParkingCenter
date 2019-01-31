@@ -2,23 +2,19 @@ package net.cis.dto;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 public class NotificationCustomerDto {
 	private long id;
 	private Long notificationId;
 	private Long cusId;
 	private Date createdAt;
-	@JsonInclude(Include.NON_NULL)
-	private NotificationDto notification;
+	private Integer isRead;
 
-	public NotificationDto getNotification() {
-		return notification;
+	public Integer getIsRead() {
+		return isRead;
 	}
 
-	public void setNotification(NotificationDto notification) {
-		this.notification = notification;
+	public void setIsRead(Integer isRead) {
+		this.isRead = isRead;
 	}
 
 	public Date getCreatedAt() {

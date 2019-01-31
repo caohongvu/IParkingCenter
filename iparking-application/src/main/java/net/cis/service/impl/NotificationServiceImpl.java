@@ -233,6 +233,8 @@ public class NotificationServiceImpl implements NotificationService {
 		List<NotificationDto> rtn = new ArrayList<>();
 		source.stream().map((entity) -> {
 			NotificationDto dto = new NotificationDto();
+			// isRead
+			dto.setIsRead(entity.getIsRead());
 			// lay thong tin notfication
 			NotificationEntity notification = notificationRepository.findOne(entity.getNotificationId());
 			mapper.map(notification, dto);
@@ -251,6 +253,17 @@ public class NotificationServiceImpl implements NotificationService {
 			rtn.add(dto);
 		});
 		return rtn;
+	}
+
+	@Override
+	public NotificationCustomerDto findNotificationCustomer(Long cusId, Long notificationId) {
+		NotificationCustomerEntity entity = notificationCustomerRepository.findByCusIdAndNotificationId(cusId,
+				notificationId);
+		if (entity == null)
+			return null;
+		NotificationCustomerDto notificationCustomerDto = new NotificationCustomerDto();
+		mapper.map(entity, notificationCustomerDto);
+		return notificationCustomerDto;
 	}
 
 }

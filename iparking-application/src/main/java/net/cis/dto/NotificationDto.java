@@ -20,7 +20,18 @@ public class NotificationDto {
 	private String createdByFullName;
 	@JsonInclude(Include.NON_NULL)
 	private Long parkingId;
+	@JsonInclude(Include.NON_NULL)
 	private List<Integer> types;
+	@JsonInclude(Include.NON_NULL)
+	private Integer isRead;
+
+	public Integer getIsRead() {
+		return isRead;
+	}
+
+	public void setIsRead(Integer isRead) {
+		this.isRead = isRead;
+	}
 
 	public Long getParkingId() {
 		return parkingId;
