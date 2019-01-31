@@ -26,12 +26,15 @@ import net.cis.constants.UserConstans;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
+import net.cis.dto.CustomerNotificationDto;
 import net.cis.dto.MenuDto;
 import net.cis.jpa.entity.CustomerCarEntity;
 import net.cis.jpa.entity.CustomerEntity;
 import net.cis.jpa.entity.CustomerInfoEntity;
+import net.cis.jpa.entity.CustomerNotificationEntity;
 import net.cis.repository.CustomerCarRepository;
 import net.cis.repository.CustomerInfoRepository;
+import net.cis.repository.CustomerNotificationRepository;
 import net.cis.repository.CustomerRepository;
 import net.cis.service.CustomerService;
 import net.cis.utils.RestfulUtil;
@@ -49,6 +52,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	CustomerInfoRepository customerInfoRepository;
+
+	@Autowired
+	CustomerNotificationRepository customerNotificationRepository;
 
 	ModelMapper mapper;
 
@@ -495,4 +501,26 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 		return result;
 	}
+
+	@Override
+	public List<CustomerNotificationDto> findCustomerNotificationByCusId(long cusId, Integer subscrice)
+			throws Exception {
+		List<CustomerNotificationEntity> entity = customerNotificationRepository.findByCusIdAndSubscrice(cusId,
+				subscrice);
+		if (entity == null) {
+			return null;
+		}
+		return this.mapCustomerNotification(entity);
+	}
+
+	private List<CustomerNotificationDto> mapCustomerNotification(List<CustomerNotificationEntity> source) {
+		List<CustomerNotificationDto> rtn = new ArrayList<>();
+		for (CustomerNotificationEntity entity : source) {
+			CustomerNotificationDto dto = new CustomerNotificationDto();
+			mapper.map(entity, dto);
+			rtn.add(dto);
+		}
+		return rtn;
+	}
+
 }

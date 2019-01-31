@@ -27,4 +27,6 @@ public interface NotificationService {
 
 	NotificationCustomerDto findNotificationCustomer(Long cusId, Long notificationId);
 
+	void pushNotificationToCustomer(String title, String content, String createdBy, Long cusId) throws Exception;
+
 }

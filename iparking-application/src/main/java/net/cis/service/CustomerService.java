@@ -7,6 +7,7 @@ import java.util.Map;
 import net.cis.dto.CustomerCarDto;
 import net.cis.dto.CustomerDto;
 import net.cis.dto.CustomerInfoDto;
+import net.cis.dto.CustomerNotificationDto;
 import net.cis.dto.MenuDto;
 
 public interface CustomerService {
@@ -54,4 +55,6 @@ public interface CustomerService {
 			throws Exception;
 
 	List<MenuDto> getMenuByRoleForWeb(Integer roleId);
+
+	List<CustomerNotificationDto> findCustomerNotificationByCusId(long cusId, Integer subscrice) throws Exception;
 }
