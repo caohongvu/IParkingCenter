@@ -16,11 +16,12 @@ import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.MessageUtil;
 import net.cis.common.util.PasswordGenerator;
 import net.cis.common.web.BaseEndpoint;
+import net.cis.constants.UserConstans;
 import net.cis.dto.MenuDto;
 import net.cis.dto.ResponseDto;
+import net.cis.dto.UserDto;
 import net.cis.dto.UserInfo;
 import net.cis.dto.UserSecurityDto;
-import net.cis.jpa.entity.UserEntity;
 import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.UserSecurityService;
 import net.cis.service.UserService;
@@ -62,11 +63,15 @@ public class UserEndpoint extends BaseEndpoint {
 				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_WRONG_PASS);
 				return responseDto;
 			}
-			UserEntity objUserEntity = userService.findByUsername(username);
+			UserDto objUserDto = userService.findByUsername(username);
+			if (UserConstans.USER_DISABLE == objUserDto.getStatus()) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_USER_LOCK);
+				return responseDto;
+			}
 			responseDto.setCode(HttpStatus.OK.toString());
 			UserInfo userInfo = new UserInfo();
-
-			userInfo.setToken(TokenAuthenticationService.createTokenUser(String.valueOf(objUserEntity.getId()),
+			userInfo.setToken(TokenAuthenticationService.createTokenUser(String.valueOf(objUserDto.getId()),
 					objUserSecurityDto.getGr(), objUserSecurityDto.getRole(),
 					objUserSecurityDto.getRoleDelegatePayment() == 1 ? Boolean.TRUE : Boolean.FALSE));
 			List<MenuDto> menus = userSecurityService.getMenuByRoleForWeb(objUserSecurityDto.getRole());
@@ -108,11 +113,15 @@ public class UserEndpoint extends BaseEndpoint {
 				responseDto.setMessage(MessageUtil.MESSAGE_CUSTOMER_WRONG_PASS);
 				return responseDto;
 			}
-			UserEntity objUserEntity = userService.findByUsername(username);
+			UserDto objUserDto = userService.findByUsername(username);
+			if (UserConstans.USER_DISABLE == objUserDto.getStatus()) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_USER_LOCK);
+				return responseDto;
+			}
 			responseDto.setCode(HttpStatus.OK.toString());
 			UserInfo userInfo = new UserInfo();
-
-			userInfo.setToken(TokenAuthenticationService.createTokenUser(String.valueOf(objUserEntity.getId()),
+			userInfo.setToken(TokenAuthenticationService.createTokenUser(String.valueOf(objUserDto.getId()),
 					objUserSecurityDto.getGr(), objUserSecurityDto.getRole(),
 					objUserSecurityDto.getRoleDelegatePayment() == 1 ? Boolean.TRUE : Boolean.FALSE));
 			List<MenuDto> menus = userSecurityService.getMenuByRoleForApp(objUserSecurityDto.getRole());

@@ -91,6 +91,11 @@ public class FuncServiceImpl implements FuncService {
 		for (FuncEntity entity : source) {
 			FuncDto dto = new FuncDto();
 			mapper.map(entity, dto);
+			if (entity.getParentId() != null) {
+				FuncEntity entityParent = funcRepository.findOne(Long.parseLong(entity.getParentId().toString()));
+				if (entityParent != null)
+					dto.setParentName(entityParent.getName());
+			}
 			rtn.add(dto);
 		}
 		return rtn;
