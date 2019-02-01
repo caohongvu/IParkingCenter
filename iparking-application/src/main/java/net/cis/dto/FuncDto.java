@@ -7,12 +7,21 @@ public class FuncDto {
 	private String description;
 	private Integer level;
 	private Integer parentId;
+	private String parentName;
 	private Integer sort;
 	private Integer status;
 	private String icon;
 	private String link;
 	private Integer type;
 	private Integer isMenu;
+
+	public String getParentName() {
+		return parentName;
+	}
+
+	public void setParentName(String parentName) {
+		this.parentName = parentName;
+	}
 
 	public Integer getIsMenu() {
 		return isMenu;

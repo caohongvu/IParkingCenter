@@ -109,9 +109,9 @@ public class UserServiceImpl implements UserService {
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseApi save(UserDto userDto) throws JSONException {
 
-		//String createUserURL = "https://admapi.live.iparkingstg.com/p/create/account";
+		// String createUserURL =
+		// "https://admapi.live.iparkingstg.com/p/create/account";
 		String createUserURL = URLConstants.URL_CREATE_USER;
-
 
 		List<NameValuePair> formParams = new ArrayList<>();
 
@@ -231,18 +231,21 @@ public class UserServiceImpl implements UserService {
 
 	// FIND BY USERNAME
 	@Override
-	public UserEntity findByUsername(String username) {
-		UserEntity entity = new UserEntity();
-		entity = userRepository.findByUsername(username);
-
-		return entity;
+	public UserDto findByUsername(String username) {
+		UserEntity entity = userRepository.findByUsername(username);
+		if (entity == null) {
+			return null;
+		}
+		UserDto dto = new UserDto();
+		mapper.map(entity, dto);
+		return dto;
 	}
 
 	// UPDATE
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseApi update(UserDto userDto) throws JSONException {
-		
+
 		String updateUserURL = URLConstants.URL_UPDATE_USER;
 
 		List<NameValuePair> formParams = new ArrayList<>();

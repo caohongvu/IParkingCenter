@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 import net.cis.dto.ResponseApi;
 import net.cis.dto.UserDto;
-import net.cis.jpa.entity.UserEntity;
 
 public interface UserService {
 
@@ -17,7 +16,7 @@ public interface UserService {
 
 	UserDto findById(int Id);
 
-	UserEntity findByUsername(String username);
+	UserDto findByUsername(String username);
 
 	ResponseApi update(UserDto userDto) throws JSONException;
 
