@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import net.cis.dto.ParkingContractDto;
 import net.cis.dto.ParkingContractInfoDto;
 import net.cis.dto.ParkingContractOutOfDateDto;
+import net.cis.dto.ParkingContractOutOfDateEndPointDto;
 import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.jpa.entity.ParkingContractEntity;
 
@@ -33,4 +34,6 @@ public interface ParkingContractService {
 	List<ParkingContractEntity> findByParkingPlace(String code);
 
 	List<ParkingContractEntity> findByCompany(String company);
+	
+	ParkingContractOutOfDateEndPointDto findParkingContractOutOfDateFooter(ParkingContractCriteria ticketCriteria);
 }
