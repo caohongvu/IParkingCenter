@@ -158,6 +158,7 @@ public class NotificationServiceImpl implements NotificationService {
 			objNotificationCustomerDto.setNotificationId(objNotificationHistoryDto.getId());
 			objNotificationCustomerDto.setCusId(objParkingContractInfoDto.getCusId());
 			objNotificationCustomerDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			objNotificationCustomerDto.setIsRead(CustomerConstans.CUSTOMER_NOTIFICATION_UN_READ);
 			saveNotificationCustomer(objNotificationCustomerDto);
 
 			if (!StringUtils.isEmpty(objParkingContractInfoDto.getEmail())) {
