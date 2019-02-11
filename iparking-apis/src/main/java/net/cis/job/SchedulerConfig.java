@@ -175,6 +175,26 @@ public class SchedulerConfig implements SchedulingConfigurer {
 		return Boolean.FALSE;
 	}
 
+	private String cronJobCheckWarngNoRevenueConfig() {
+		String cronTabExpression = PropertiesUtils.getProperty("JOB_CHECK_WARNG_NO_REVENUE");
+		if (StringUtils.isEmpty(cronTabExpression))
+			cronTabExpression = "0/5 * * * * *";
+		LOGGER.info("cronJobCheckWarngNoRevenueConfig partten:" + cronTabExpression);
+		return cronTabExpression;
+	}
+
+	private boolean cronJobCheckWarngNoRevenueEnableConfig() {
+		String strEnable = PropertiesUtils.getProperty("JOB_CHECK_WARNG_NO_REVENUE_ENABLE");
+		LOGGER.info("cronJobJobCheckWarngNoRevenueEnableConfig: " + strEnable);
+		if (StringUtils.isEmpty(strEnable)) {
+			return Boolean.FALSE;
+		}
+		if (ParkingCenterConstants.JOB_ENABLE.equals(strEnable)) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
+
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
 
@@ -292,5 +312,22 @@ public class SchedulerConfig implements SchedulingConfigurer {
 				return nextExec;
 			}
 		});
+
+		// job check waring no revenue
+		taskRegistrar.addTriggerTask(new Runnable() {
+			@Override
+			public void run() {
+				if (cronJobCheckWarngNoRevenueEnableConfig())
+					jobService.checkWaringNoRevenue();
+			}
+		}, new Trigger() {
+			@Override
+			public Date nextExecutionTime(TriggerContext triggerContext) {
+				CronTrigger trigger = new CronTrigger(cronJobCheckWarngNoRevenueConfig());
+				Date nextExec = trigger.nextExecutionTime(triggerContext);
+				return nextExec;
+			}
+		});
+
 	}
 }

@@ -17,4 +17,6 @@ public interface EmailService {
 
 	public void sendEmailChangePasswordSuccess(String title, String content, String emailTo) throws Exception;
 
+	public void sendMailCheckWaringNoRevenue(String title, String content) throws Exception;
+
 }
