@@ -12,4 +12,7 @@ public class UserConstans {
 
 	public static final int USER_ENABLE = 1;
 	public static final int USER_DISABLE = 0;
+	
+	public static final int USER_ROLE_ENABLE = 1;
+	public static final int USER_ROLE_DISABLE = 0;
 }

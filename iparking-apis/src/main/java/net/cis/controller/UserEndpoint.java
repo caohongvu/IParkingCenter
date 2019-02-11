@@ -19,10 +19,12 @@ import net.cis.common.web.BaseEndpoint;
 import net.cis.constants.UserConstans;
 import net.cis.dto.MenuDto;
 import net.cis.dto.ResponseDto;
+import net.cis.dto.RoleDto;
 import net.cis.dto.UserDto;
 import net.cis.dto.UserInfo;
 import net.cis.dto.UserSecurityDto;
 import net.cis.security.filter.TokenAuthenticationService;
+import net.cis.service.RoleService;
 import net.cis.service.UserSecurityService;
 import net.cis.service.UserService;
 
@@ -36,6 +38,9 @@ public class UserEndpoint extends BaseEndpoint {
 
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	RoleService roleService;
 
 	/**
 	 * liemnh customer dang nhap he thong
@@ -67,6 +72,13 @@ public class UserEndpoint extends BaseEndpoint {
 			if (UserConstans.USER_DISABLE == objUserDto.getStatus()) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 				responseDto.setMessage(MessageUtil.MESSAGE_USER_LOCK);
+				return responseDto;
+			}
+			// lay thong tin role
+			RoleDto roleDto = roleService.findOne(Long.parseLong(String.valueOf(objUserSecurityDto.getRole())));
+			if (UserConstans.USER_ROLE_DISABLE == roleDto.getStatus()) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_USER_ROLE_LOCK);
 				return responseDto;
 			}
 			responseDto.setCode(HttpStatus.OK.toString());
@@ -117,6 +129,13 @@ public class UserEndpoint extends BaseEndpoint {
 			if (UserConstans.USER_DISABLE == objUserDto.getStatus()) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
 				responseDto.setMessage(MessageUtil.MESSAGE_USER_LOCK);
+				return responseDto;
+			}
+			// lay thong tin role
+			RoleDto roleDto = roleService.findOne(Long.parseLong(String.valueOf(objUserSecurityDto.getRole())));
+			if (UserConstans.USER_ROLE_DISABLE == roleDto.getStatus()) {
+				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
+				responseDto.setMessage(MessageUtil.MESSAGE_USER_ROLE_LOCK);
 				return responseDto;
 			}
 			responseDto.setCode(HttpStatus.OK.toString());
