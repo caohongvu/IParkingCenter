@@ -38,4 +38,11 @@ public class ReportProportionPaymentServiceImpl implements ReportProportionPayme
 		return entities;
 	}
 
+	@Override
+	public List<ReportProportionPaymentDto> getProportionPaymentByDay(long fromDate, long toDate) {
+		List<ReportProportionPaymentDto> entities = proportionPaymentRepository.findByProportionPaymentEntity(fromDate,
+				toDate);
+		return entities;
+	}
+
 }

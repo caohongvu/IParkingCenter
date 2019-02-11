@@ -169,4 +169,25 @@ public class EmailServiceImpl implements EmailService {
 			}
 		});
 	}
+
+	@Override
+	public void sendMailCheckWaringNoRevenue(String title, String content) throws Exception {
+		String[] emailTo = new String[2];
+		// emailTo[0] = "operation_iparking@cis.net.vn";
+		// emailTo[1] = "long.ho@cis.net.vn";
+		emailTo[0] = "liem.nguyen@cis.net.vn";
+		emailTo[1] = "liem.nguyen@cis.net.vn";
+		mailSender.send(new MimeMessagePreparator() {
+			@Override
+			public void prepare(MimeMessage mimeMessage) throws Exception {
+				MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+				messageHelper.setFrom("automailer@cis.net.vn");
+				messageHelper.setTo(emailTo);
+				messageHelper.setSubject(title);
+				messageHelper.setText(content, true);
+			}
+		});
+
+	}
+
 }
