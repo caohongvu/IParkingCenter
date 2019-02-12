@@ -186,9 +186,11 @@ public class JobServiceImpl implements JobService {
 		emailContent.append(" <br />\n");
 		if (lstProportionPaymentDto != null && lstProportionPaymentDto.size() > 0) {
 			for (ReportProportionPaymentDto obj : lstProportionPaymentDto) {
-				emailContent.append("<strong> - ");
-				emailContent.append(obj.getParkingCode()).append(" - ").append(obj.getCompany());
-				emailContent.append(" </strong> <br />\n");
+				if (obj.getRevenue().equals(0D)) {
+					emailContent.append("<strong> - ");
+					emailContent.append(obj.getParkingCode()).append(" - ").append(obj.getCompany());
+					emailContent.append(" </strong> <br />\n");
+				}
 			}
 			try {
 				emailService.sendMailCheckWaringNoRevenue(title, emailContent.toString());

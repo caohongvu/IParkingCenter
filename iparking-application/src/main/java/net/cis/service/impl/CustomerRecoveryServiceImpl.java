@@ -29,4 +29,12 @@ public class CustomerRecoveryServiceImpl implements CustomerRecoveryService {
 		mapper.map(customerRecoveryRepository.save(entity), customerRecoveryDto);
 		return customerRecoveryDto;
 	}
+
+	@Override
+	public CustomerRecoveryDto find(Long cusId, Long checkSum) {
+		CustomerRecoveryDto dto = new CustomerRecoveryDto();
+		CustomerRecoveryEntity entity = customerRecoveryRepository.findByCusIdAndCheckSum(cusId, checkSum.toString());
+		mapper.map(entity, dto);
+		return dto;
+	}
 }

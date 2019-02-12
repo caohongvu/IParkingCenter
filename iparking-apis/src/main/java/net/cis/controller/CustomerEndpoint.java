@@ -34,6 +34,7 @@ import net.cis.common.util.MD5Util;
 import net.cis.common.util.MessageUtil;
 import net.cis.common.util.PasswordGenerator;
 import net.cis.common.util.Utils;
+import net.cis.common.util.constant.URLConstants;
 import net.cis.common.util.constant.UserConstant;
 import net.cis.constants.CustomerConstans;
 import net.cis.constants.ResponseErrorCodeConstants;
@@ -959,8 +960,59 @@ public class CustomerEndpoint {
 					sb.append(line).append("\n");
 				}
 			}
-			emailService.sendEmailResendPassword(CustomerConstans.CUSTOMER_TITLE_EMAIL_RESET_PASSWORD, sb.toString(),
-					"liemnh267@gmail.com");
+
+			SimpleDateFormat simple = new SimpleDateFormat("HHmmssddMMyyyy");
+
+			String finalURL = URLConstants.URL_RESEND_PASSWORD;
+			finalURL = finalURL.replace("{id}", String.valueOf(objCustomerInfoDto.getCusId()));
+			finalURL = finalURL.replace("{checksum}", checkSum.toString());
+			finalURL = finalURL.replace("{expire}", simple.format(expire));
+
+			emailService.sendEmailResendPassword(CustomerConstans.CUSTOMER_TITLE_EMAIL_RESET_PASSWORD,
+					sb.toString().replace("[LINK]", finalURL).replace("[ACCOUNT]", email), email);
+			responseApi.setError(errorDto);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
+
+	/**
+	 * liemnh resendPassword
+	 * 
+	 * @param captchaID
+	 * @return
+	 */
+	@RequestMapping(value = "/verifyResendPassword", method = RequestMethod.POST)
+	@ApiOperation("resendPassword")
+	public @ResponseBody ResponseApi verifyResendPassword(HttpServletRequest request,
+			@RequestParam(name = "cus-id") String cusId, @RequestParam(name = "checksum") String checksum,
+			@RequestParam(name = "expire") String expire) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			// tim kiem thong tin recovery
+			CustomerRecoveryDto dto = customerRecoveryService.find(Long.parseLong(cusId), Long.parseLong(checksum));
+			if (dto == null) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage(MessageUtil.MESSAGE_URL_EXPIRE);
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// thuc hien kiem tra thoi gian
+			if (dto.getExpire().before(DateTimeUtil.getCurrentDateTime())) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage(MessageUtil.MESSAGE_URL_EXPIRE);
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			responseApi.setError(errorDto);
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();
