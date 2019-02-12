@@ -62,10 +62,8 @@ public class ConfigEndpoint {
 		}
 		// lay cappId
 		long carpp_id = parkingActorDtos.get(0).getCppId();
-		String cppId = String.valueOf(carpp_id);
-
 		// lay ID company
-		ParkingDto parkingDto = parkingService.findByOldId(cppId);
+		ParkingDto parkingDto = parkingService.findByOldId(carpp_id);
 		int companyId = parkingDto.getCompany();
 
 		ResponseApi enpoint = configService.findAllConfigOfCompany(companyId);

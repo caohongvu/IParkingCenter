@@ -76,7 +76,7 @@ public class ParkingPlaceEndpoint {
 
 	@RequestMapping(value = "/{id}/getByOldId", method = RequestMethod.GET)
 	public @ResponseBody ParkingDto c(@PathVariable("id") String oldId) throws Exception {
-		ParkingDto parkingDto = parkingService.findByOldId(oldId);
+		ParkingDto parkingDto = parkingService.findByOldId(Long.parseLong(oldId));
 		TicketCriteria ticketCriteria = new TicketCriteria();
 		ticketCriteria.setCppId(parkingDto.getOldId());
 		ticketCriteria.setInSession(1);
@@ -214,7 +214,7 @@ public class ParkingPlaceEndpoint {
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
-		ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+		ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 		if (objParkingDto == null) {
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage("Điểm dịch vụ không tồn tại");
@@ -256,7 +256,7 @@ public class ParkingPlaceEndpoint {
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
-		ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+		ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 		if (objParkingDto == null) {
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage("Điểm dịch vụ không tồn tại");
@@ -347,7 +347,7 @@ public class ParkingPlaceEndpoint {
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
-		ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+		ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 		if (objParkingDto == null) {
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage("Điểm dịch vụ không tồn tại");

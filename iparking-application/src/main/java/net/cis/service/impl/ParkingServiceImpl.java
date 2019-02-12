@@ -116,7 +116,7 @@ public class ParkingServiceImpl implements ParkingService {
 	}
 
 	@Override
-	public ParkingDto findByOldId(String oldId) {
+	public ParkingDto findByOldId(long oldId) {
 		ModelMapper mapper = new ModelMapper();
 		ParkingEntity entity = parkingRepository.findByOldId(oldId);
 		if (entity == null) {
@@ -242,7 +242,7 @@ public class ParkingServiceImpl implements ParkingService {
 			e.printStackTrace();
 		}
 
-		ParkingEntity entity = parkingRepository.findByOldId(parkingSynDto.getOldId());
+		ParkingEntity entity = parkingRepository.findByOldId(Long.parseLong(parkingSynDto.getOldId()));
 
 		mapper.map(entity, parkingDto);
 
@@ -260,7 +260,7 @@ public class ParkingServiceImpl implements ParkingService {
 		ParkingActorEntity actor = new ParkingActorEntity();
 		Date updatedAt = null;
 
-		ParkingEntity entity = parkingRepository.findByOldId(parkingSynDto.getOldId());
+		ParkingEntity entity = parkingRepository.findByOldId(Long.parseLong(parkingSynDto.getOldId()));
 
 		// MAN HINH UPDATE PROVIDERID
 		if (parkingSynDto.getUpdateCompany() == 1) {
