@@ -9,9 +9,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.cis.dto.ParkingDto;
 import net.cis.dto.ReportDelegatePaymentDto;
 import net.cis.jpa.entity.ReportDelegatePaymentEntity;
 import net.cis.repository.ReportDelegatePaymentRepository;
+import net.cis.service.ParkingService;
 import net.cis.service.ReportDelegatePaymentService;
 
 /**
@@ -23,6 +25,9 @@ public class ReportDelegatePaymentServiceImpl implements ReportDelegatePaymentSe
 	@Autowired
 	private ReportDelegatePaymentRepository reportDelegatePaymentRepository;
 
+	@Autowired
+	ParkingService parkingService;
+
 	ModelMapper mapper;
 
 	@PostConstruct
@@ -33,21 +38,31 @@ public class ReportDelegatePaymentServiceImpl implements ReportDelegatePaymentSe
 
 	@Override
 	public List<ReportDelegatePaymentDto> findByCarppIdsAndDate(List<Long> carppIds, String date) {
+		// danh sach diem do
+		List<ParkingDto> lstParkingDto = parkingService.findByCarppIds(carppIds);
+		// danh sach thanh toan ho
 		List<ReportDelegatePaymentEntity> entities = reportDelegatePaymentRepository
 				.findByCarppIdInAndCreatedDate(carppIds, date);
-		return this.map(entities);
+		return this.map(lstParkingDto, entities);
 	}
 
-	private List<ReportDelegatePaymentDto> map(List<ReportDelegatePaymentEntity> source) {
-
+	private List<ReportDelegatePaymentDto> map(List<ParkingDto> lstParkingDto,
+			List<ReportDelegatePaymentEntity> source) {
 		ArrayList<ReportDelegatePaymentDto> rtn = new ArrayList<>();
-		source.stream().map((entity) -> {
+		for (ParkingDto objParkingDto : lstParkingDto) {
 			ReportDelegatePaymentDto dto = new ReportDelegatePaymentDto();
-			mapper.map(entity, dto);
-			return dto;
-		}).forEachOrdered((dto) -> {
+			dto.setCarppId(objParkingDto.getOldId());
+			dto.setAddress(objParkingDto.getAddress());
+			dto.setCode(objParkingDto.getParkingCode());
+			dto.setAmount(0L);
+			for (ReportDelegatePaymentEntity entity : source) {
+				if (dto.getCarppId() == entity.getCarppId()) {
+					dto.setAmount(entity.getAmount());
+					break;
+				}
+			}
 			rtn.add(dto);
-		});
+		}
 		return rtn;
 	}
 

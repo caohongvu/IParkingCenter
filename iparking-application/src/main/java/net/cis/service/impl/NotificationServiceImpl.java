@@ -175,7 +175,7 @@ public class NotificationServiceImpl implements NotificationService {
 		// thuc hien tao NotificationParkingPlace
 		NotificationParkingPlaceDto objNotificationCpp = new NotificationParkingPlaceDto();
 		objNotificationCpp.setNotificationId(objNotificationHistoryDto.getId());
-		objNotificationCpp.setParkingId(Long.parseLong(objParkingDto.getOldId()));
+		objNotificationCpp.setParkingId(objParkingDto.getOldId());
 		objNotificationCpp.setCompanyId(objParkingDto.getCompany());
 		objNotificationCpp.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 		saveNotificationParkingPlace(objNotificationCpp);

@@ -51,7 +51,7 @@ public class ParkingServiceImpl implements ParkingService {
 
 	@Autowired
 	private ParkingPlaceFeatureReponsitory parkingPlaceFeatureServiceRepository;
-	
+
 	@Autowired
 	private ParkingInfoRepository parkingInfoRepository;
 
@@ -103,7 +103,7 @@ public class ParkingServiceImpl implements ParkingService {
 		mapper = new ModelMapper();
 		List<ParkingDto> dtos = this.findAll();
 		for (ParkingDto dto : dtos) {
-			this.parkingPlaceCache.put(dto.getOldId(), dto);
+			this.parkingPlaceCache.put(String.valueOf(dto.getOldId()), dto);
 			this.parkingPlaceCache.put(dto.getParkingCode(), dto);
 		}
 	}
@@ -160,7 +160,8 @@ public class ParkingServiceImpl implements ParkingService {
 		//
 		// List<NameValuePair> formParams = new ArrayList<>();
 		//
-		// String responseContent = RestfulUtil.getWithOutAccessToke(detailUserURL,
+		// String responseContent =
+		// RestfulUtil.getWithOutAccessToke(detailUserURL,
 		// null);
 		// JSONObject jsonObject = new JSONObject(responseContent);
 
@@ -202,7 +203,7 @@ public class ParkingServiceImpl implements ParkingService {
 
 		parkingDto.setLat(parkingSysDto.getLat());
 		parkingDto.setLng(parkingSysDto.getLng());
-		parkingDto.setOldId(parkingSysDto.getOldId());
+		parkingDto.setOldId(Long.parseLong(parkingSysDto.getOldId()));
 		parkingDto.setPhone(parkingSysDto.getPhone());
 		parkingDto.setParkingName("");
 
@@ -299,7 +300,8 @@ public class ParkingServiceImpl implements ParkingService {
 			List<ParkingActorEntity> listActorCurrent = parkingActorReponsitory
 					.findByCppId(Long.valueOf(parkingSynDto.getOldId()));
 
-			// List<ParkingActorEntity> listAdd = new ArrayList<ParkingActorEntity>();
+			// List<ParkingActorEntity> listAdd = new
+			// ArrayList<ParkingActorEntity>();
 			HashSet<ParkingActorEntity> listAdd = new HashSet<ParkingActorEntity>();
 			for (int i = 0; i < listAll.size(); i++) {
 				for (int j = 0; j < listActorCurrent.size(); j++) {
@@ -361,31 +363,34 @@ public class ParkingServiceImpl implements ParkingService {
 			JSONObject jsonObject = new JSONObject(parkingSynDto);
 			String list = jsonObject.getString("listPayment");
 			JSONObject objectPayment = new JSONObject(list);
-			
+
 			String paymentRule = objectPayment.getString("Payment");
 			String TTMThreshold = objectPayment.getString("TTMThreshold");
 
-			
 			ParkingInfoEntity infoEntity = new ParkingInfoEntity();
 			infoEntity.setPaymentRule(paymentRule);
 			infoEntity.setTimeAvg(Integer.parseInt(TTMThreshold));
 			infoEntity.setCarppId(Long.valueOf(parkingSynDto.getOldId()));
-		
-		
+
 			parkingInfoRepository.save(infoEntity);
 
 		}
-		//MAN HINH UPDATE METADATA
-		if(parkingSynDto.getUpdateMetadata() == 1) {
+		// MAN HINH UPDATE METADATA
+		if (parkingSynDto.getUpdateMetadata() == 1) {
 			ParkingInfoEntity infoEntity = new ParkingInfoEntity();
 			JSONObject jsonObject = new JSONObject(parkingSynDto);
 			System.out.println(jsonObject);
 			parkingInfoRepository.save(infoEntity);
 
-			
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<ParkingDto> findByCarppIds(List<Long> carppIds) {
+		List<ParkingEntity> lst = parkingRepository.findByOldIdIn(carppIds);
+		return this.map(lst);
 	}
 
 }

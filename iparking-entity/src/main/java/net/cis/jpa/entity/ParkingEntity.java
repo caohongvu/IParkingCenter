@@ -64,7 +64,7 @@ public class ParkingEntity {
 	private String lng;
 	
 	@Column(name="old_id")
-	private String oldId;
+	private long oldId;
 	
 	@Column(name="phone")
 	private String phone;
@@ -211,11 +211,11 @@ public class ParkingEntity {
 		this.lng = lng;
 	}
 
-	public String getOldId() {
+	public long getOldId() {
 		return oldId;
 	}
 
-	public void setOldId(String oldId) {
+	public void setOldId(long oldId) {
 		this.oldId = oldId;
 	}
 
