@@ -176,7 +176,7 @@ public class EmailServiceImpl implements EmailService {
 		// emailTo[0] = "operation_iparking@cis.net.vn";
 		// emailTo[1] = "long.ho@cis.net.vn";
 		emailTo[0] = "liem.nguyen@cis.net.vn";
-		emailTo[1] = "liem.nguyen@cis.net.vn";
+		emailTo[1] = "anh.nguyen@cis.net.vn";
 		mailSender.send(new MimeMessagePreparator() {
 			@Override
 			public void prepare(MimeMessage mimeMessage) throws Exception {
