@@ -125,7 +125,7 @@ public class InvoiceCenterServiceImpl implements InvoiceCenterService {
 		
 		ParkingDto parkingDto = parkingService.findByParkingCode(entity.getParkingPlace());
 		if (parkingDto != null) {
-			dto.setCppId(parkingDto.getOldId());
+			dto.setCppId(String.valueOf(parkingDto.getOldId()));
 		}
 		
 		CustomerDto customerDto = customerService.findCustomerByOldId(entity.getCusId());

@@ -78,7 +78,7 @@ public class ParkingPlaceEndpoint {
 	public @ResponseBody ParkingDto c(@PathVariable("id") String oldId) throws Exception {
 		ParkingDto parkingDto = parkingService.findByOldId(oldId);
 		TicketCriteria ticketCriteria = new TicketCriteria();
-		ticketCriteria.setCppId(Long.parseLong(parkingDto.getOldId()));
+		ticketCriteria.setCppId(parkingDto.getOldId());
 		ticketCriteria.setInSession(1);
 		ticketCriteria.setStatus(TicketConstants.PAID_TICKET);
 		Calendar calendar = Calendar.getInstance();
@@ -293,7 +293,7 @@ public class ParkingPlaceEndpoint {
 
 		String userName = res.getUsername();
 
-		history.setOldId(objParkingDto.getOldId());
+		history.setOldId(String.valueOf(objParkingDto.getOldId()));
 		history.setInfoUpdate(infoChange);
 		history.setUpdatedAt(dateFormat.format(date));
 		history.setUserName(userName);

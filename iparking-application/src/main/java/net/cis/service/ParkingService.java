@@ -26,16 +26,16 @@ public interface ParkingService {
 	ParkingDto findByParkingCode(String parkingCode);
 
 	List<ParkingDto> findByCompany(long company);
-	
+
 	List<ParkingEntity> findByCompanyId(int companyId);
-	
+
 	ParkingDto updateParkingPlace(ParkingDto parkingDto) throws JSONException;
-	
+
 	ParkingSynDto create(ParkingSynDto parkingSynDto) throws JSONException;
-	
+
 	ParkingSynDto updateAssignProvider(ParkingSynDto parkingSynDto) throws JSONException;
-	
+
 	ParkingSynDto updateParkingPlace(ParkingSynDto parkingSynDto) throws JSONException;
 
-
+	List<ParkingDto> findByCarppIds(List<Long> carppIds);
 }

@@ -19,4 +19,6 @@ public interface ParkingRepository extends JpaRepository<ParkingEntity, Long> {
 	public ParkingEntity findByParkingCodeIgnoreCase(String parkingCode);
 
 	public List<ParkingEntity> findByCompany(long company);
+
+	List<ParkingEntity> findByOldIdIn(List<Long> oldIds);
 }
