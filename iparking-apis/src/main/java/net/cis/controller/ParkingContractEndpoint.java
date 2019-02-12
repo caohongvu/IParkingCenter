@@ -23,6 +23,7 @@ import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingContractDto;
 import net.cis.dto.ParkingContractOutOfDateDto;
+import net.cis.dto.ParkingContractOutOfDateEndPointDto;
 import net.cis.dto.ResponseApi;
 import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.jpa.entity.ParkingContractEntity;
@@ -97,7 +98,9 @@ public class ParkingContractEndpoint {
 			objParkingContractCriteria.setCppCode(parkingCode);
 			List<ParkingContractOutOfDateDto> lstParkingContractDto = parkingContractService
 					.findParkingContractOutOfDate(objParkingContractCriteria, pageable);
-			response.setData(lstParkingContractDto);
+			ParkingContractOutOfDateEndPointDto endPointDto = parkingContractService.findParkingContractOutOfDateFooter(objParkingContractCriteria);
+			endPointDto.setParkingContractOutOfDateDtos(lstParkingContractDto);
+			response.setData(endPointDto);
 			response.setError(error);
 			return response;
 		} catch (Exception ex) {

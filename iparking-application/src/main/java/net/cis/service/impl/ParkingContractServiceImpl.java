@@ -15,12 +15,15 @@ import net.cis.dto.InvoiceCodeDto;
 import net.cis.dto.ParkingContractDto;
 import net.cis.dto.ParkingContractInfoDto;
 import net.cis.dto.ParkingContractOutOfDateDto;
+import net.cis.dto.ParkingContractOutOfDateEndPointDto;
 import net.cis.dto.ParkingDto;
 import net.cis.jpa.criteria.ParkingContractCriteria;
 import net.cis.jpa.entity.ParkingContractEntity;
 import net.cis.jpa.entity.ParkingContractInfoEntity;
 import net.cis.jpa.entity.ParkingContractOutOfDateEntity;
+import net.cis.jpa.entity.ParkingContractOutOfDateFooterEntity;
 import net.cis.repository.ParkingContractInfoRepository;
+import net.cis.repository.ParkingContractOutOfDateFooterRepository;
 import net.cis.repository.ParkingContractOutOfDateRepository;
 import net.cis.repository.ParkingContractRepository;
 import net.cis.service.InvoiceCenterService;
@@ -39,6 +42,9 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 
 	@Autowired
 	ParkingContractOutOfDateRepository parkingContractOutOfDateRepository;
+	
+	@Autowired
+	ParkingContractOutOfDateFooterRepository parkingContractOutOfDateFooterRepository;
 
 	@Autowired
 	ParkingContractInfoRepository parkingContractInfoRepository;
@@ -186,6 +192,20 @@ public class ParkingContractServiceImpl implements ParkingContractService {
 	@Override
 	public List<ParkingContractEntity> findByCompany(String company) {
 		return parkingContractRepository.findParkingContractByCompany(company);
+	}
+
+	@Override
+	public ParkingContractOutOfDateEndPointDto findParkingContractOutOfDateFooter(
+			ParkingContractCriteria ticketCriteria) {
+		// TODO Auto-generated method stub
+		ParkingContractOutOfDateEndPointDto parkingContractOutOfDateEndPointDto = new ParkingContractOutOfDateEndPointDto();
+		ParkingContractOutOfDateFooterEntity footerEntity = null;
+		footerEntity = parkingContractOutOfDateFooterRepository.findParkingContractOutOfDate(ticketCriteria.getCppCode());
+		if (footerEntity == null) {
+			footerEntity = new ParkingContractOutOfDateFooterEntity();
+		}
+		mapper.map(footerEntity, parkingContractOutOfDateEndPointDto);
+		return parkingContractOutOfDateEndPointDto;
 	}
 
 }
