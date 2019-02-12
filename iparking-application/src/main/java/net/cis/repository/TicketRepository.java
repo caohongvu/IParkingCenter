@@ -26,4 +26,5 @@ public interface TicketRepository  extends JpaRepository<TicketEntity, Long> {
 	public List<TicketEntity> findByMonthlyTicketInSession();
 	
 	List<TicketEntity> findByParkingPlace(long parkingPlace);
+
 }

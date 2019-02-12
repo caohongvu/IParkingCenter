@@ -590,7 +590,7 @@ public class CustomerEndpoint {
 			Map<String, Object> result = customerService.otpSignupCallGolang(phone, captcha, captchaID);
 			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-				errorDto.setMessage((String)result.get("Message"));
+				errorDto.setMessage((String) result.get("Message"));
 				responseDto.setError(errorDto);
 				return responseDto;
 			}
@@ -600,7 +600,7 @@ public class CustomerEndpoint {
 		} catch (Exception e) {
 			// TODO: handle exception
 			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
-			errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage(e.getMessage());
 			responseDto.setError(errorDto);
 			return responseDto;
@@ -643,7 +643,7 @@ public class CustomerEndpoint {
 			Map<String, Object> result = customerService.verifyOtpSignupCallGolang(phone, otp, ticket);
 			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-				errorDto.setMessage((String)result.get("Message"));
+				errorDto.setMessage((String) result.get("Message"));
 				responseDto.setError(errorDto);
 				return responseDto;
 			}
@@ -652,7 +652,7 @@ public class CustomerEndpoint {
 		} catch (Exception e) {
 			// TODO: handle exception
 			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
-			errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage(e.getMessage());
 			responseDto.setError(errorDto);
 			return responseDto;
@@ -708,7 +708,7 @@ public class CustomerEndpoint {
 			Map<String, Object> result = customerService.napSignupCallGolang(phone, passwordEncrypt);
 			if (result == null || !HttpStatus.OK.toString().equals(result.get("Code"))) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-				errorDto.setMessage((String)result.get("Message"));
+				errorDto.setMessage((String) result.get("Message"));
 				responseDto.setError(errorDto);
 				return responseDto;
 			}
@@ -744,7 +744,7 @@ public class CustomerEndpoint {
 			// TODO: handle exception
 			e.printStackTrace();
 			LOGGER.error("Lỗi hệ thống: " + e.getMessage());
-			errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage(e.getMessage());
 			responseDto.setError(errorDto);
 			return responseDto;
