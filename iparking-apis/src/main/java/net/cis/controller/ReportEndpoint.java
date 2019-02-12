@@ -341,7 +341,7 @@ public class ReportEndpoint {
 		} else if (role == 2) {
 			Long userId = Long.parseLong(TokenAuthenticationService.getAuthenticationInfo(request));
 			List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(userId);
-			ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+			ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 			ticketDailyCriteria.setCppCode(objParkingDto.getParkingCode());
 		}
 		Pageable pageable = new PageRequest(page, size);
@@ -427,7 +427,7 @@ public class ReportEndpoint {
 		} else if (role == 2) {
 			Long userId = Long.parseLong(TokenAuthenticationService.getAuthenticationInfo(request));
 			List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(userId);
-			ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+			ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 			monthlyTicketReportCriteria.setParking_place(objParkingDto.getParkingCode());
 		}
 		Pageable pageable = new PageRequest(page, size);
@@ -490,7 +490,7 @@ public class ReportEndpoint {
 			List<PerformanceExtractionDto> result = new ArrayList<>();
 			// thuc hien tinh toan doanh thu ve luot va ve thang
 			for (Long cppId : lstCppId) {
-				ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(cppId));
+				ParkingDto objParkingDto = parkingService.findByOldId(cppId);
 				ParkingInfoDto objParkingInfoDto = parkingInfoService.findByCppId(cppId);
 				double mauthuc = objParkingDto.getCapacity()
 						* (objParkingInfoDto.getTimeAvg() == null ? 24 : objParkingInfoDto.getTimeAvg())

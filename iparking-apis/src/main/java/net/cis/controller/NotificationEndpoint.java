@@ -87,7 +87,7 @@ public class NotificationEndpoint {
 			}
 
 			// thuc hien lay thông tin cpp code
-			ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+			ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 			if (objParkingDto == null) {
 				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 				errorDto.setMessage("Điểm dịch vụ không tồn tại");

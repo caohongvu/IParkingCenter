@@ -21,7 +21,7 @@ public interface ParkingService {
 
 	List<ParkingDto> findAll();
 
-	ParkingDto findByOldId(String oldId);
+	ParkingDto findByOldId(long oldId);
 
 	ParkingDto findByParkingCode(String parkingCode);
 
