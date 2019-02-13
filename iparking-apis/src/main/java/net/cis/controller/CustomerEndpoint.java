@@ -773,7 +773,7 @@ public class CustomerEndpoint {
 			}
 			if (!Utils.validateVNPhoneNumber(String.valueOf(phone))) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage("Phone Malformed");
+				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
 				return responseDto;
 			}
 			if (phone.startsWith(Utils.phone_prefix)) {
@@ -826,7 +826,7 @@ public class CustomerEndpoint {
 			}
 			if (!Utils.validateVNPhoneNumber(String.valueOf(phone))) {
 				responseDto.setCode(HttpStatus.BAD_REQUEST.toString());
-				responseDto.setMessage("Phone Malformed");
+				responseDto.setMessage(MessageUtil.MESSAGE_PHONE_WRONG_FORMAT);
 				return responseDto;
 			}
 			if (phone.startsWith(Utils.phone_prefix)) {
