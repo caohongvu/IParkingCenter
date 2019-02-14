@@ -94,7 +94,7 @@ public class FuncServiceImpl implements FuncService {
 			if (entity.getParentId() != null) {
 				FuncEntity entityParent = funcRepository.findOne(Long.parseLong(entity.getParentId().toString()));
 				if (entityParent != null)
-					dto.setParentName(entityParent.getName());
+					dto.setParentName(entityParent.getLabel());
 			}
 			rtn.add(dto);
 		}

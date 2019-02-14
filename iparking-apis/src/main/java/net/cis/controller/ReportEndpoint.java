@@ -341,7 +341,7 @@ public class ReportEndpoint {
 		} else if (role == 2) {
 			Long userId = Long.parseLong(TokenAuthenticationService.getAuthenticationInfo(request));
 			List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(userId);
-			ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+			ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 			ticketDailyCriteria.setCppCode(objParkingDto.getParkingCode());
 		}
 		Pageable pageable = new PageRequest(page, size);
@@ -427,7 +427,7 @@ public class ReportEndpoint {
 		} else if (role == 2) {
 			Long userId = Long.parseLong(TokenAuthenticationService.getAuthenticationInfo(request));
 			List<ParkingActorDto> parkingActorDtos = parkingActorService.findByActors(userId);
-			ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+			ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 			monthlyTicketReportCriteria.setParking_place(objParkingDto.getParkingCode());
 		}
 		Pageable pageable = new PageRequest(page, size);
@@ -478,9 +478,9 @@ public class ReportEndpoint {
 				// thuc hien kiem tra parkingCode co nam trong quyen cua user
 				// super
 				ParkingDto objParkingDto = parkingService.findByParkingCode(cppCode);
-				if (objParkingDto != null && lstCppId.contains(Long.parseLong(objParkingDto.getOldId()))) {
+				if (objParkingDto != null && lstCppId.contains(objParkingDto.getOldId())) {
 					lstCppId.clear();
-					lstCppId.add(Long.parseLong(objParkingDto.getOldId()));
+					lstCppId.add(objParkingDto.getOldId());
 				}
 			}
 			Date date1 = simpleDate.parse(fromDate);
@@ -490,7 +490,7 @@ public class ReportEndpoint {
 			List<PerformanceExtractionDto> result = new ArrayList<>();
 			// thuc hien tinh toan doanh thu ve luot va ve thang
 			for (Long cppId : lstCppId) {
-				ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(cppId));
+				ParkingDto objParkingDto = parkingService.findByOldId(cppId);
 				ParkingInfoDto objParkingInfoDto = parkingInfoService.findByCppId(cppId);
 				double mauthuc = objParkingDto.getCapacity()
 						* (objParkingInfoDto.getTimeAvg() == null ? 24 : objParkingInfoDto.getTimeAvg())
@@ -596,9 +596,9 @@ public class ReportEndpoint {
 				// thuc hien kiem tra parkingCode co nam trong quyen cua user
 				// super
 				ParkingDto objParkingDto = parkingService.findByParkingCode(cppCode);
-				if (objParkingDto != null && lstCppCode.contains(Long.parseLong(objParkingDto.getOldId()))) {
+				if (objParkingDto != null && lstCppCode.contains(objParkingDto.getOldId())) {
 					lstCppCode.clear();
-					lstCppCode.add(Long.parseLong(objParkingDto.getOldId()));
+					lstCppCode.add(objParkingDto.getOldId());
 				}
 			}
 
@@ -743,7 +743,7 @@ public class ReportEndpoint {
 			ParkingDto objParkingDto = parkingService.findByParkingCode(cppCode);
 			if (objParkingDto != null) {
 				List<Long> lstLongCppId = new ArrayList<>();
-				lstLongCppId.add(Long.parseLong(objParkingDto.getOldId()));
+				lstLongCppId.add(objParkingDto.getOldId());
 				List<ReportDailyPaymentDto> lstReportDailyPaymentDto = reportDailyPaymentService
 						.getSummaryReportDailyPaymentByParkingPlace(lstLongCppId, start_time, end_time);
 				responseApi.setData(lstReportDailyPaymentDto);
@@ -780,7 +780,7 @@ public class ReportEndpoint {
 			ParkingDto objParkingDto = parkingService.findByParkingCode(cppCode);
 			if (objParkingDto != null) {
 				List<Long> lstLongCppId = new ArrayList<>();
-				lstLongCppId.add(Long.parseLong(objParkingDto.getOldId()));
+				lstLongCppId.add(objParkingDto.getOldId());
 				List<ReportMonthlyPaymentDto> lstReportDailyPaymentDto = reportMonthlyPaymentService
 						.getSummaryReportMonthlyPaymentByParkingPlace(lstLongCppId, start_time, end_time);
 				responseApi.setData(lstReportDailyPaymentDto);

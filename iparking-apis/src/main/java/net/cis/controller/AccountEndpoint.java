@@ -72,7 +72,7 @@ public class AccountEndpoint extends BaseEndpoint {
 		HashSet<Integer> listIdUser = new HashSet<Integer>();
 
 		for(int i = 0; i < listParkingPlace.size();i++) {
-			List<ParkingActorEntity> listActor = parkingActorService.findByCppId(Long.parseLong(listParkingPlace.get(i).getOldId()));
+			List<ParkingActorEntity> listActor = parkingActorService.findByCppId(listParkingPlace.get(i).getOldId());
 			for (int j = 0; j < listActor.size();j++) {
 				listIdUser.add(Math.toIntExact(listActor.get(j).getActor()));
 			}

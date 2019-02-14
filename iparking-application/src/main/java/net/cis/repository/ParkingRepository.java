@@ -14,9 +14,11 @@ import net.cis.jpa.entity.ParkingEntity;
 
 public interface ParkingRepository extends JpaRepository<ParkingEntity, Long> {
 	@Query("SELECT parking FROM ParkingEntity parking WHERE parking.oldId =:oldId")
-	public ParkingEntity findByOldId(@Param("oldId") String oldId);
+	public ParkingEntity findByOldId(@Param("oldId") long oldId);
 
 	public ParkingEntity findByParkingCodeIgnoreCase(String parkingCode);
 
 	public List<ParkingEntity> findByCompany(long company);
+
+	List<ParkingEntity> findByOldIdIn(List<Long> oldIds);
 }

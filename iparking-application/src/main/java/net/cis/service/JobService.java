@@ -10,4 +10,6 @@ public interface JobService {
 	void getCompanyDalyRevenue();
 
 	void getCompanyMonthRevenue();
+
+	void checkWaringNoRevenue();
 }

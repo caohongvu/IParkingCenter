@@ -2,6 +2,7 @@ package net.cis.controller;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.cis.common.util.StatusUtil;
+import net.cis.common.util.constant.TicketConstants;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.CompanyDto;
 import net.cis.dto.ErrorDto;
@@ -70,12 +72,31 @@ public class ParkingPlaceEndpoint {
 	@Autowired
 	UserService userService;
 
+	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
 	@RequestMapping(value = "/{id}/getByOldId", method = RequestMethod.GET)
-	public @ResponseBody ParkingDto getByOldId(@PathVariable("id") String oldId) throws Exception {
-		ParkingDto parkingDto = parkingService.findByOldId(oldId);
+	public @ResponseBody ParkingDto c(@PathVariable("id") String oldId) throws Exception {
+		ParkingDto parkingDto = parkingService.findByOldId(Long.parseLong(oldId));
 		TicketCriteria ticketCriteria = new TicketCriteria();
-		ticketCriteria.setCppId(parkingDto.getId());
+		ticketCriteria.setCppId(parkingDto.getOldId());
 		ticketCriteria.setInSession(1);
+		ticketCriteria.setStatus(TicketConstants.PAID_TICKET);
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		Date toDate = calendar.getTime();
+		ticketCriteria.setToDate(toDate);
+		LOGGER.info("----------------getByOldId -toDate:" + format.format(toDate));
+		calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.HOUR, -36);
+		Date fromDate = calendar.getTime();
+		LOGGER.info("---------------getByOldId-fromDate:" + format.format(fromDate));
+
+		ticketCriteria.setFromDate(fromDate);
 
 		Pageable pageable = new PageRequest(0, 1000);
 		List<TicketDto> ticketsInsession = ticketService.findAll(ticketCriteria, pageable);
@@ -193,7 +214,7 @@ public class ParkingPlaceEndpoint {
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
-		ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+		ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 		if (objParkingDto == null) {
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage("Điểm dịch vụ không tồn tại");
@@ -235,7 +256,7 @@ public class ParkingPlaceEndpoint {
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
-		ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+		ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 		if (objParkingDto == null) {
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage("Điểm dịch vụ không tồn tại");
@@ -272,7 +293,7 @@ public class ParkingPlaceEndpoint {
 
 		String userName = res.getUsername();
 
-		history.setOldId(objParkingDto.getOldId());
+		history.setOldId(String.valueOf(objParkingDto.getOldId()));
 		history.setInfoUpdate(infoChange);
 		history.setUpdatedAt(dateFormat.format(date));
 		history.setUserName(userName);
@@ -326,7 +347,7 @@ public class ParkingPlaceEndpoint {
 			responseApi.setError(errorDto);
 			return responseApi;
 		}
-		ParkingDto objParkingDto = parkingService.findByOldId(String.valueOf(parkingActorDtos.get(0).getCppId()));
+		ParkingDto objParkingDto = parkingService.findByOldId(parkingActorDtos.get(0).getCppId());
 		if (objParkingDto == null) {
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage("Điểm dịch vụ không tồn tại");
@@ -360,39 +381,40 @@ public class ParkingPlaceEndpoint {
 
 		return endpoint;
 	}
-	
-	//UPDATE ASSIGN PROVIDER PARKING PLACE
-		@RequestMapping(value = "/assign/provider",method = RequestMethod.POST)
-		@ApiOperation("assign parking place")
-		public @ResponseBody Object assignProvider(ParkingSynDto parkingSynDto)throws Exception {
-			
-			ResponseApi endpoint = new ResponseApi();
-			
-			ParkingDto parkingDto = new ParkingDto();
-			
-			ParkingSynDto parking = parkingService.updateAssignProvider(parkingSynDto);
-			
-			endpoint.setData(parking);
 
-			return endpoint;
-		}
-		//UPDATE PARKING PLACE
-		@RequestMapping(value = "/update/parking_place",method = RequestMethod.POST)
-		@ApiOperation("add perm parking place")
-		public @ResponseBody Object addPerm(@RequestBody(required = false) ParkingSynDto parkingSynDtoRes, ParkingSynDto parkingSynDto)throws Exception {
-			
-			ResponseApi endpoint = new ResponseApi();
-			if(parkingSynDtoRes != null) {
-				if(parkingSynDtoRes.getListPayment() != null) {
-					parkingSynDto.setListPayment(parkingSynDtoRes.getListPayment());
-				}
+	// UPDATE ASSIGN PROVIDER PARKING PLACE
+	@RequestMapping(value = "/assign/provider", method = RequestMethod.POST)
+	@ApiOperation("assign parking place")
+	public @ResponseBody Object assignProvider(ParkingSynDto parkingSynDto) throws Exception {
+
+		ResponseApi endpoint = new ResponseApi();
+
+		ParkingDto parkingDto = new ParkingDto();
+
+		ParkingSynDto parking = parkingService.updateAssignProvider(parkingSynDto);
+
+		endpoint.setData(parking);
+
+		return endpoint;
+	}
+
+	// UPDATE PARKING PLACE
+	@RequestMapping(value = "/update/parking_place", method = RequestMethod.POST)
+	@ApiOperation("add perm parking place")
+	public @ResponseBody Object addPerm(@RequestBody(required = false) ParkingSynDto parkingSynDtoRes,
+			ParkingSynDto parkingSynDto) throws Exception {
+
+		ResponseApi endpoint = new ResponseApi();
+		if (parkingSynDtoRes != null) {
+			if (parkingSynDtoRes.getListPayment() != null) {
+				parkingSynDto.setListPayment(parkingSynDtoRes.getListPayment());
 			}
-			
-					
-			ParkingSynDto parking = parkingService.updateParkingPlace(parkingSynDto);
-			
-			endpoint.setData(parking);
-
-			return endpoint;
 		}
+
+		ParkingSynDto parking = parkingService.updateParkingPlace(parkingSynDto);
+
+		endpoint.setData(parking);
+
+		return endpoint;
+	}
 }

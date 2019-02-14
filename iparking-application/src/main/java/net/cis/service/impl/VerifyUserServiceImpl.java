@@ -8,13 +8,21 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+
+import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.constant.URLConstants;
 import net.cis.common.util.constant.UserConstant;
+import net.cis.constants.CustomerConstans;
 import net.cis.constants.NotificationTypeEnum;
+import net.cis.dto.NotificationCustomerDto;
+import net.cis.dto.NotificationData;
+import net.cis.dto.NotificationDto;
 import net.cis.jpa.entity.CustomerEmailVerifyViewEntity;
 import net.cis.jpa.entity.CustomerNonInfoViewEntity;
 import net.cis.repository.CustomerEmailVerifyRepository;
 import net.cis.repository.CustomerNonInfoRepository;
+import net.cis.service.NotificationService;
 import net.cis.service.PushNotificationService;
 import net.cis.service.VerifyUserService;
 import net.cis.utils.RestfulUtil;
@@ -36,6 +44,9 @@ public class VerifyUserServiceImpl implements VerifyUserService {
 
 	@Autowired
 	private CustomerNonInfoRepository customerNonInfoRepository;
+
+	@Autowired
+	NotificationService notificationService;
 
 	/**
 	 * thuc hien gui email|| thuc hien gui den nhung customer chua verify email
@@ -75,12 +86,33 @@ public class VerifyUserServiceImpl implements VerifyUserService {
 			List<CustomerNonInfoViewEntity> lstCustomerNonInfoViewEntity = customerNonInfoRepository.findAll();
 			LOGGER.info("pushNotification CustomerNonInfo Size" + lstCustomerNonInfoViewEntity.size());
 			// thuc hien gui thông tin den cho app user
+
+			String title = "Thông tin tài khoản";
+			String content = "Đề nghị KH cập nhật thông tin tài khoản iParking";
+			// thuc hien insert DB (notification )
+			NotificationDto objNotificationHistoryDto = new NotificationDto();
+			objNotificationHistoryDto.setTitle(title);
+			objNotificationHistoryDto.setContent(content);
+			objNotificationHistoryDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			NotificationData notificationData = new NotificationData();
+			notificationData.setType(NotificationTypeEnum.VERIFY_EMAIL);
+			Gson gson = new Gson();
+			objNotificationHistoryDto.setData(gson.toJson(notificationData));
+			objNotificationHistoryDto = notificationService.saveNotification(objNotificationHistoryDto);
+
 			for (CustomerNonInfoViewEntity obj : lstCustomerNonInfoViewEntity) {
 				lstPlayerIds.add(obj.getToken().split(";")[0]);
+				// thuc hien them moi noti_customer
+				NotificationCustomerDto objNotificationCustomerDto = new NotificationCustomerDto();
+				objNotificationCustomerDto.setNotificationId(objNotificationHistoryDto.getId());
+				objNotificationCustomerDto.setCusId(Long.parseLong(obj.getCusId()));
+				objNotificationCustomerDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+				objNotificationCustomerDto.setIsRead(CustomerConstans.CUSTOMER_NOTIFICATION_UN_READ);
+				notificationService.saveNotificationCustomer(objNotificationCustomerDto);
 			}
 			if (lstPlayerIds.size() > 0) {
 				pushNotificationService.sendNotificationForPlayerIds(lstPlayerIds, NotificationTypeEnum.VERIFY_EMAIL,
-						"Thông tin tài khoản", "Đề nghị KH cập nhật thông tin tài khoản iParking");
+						title, content);
 			}
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());

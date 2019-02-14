@@ -24,7 +24,7 @@ public class ParkingDto {
 	 private boolean isProvideEInvoice;
 	 private String lat;
 	 private String lng;
-	 private String oldId;
+	 private long oldId;
 	 private String phone;
 	 private String parkingName;
 	 
@@ -152,10 +152,10 @@ public class ParkingDto {
 	public void setLng(String lng) {
 		this.lng = lng;
 	}
-	public String getOldId() {
+	public long getOldId() {
 		return oldId;
 	}
-	public void setOldId(String oldId) {
+	public void setOldId(long oldId) {
 		this.oldId = oldId;
 	}
 	 

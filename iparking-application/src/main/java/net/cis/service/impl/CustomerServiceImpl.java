@@ -358,14 +358,14 @@ public class CustomerServiceImpl implements CustomerService {
 		Map<String, Object> result = new HashMap<String, Object>();
 		JSONObject ticketJSon = new JSONObject(responseContent);
 		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
-		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
 		if (ticketErrorJSon.has("Code")) {
 			result.put("Code", ticketErrorJSon.getString("Code"));
 		}
 		if (ticketErrorJSon.has("Message")) {
 			result.put("Message", ticketErrorJSon.getString("Message"));
 		}
-		if (ticketDataJSon.has("Ticket")) {
+		if (!ticketJSon.isNull("Data")) {
+			JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
 			result.put("Ticket", ticketDataJSon.getString("Ticket"));
 		}
 		return result;
@@ -413,27 +413,31 @@ public class CustomerServiceImpl implements CustomerService {
 		Map<String, Object> result = new HashMap<String, Object>();
 		JSONObject ticketJSon = new JSONObject(responseContent);
 		JSONObject ticketErrorJSon = ticketJSon.getJSONObject("Error");
-		JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
+
 		if (ticketErrorJSon.has("Code")) {
 			result.put("Code", ticketErrorJSon.getString("Code"));
 		}
 		if (ticketErrorJSon.has("Message")) {
 			result.put("Message", ticketErrorJSon.getString("Message"));
 		}
-		if (ticketDataJSon.has("token")) {
-			result.put("token", ticketDataJSon.getString("token"));
-		}
-		if (ticketDataJSon.has("Token")) {
-			result.put("Token", ticketDataJSon.getString("Token"));
-		}
-		if (ticketDataJSon.has("cus_id")) {
-			result.put("cus_id", ticketDataJSon.getLong("cus_id"));
-		}
-		if (ticketDataJSon.has("checksum")) {
-			result.put("checksum", ticketDataJSon.getString("checksum"));
-		}
-		if (ticketDataJSon.has("telco")) {
-			result.put("telco", ticketDataJSon.getString("telco"));
+
+		if (!ticketJSon.isNull("Data")) {
+			JSONObject ticketDataJSon = ticketJSon.getJSONObject("Data");
+			if (ticketDataJSon.has("token")) {
+				result.put("token", ticketDataJSon.getString("token"));
+			}
+			if (ticketDataJSon.has("Token")) {
+				result.put("Token", ticketDataJSon.getString("Token"));
+			}
+			if (ticketDataJSon.has("cus_id")) {
+				result.put("cus_id", ticketDataJSon.getLong("cus_id"));
+			}
+			if (ticketDataJSon.has("checksum")) {
+				result.put("checksum", ticketDataJSon.getString("checksum"));
+			}
+			if (ticketDataJSon.has("telco")) {
+				result.put("telco", ticketDataJSon.getString("telco"));
+			}
 		}
 		return result;
 	}

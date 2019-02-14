@@ -1,6 +1,9 @@
 package net.cis.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
@@ -11,9 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.cis.common.util.DateTimeUtil;
+import net.cis.dto.ReportProportionPaymentDto;
 import net.cis.jpa.entity.ParkingConfigEntity;
 import net.cis.repository.ParkingConfigRepository;
+import net.cis.service.EmailService;
 import net.cis.service.JobService;
+import net.cis.service.ReportProportionPaymentService;
 
 @Service
 public class JobServiceImpl implements JobService {
@@ -24,6 +30,12 @@ public class JobServiceImpl implements JobService {
 
 	@Autowired
 	ParkingConfigRepository parkingConfigRepository;
+
+	@Autowired
+	EmailService emailService;
+
+	@Autowired
+	ReportProportionPaymentService reportProportionPaymentService;
 
 	/**
 	 * thuc hien tinh toan doanh thu ve luot theo ngay
@@ -139,6 +151,54 @@ public class JobServiceImpl implements JobService {
 			objParkingConfig.setLastDateRun(c.getTime());
 			parkingConfigRepository.save(objParkingConfig);
 		}
+
+	}
+
+	/**
+	 * Thuc hien kiem tra cac diem do khong co doanh thu T + 1
+	 * 
+	 * @throws Exception
+	 */
+	@Override
+	public void checkWaringNoRevenue() {
+		/**
+		 * thu hien kiem tra doanh thu cua tung diem đõ , nếu điểm đỗ nào có
+		 * không có doanh thu thì thông báo gửi email
+		 */
+		SimpleDateFormat simple = new SimpleDateFormat("dd/MM/yyyy");
+		Date currentDate = DateTimeUtil.getCurrentDateTime();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(currentDate);
+		cal.add(Calendar.DATE, -1);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date dateBefore1Days = cal.getTime();
+
+		LOGGER.info("----------------dateBefore1Days job ----------------- :" + dateBefore1Days.getTime() / 1000);
+		List<ReportProportionPaymentDto> lstProportionPaymentDto = reportProportionPaymentService
+				.getProportionPaymentByDay(dateBefore1Days.getTime() / 1000, dateBefore1Days.getTime() / 1000);
+		LOGGER.info("----------------Start job checkWaringNoRevenue -----------------");
+		StringBuilder emailContent = new StringBuilder();
+		emailContent.append("Danh sách công ty không phát sinh doanh thu ngày: ")
+				.append(simple.format(dateBefore1Days));
+		String title = emailContent.toString();
+		emailContent.append(" <br />\n");
+		if (lstProportionPaymentDto != null && lstProportionPaymentDto.size() > 0) {
+			for (ReportProportionPaymentDto obj : lstProportionPaymentDto) {
+				if (obj.getRevenue().equals(0D)) {
+					emailContent.append("<strong> - ");
+					emailContent.append(obj.getParkingCode()).append(" - ").append(obj.getCompany());
+					emailContent.append(" </strong> <br />\n");
+				}
+			}
+			try {
+				emailService.sendMailCheckWaringNoRevenue(title, emailContent.toString());
+			} catch (Exception ex) {
+				LOGGER.error(ex.getMessage());
+			}
+		}
+		LOGGER.info("----------------End job checkWaringNoRevenue-----------------");
 
 	}
 }

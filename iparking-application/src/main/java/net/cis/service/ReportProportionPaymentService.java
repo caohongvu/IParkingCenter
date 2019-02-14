@@ -9,4 +9,6 @@ public interface ReportProportionPaymentService {
 
 	ReportProportionPaymentDto getProportionPayment(long cppId, long fromDate, long toDate);
 
+	List<ReportProportionPaymentDto> getProportionPaymentByDay(long fromDate, long toDate);
+
 }
