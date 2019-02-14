@@ -10,15 +10,6 @@ public class PrivateServicesParkingCusDto {
 	private Date updatedAt;
 	private String info;
 	private Integer status;
-	private PrivateServicesParkingDto privateServicesParkingDto;
-
-	public PrivateServicesParkingDto getPrivateServicesParkingDto() {
-		return privateServicesParkingDto;
-	}
-
-	public void setPrivateServicesParkingDto(PrivateServicesParkingDto privateServicesParkingDto) {
-		this.privateServicesParkingDto = privateServicesParkingDto;
-	}
 
 	public long getId() {
 		return id;

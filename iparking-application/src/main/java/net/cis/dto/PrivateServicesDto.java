@@ -5,9 +5,8 @@ import java.util.Date;
 public class PrivateServicesDto {
 	private long id;
 	private String name;
-	private String desscription;
+	private String description;
 	private Date createdAt;
-	private Date updatedAt;
 	private Integer status;
 
 	public long getId() {
@@ -26,12 +25,12 @@ public class PrivateServicesDto {
 		this.name = name;
 	}
 
-	public String getDesscription() {
-		return desscription;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDesscription(String desscription) {
-		this.desscription = desscription;
+	public void setDescription(String desscription) {
+		this.description = desscription;
 	}
 
 	public Date getCreatedAt() {
@@ -40,14 +39,6 @@ public class PrivateServicesDto {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	public Integer getStatus() {

@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -20,8 +22,9 @@ public class PrivateServicesParkingEntity {
 	@Column(name = "parking_id")
 	private Long parkingId;
 
-	@Column(name = "private_service_id")
-	private Long privateServiceId;
+	@ManyToOne
+	@JoinColumn(name = "private_service_id", referencedColumnName = "id")
+	private PrivateServicesEntity privateServices;
 
 	@Column(name = "created_at")
 	private Date createdAt;
@@ -31,6 +34,14 @@ public class PrivateServicesParkingEntity {
 
 	@Column(name = "status")
 	private Integer status;
+
+	public PrivateServicesEntity getPrivateServices() {
+		return privateServices;
+	}
+
+	public void setPrivateServices(PrivateServicesEntity privateServices) {
+		this.privateServices = privateServices;
+	}
 
 	public Integer getStatus() {
 		return status;
@@ -54,14 +65,6 @@ public class PrivateServicesParkingEntity {
 
 	public void setParkingId(Long parkingId) {
 		this.parkingId = parkingId;
-	}
-
-	public Long getPrivateServiceId() {
-		return privateServiceId;
-	}
-
-	public void setPrivateServiceId(Long privateServiceId) {
-		this.privateServiceId = privateServiceId;
 	}
 
 	public Date getCreatedAt() {
