@@ -2,15 +2,16 @@ package net.cis.dto;
 
 public class CompanyServiceDto {
 
-	private int apply_einvoice;
+	private int apply_einvoice_daily;
 	private int enable_viettel_pay;
 	private int use_parking_center;
 	private int use_napas_3;
-	public int getApply_einvoice() {
-		return apply_einvoice;
+	private int apply_einvoice_monthly;
+	public int getApply_einvoice_daily() {
+		return apply_einvoice_daily;
 	}
-	public void setApply_einvoice(int apply_einvoice) {
-		this.apply_einvoice = apply_einvoice;
+	public void setApply_einvoice_daily(int apply_einvoice_daily) {
+		this.apply_einvoice_daily = apply_einvoice_daily;
 	}
 	public int getEnable_viettel_pay() {
 		return enable_viettel_pay;
@@ -30,6 +31,10 @@ public class CompanyServiceDto {
 	public void setUse_napas_3(int use_napas_3) {
 		this.use_napas_3 = use_napas_3;
 	}
-	
-
+	public int getApply_einvoice_monthly() {
+		return apply_einvoice_monthly;
+	}
+	public void setApply_einvoice_monthly(int apply_einvoice_monthly) {
+		this.apply_einvoice_monthly = apply_einvoice_monthly;
+	}
 }

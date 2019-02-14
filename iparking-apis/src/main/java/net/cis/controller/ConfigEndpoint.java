@@ -82,17 +82,19 @@ public class ConfigEndpoint {
 	@RequestMapping(value = "/update/config", method = RequestMethod.GET)
 	@ApiOperation("Update config Service for company")
 	public @ResponseBody ResponseApi updateConfigService(
-			@RequestParam(name = "is_invoice", required = false) int isInvoice,
+			@RequestParam(name = "is_invoice_daily", required = false) int isInvoiceDaily,
 			@RequestParam(name = "is_viettelPay", required = false) int isViettelPay,
 			@RequestParam(name = "is_parkingCenter", required = false) int isParkingCenter,
 			@RequestParam(name = "is_napas3", required = false) int isNapas3,
+			@RequestParam(name = "is_invoice_monthly", required = false) int isInvoiceMonthly,
 			@RequestParam(name = "companyId",required = false) int companyId) throws Exception {
 		
 		CompanyServiceDto companyServiceDto = new CompanyServiceDto();
-		companyServiceDto.setApply_einvoice(isInvoice);
+		companyServiceDto.setApply_einvoice_daily(isInvoiceDaily);
 		companyServiceDto.setEnable_viettel_pay(isViettelPay);
 		companyServiceDto.setUse_parking_center(isParkingCenter);
 		companyServiceDto.setUse_napas_3(isNapas3);
+		companyServiceDto.setApply_einvoice_monthly(isInvoiceMonthly);
 		ResponseApi responseApi = configService.configCompanyService(companyServiceDto, companyId);
 		return responseApi;
 	}
