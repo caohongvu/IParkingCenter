@@ -18,7 +18,7 @@ public interface ParkingConfigService {
 	List<ParkingConfigDto> getParkingConfig(long parkingConfigType);
 
 	List<ParkingConfigDto> getParkingConfig(String configKey, Long company, Long configType);
-
+	
 	ParkingConfigDto findParkingConfigById(long id);
 
 	ParkingConfigDto saveParkingConfig(ParkingConfigDto request);

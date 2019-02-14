@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import net.cis.jpa.entity.PrivateServicesEntity;
 import net.cis.jpa.entity.PrivateServicesParkingEntity;
 
 public interface PrivateServicesParkingRepository extends JpaRepository<PrivateServicesParkingEntity, Long> {
@@ -11,7 +12,10 @@ public interface PrivateServicesParkingRepository extends JpaRepository<PrivateS
 
 	List<PrivateServicesParkingEntity> findByParkingId(Long parkingId);
 
-	PrivateServicesParkingEntity findByParkingIdAndPrivateServiceIdAndStatus(Long parkingId, Long privateServiceId,
-			Integer status);
+	PrivateServicesParkingEntity findByParkingIdAndPrivateServicesAndStatus(Long parkingId,
+			PrivateServicesEntity privateServices, Integer status);
+
+	PrivateServicesParkingEntity findByParkingIdAndPrivateServices(Long parkingId,
+			PrivateServicesEntity privateServices);
 
 }

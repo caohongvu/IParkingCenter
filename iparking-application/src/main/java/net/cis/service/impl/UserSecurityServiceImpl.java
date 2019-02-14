@@ -123,7 +123,7 @@ public class UserSecurityServiceImpl implements UserSecurityService {
 		@SuppressWarnings("unchecked")
 		List<Object[]> lst = storedProcedureQuery.getResultList();
 		for (Object[] value : lst) {
-			if ((int) value[9] == UserConstans.FUNC_LEVEL_2) {
+			if (value[9].equals(String.valueOf(UserConstans.FUNC_LEVEL_2))) {
 				MenuDto objMenuDto = new MenuDto();
 				objMenuDto.setId((int) value[7]);
 				objMenuDto.setName(value[8] != null ? value[8].toString() : null);

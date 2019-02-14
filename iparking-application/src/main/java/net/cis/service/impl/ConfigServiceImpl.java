@@ -44,7 +44,7 @@ public class ConfigServiceImpl implements ConfigService {
 		for (int i = 0; i < entity.size(); i++) {
 			CompanyServiceEntity object = entity.get(i);
 			if (object.getServiceId() == 1) {
-				companyServiceDto.setApply_einvoice(1);
+				companyServiceDto.setApply_einvoice_daily(1);
 			}
 			if (object.getServiceId() == 2) {
 				companyServiceDto.setEnable_viettel_pay(1);
@@ -54,6 +54,9 @@ public class ConfigServiceImpl implements ConfigService {
 			}
 			if (object.getServiceId() == 4) {
 				companyServiceDto.setUse_napas_3(1);
+			}
+			if (object.getServiceId() == 5) {
+				companyServiceDto.setApply_einvoice_monthly(1);
 			}
 		}
 		// CompanyServiceDto companyServiceDto = new CompanyServiceDto();
@@ -91,7 +94,7 @@ public class ConfigServiceImpl implements ConfigService {
 
 		// list services will config
 		HashSet<Integer> listServicesWillCongif = new HashSet<Integer>();
-		if (companyServiceDto.getApply_einvoice() == 1) {
+		if (companyServiceDto.getApply_einvoice_daily() == 1) {
 			listServicesWillCongif.add(1);
 		}
 		if (companyServiceDto.getEnable_viettel_pay() == 1) {
@@ -103,79 +106,26 @@ public class ConfigServiceImpl implements ConfigService {
 		if (companyServiceDto.getUse_napas_3() == 1) {
 			listServicesWillCongif.add(4);
 		}
-
-		// list current Services of company
-		HashSet<Integer> listServicesCurrent = new HashSet<Integer>();
-		for (int i = 0; i < listServicesOfCompany.size(); i++) {
-			if (listServicesOfCompany.get(i).getServiceId() == 1) {
-				listServicesCurrent.add(1);
-			}
-			if (listServicesOfCompany.get(i).getServiceId() == 2) {
-				listServicesCurrent.add(2);
-			}
-			if (listServicesOfCompany.get(i).getServiceId() == 3) {
-				listServicesCurrent.add(3);
-			}
-			if (listServicesOfCompany.get(i).getServiceId() == 4) {
-				listServicesCurrent.add(4);
-			}
-
+		if (companyServiceDto.getApply_einvoice_monthly() == 1) {
+			listServicesWillCongif.add(5);
 		}
 
-		HashSet<Integer> listAll = new HashSet<Integer>();
+		// get all config of company
+		List<CompanyServiceEntity> listService = companyServiceReponsitory.findConfigByCompanyId(companyId);
 
-		Iterator<Integer> configInt = listServicesWillCongif.iterator();
-		while (configInt.hasNext()) {
-			listAll.add(configInt.next());
+		// delete service of company
+		for (int i = 0; i < listService.size(); i++) {
+			companyServiceReponsitory.delete(listService.get(i));
 		}
 
-		Iterator<Integer> currentInt = listServicesCurrent.iterator();
-		while (currentInt.hasNext()) {
-			listAll.add(currentInt.next());
+		Iterator<Integer> addInt = listServicesWillCongif.iterator();
+		while (addInt.hasNext()) {
+			CompanyServiceEntity entity = new CompanyServiceEntity();
+			entity.setCompanyId(companyId);
+			entity.setServiceId(addInt.next());
+			companyServiceReponsitory.save(entity);
 		}
 
-		HashSet<Integer> listServicesAdd = new HashSet<Integer>();
-		HashSet<Integer> listServicesDelete = new HashSet<Integer>();
-
-		Iterator<Integer> allInt = listAll.iterator();
-		while (allInt.hasNext()) {
-			int item = allInt.next();
-			if (!listServicesCurrent.contains(item) && listServicesWillCongif.contains(item)) {
-				listServicesAdd.add(item);
-			}
-
-			if (listServicesCurrent.contains(item) && !listServicesWillCongif.contains(item)) {
-				listServicesDelete.add(item);
-			}
-
-		}
-		System.out.println(listServicesAdd);
-		System.out.println(listServicesDelete);
-		// delete
-		if (listServicesDelete != null) {
-			Iterator<Integer> deleteInt = listServicesDelete.iterator();
-			while (deleteInt.hasNext()) {
-				int serviceId = deleteInt.next();
-				for (int i = 0; i < listServicesOfCompany.size(); i++) {
-					if (listServicesOfCompany.get(i).getServiceId() == serviceId) {
-						companyServiceReponsitory.delete(listServicesOfCompany.get(i).getId());
-
-					}
-				}
-
-			}
-		}
-		// add
-		if (listServicesAdd != null) {
-			Iterator<Integer> addInt = listServicesAdd.iterator();
-			while (addInt.hasNext()) {
-				CompanyServiceEntity entity = new CompanyServiceEntity();
-				entity.setCompanyId(companyId);
-				entity.setServiceId(addInt.next());
-				companyServiceReponsitory.save(entity);
-
-			}
-		}
 		ErrorDto errorDto = new ErrorDto();
 		ResponseApi responseApi = new ResponseApi();
 		errorDto.setCode(HttpStatus.SC_OK);

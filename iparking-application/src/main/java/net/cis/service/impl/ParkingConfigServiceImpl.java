@@ -119,4 +119,5 @@ public class ParkingConfigServiceImpl implements ParkingConfigService {
 				configType);
 		return this.mapParkingConfigDto(entities);
 	}
+	
 }
