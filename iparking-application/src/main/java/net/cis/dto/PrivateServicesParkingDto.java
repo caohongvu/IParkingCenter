@@ -6,8 +6,7 @@ public class PrivateServicesParkingDto {
 	private long id;
 	private Long parkingId;
 	private String parkingCode;
-	private Long privateServiceId;
-	private String parkingServiceName;
+	private PrivateServicesDto privateServices;
 	private Date createdAt;
 	private Date updatedAt;
 	private Integer status;
@@ -20,12 +19,12 @@ public class PrivateServicesParkingDto {
 		this.parkingCode = parkingCode;
 	}
 
-	public String getParkingServiceName() {
-		return parkingServiceName;
+	public PrivateServicesDto getPrivateServices() {
+		return privateServices;
 	}
 
-	public void setParkingServiceName(String parkingServiceName) {
-		this.parkingServiceName = parkingServiceName;
+	public void setPrivateServices(PrivateServicesDto privateServices) {
+		this.privateServices = privateServices;
 	}
 
 	public long getId() {
@@ -42,14 +41,6 @@ public class PrivateServicesParkingDto {
 
 	public void setParkingId(Long parkingId) {
 		this.parkingId = parkingId;
-	}
-
-	public Long getPrivateServiceId() {
-		return privateServiceId;
-	}
-
-	public void setPrivateServiceId(Long privateServiceId) {
-		this.privateServiceId = privateServiceId;
 	}
 
 	public Date getCreatedAt() {

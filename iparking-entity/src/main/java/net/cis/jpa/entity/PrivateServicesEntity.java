@@ -26,6 +26,16 @@ public class PrivateServicesEntity {
 	@Column(name = "created_at")
 	private Date createdAt;
 
+	@Column(name = "status")
+	private Integer status;
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 
 	public long getId() {
 		return id;
