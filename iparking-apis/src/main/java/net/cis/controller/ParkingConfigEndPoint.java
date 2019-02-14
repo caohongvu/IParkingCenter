@@ -17,7 +17,6 @@ import net.cis.common.util.DateTimeUtil;
 import net.cis.constants.ResponseErrorCodeConstants;
 import net.cis.dto.ErrorDto;
 import net.cis.dto.ParkingConfigDto;
-import net.cis.dto.ParkingConfigTypeDto;
 import net.cis.dto.ResponseApi;
 import net.cis.service.ParkingConfigService;
 
@@ -70,88 +69,6 @@ public class ParkingConfigEndPoint {
 	}
 
 	/**
-	 * liemnh tao parking config type
-	 * 
-	 * @param request
-	 * @param name
-	 * @param description
-	 * @param status
-	 * @return
-	 */
-	@RequestMapping(value = "/create-parking-config-type", method = RequestMethod.POST)
-	@ApiOperation("Tạo mới kiểu cấu hình")
-	public @ResponseBody ResponseApi createParkingConfigType(HttpServletRequest request,
-			@RequestParam(name = "name") String name,
-			@RequestParam(name = "description", required = false) String description,
-			@RequestParam(name = "status") Integer status) {
-		ResponseApi responseDto = new ResponseApi();
-		ErrorDto errorDto = new ErrorDto();
-		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
-		try {
-
-			ParkingConfigTypeDto objParkingConfigTypeDto = new ParkingConfigTypeDto();
-			objParkingConfigTypeDto.setName(name);
-			objParkingConfigTypeDto.setDescription(description);
-			objParkingConfigTypeDto.setStatus(status);
-			objParkingConfigTypeDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
-			objParkingConfigTypeDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
-			responseDto.setData(parkingConfigService.saveParkingConfigType(objParkingConfigTypeDto));
-			responseDto.setError(errorDto);
-			return responseDto;
-
-		} catch (Exception ex) {
-			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
-			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-			errorDto.setMessage(ex.getMessage());
-			responseDto.setError(errorDto);
-			return responseDto;
-		}
-	}
-
-	/**
-	 * liemnh cap nhat parking config type
-	 * 
-	 * @param request
-	 * @param id
-	 * @param name
-	 * @param description
-	 * @param status
-	 * @return
-	 */
-	@RequestMapping(value = "/update-parking-config-type", method = RequestMethod.POST)
-	@ApiOperation("Cập nhật kiểu cấu hình")
-	public @ResponseBody ResponseApi updateParkingConfigType(HttpServletRequest request,
-			@RequestParam(name = "id") Long id, @RequestParam(name = "name") String name,
-			@RequestParam(name = "description", required = false) String description,
-			@RequestParam(name = "status") Integer status) {
-		ResponseApi responseDto = new ResponseApi();
-		ErrorDto errorDto = new ErrorDto();
-		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
-		try {
-			ParkingConfigTypeDto dto = parkingConfigService.findParkingConfigTypeById(id);
-			if (dto == null) {
-				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-				errorDto.setMessage("ParkingConfigType không tồn tại");
-				responseDto.setError(errorDto);
-				return responseDto;
-			}
-			dto.setName(name);
-			dto.setDescription(description);
-			dto.setStatus(status);
-			responseDto.setData(parkingConfigService.saveParkingConfigType(dto));
-			responseDto.setError(errorDto);
-			return responseDto;
-
-		} catch (Exception ex) {
-			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
-			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-			errorDto.setMessage(ex.getMessage());
-			responseDto.setError(errorDto);
-			return responseDto;
-		}
-	}
-
-	/**
 	 * liemnh tim kiem parking config
 	 * 
 	 * @param request
@@ -171,52 +88,6 @@ public class ParkingConfigEndPoint {
 		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
 		try {
 			responseDto.setData(parkingConfigService.getParkingConfig(configKey, company, configType));
-			responseDto.setError(errorDto);
-			return responseDto;
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			LOGGER.error("Lỗi hệ thống: " + ex.getMessage());
-			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
-			errorDto.setMessage(ex.getMessage());
-			responseDto.setError(errorDto);
-			return responseDto;
-		}
-	}
-
-	/**
-	 * liemnh tao paking config
-	 * 
-	 * @param request
-	 * @param configKey
-	 * @param configValue
-	 * @param configDescription
-	 * @param company
-	 * @param configType
-	 * @return
-	 */
-	@RequestMapping(value = "/create-parking-config", method = RequestMethod.POST)
-	@ApiOperation("Tao parking config ")
-	public @ResponseBody ResponseApi createParkingConfig(HttpServletRequest request,
-			@RequestParam(name = "config_key") String configKey,
-			@RequestParam(name = "config_value") String configValue,
-			@RequestParam(name = "config_description", required = false) String configDescription,
-			@RequestParam(name = "company", required = false) Long company,
-			@RequestParam(name = "parking-config-type") Long configType) {
-		ResponseApi responseDto = new ResponseApi();
-		ErrorDto errorDto = new ErrorDto();
-		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
-		try {
-
-			ParkingConfigDto objParkingConfigDto = new ParkingConfigDto();
-			objParkingConfigDto.setConfigKey(configKey);
-			objParkingConfigDto.setConfigValue(configValue);
-			objParkingConfigDto.setConfigDescription(configDescription);
-			objParkingConfigDto.setCompanyId(company);
-			objParkingConfigDto.setParkingConfigTypeId(configType);
-			objParkingConfigDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
-			objParkingConfigDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
-			responseDto.setData(parkingConfigService.saveParkingConfig(objParkingConfigDto));
 			responseDto.setError(errorDto);
 			return responseDto;
 
