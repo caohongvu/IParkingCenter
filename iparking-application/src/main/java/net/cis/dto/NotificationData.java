@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import net.cis.constants.NotificationTypeEnum;
 
 public class NotificationData {
-	@SerializedName("type")
+	@SerializedName("type_content")
 	private NotificationTypeEnum type;
 
 	public NotificationTypeEnum getType() {

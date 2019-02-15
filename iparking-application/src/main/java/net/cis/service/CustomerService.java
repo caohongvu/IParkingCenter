@@ -55,6 +55,8 @@ public interface CustomerService {
 			throws Exception;
 
 	List<MenuDto> getMenuByRoleForWeb(Integer roleId);
+	
+	List<MenuDto> getMenuCustomerByRoleForWeb(Integer roleId);
 
 	List<CustomerNotificationDto> findCustomerNotificationByCusId(long cusId, Integer subscrice) throws Exception;
 }

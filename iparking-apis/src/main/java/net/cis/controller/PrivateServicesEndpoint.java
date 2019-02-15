@@ -1,6 +1,10 @@
 package net.cis.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -22,6 +26,7 @@ import net.cis.dto.PrivateServicesDto;
 import net.cis.dto.PrivateServicesParkingCusDto;
 import net.cis.dto.PrivateServicesParkingDto;
 import net.cis.dto.ResponseApi;
+import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.PrivateService;
 
 @RestController
@@ -97,7 +102,7 @@ public class PrivateServicesEndpoint {
 
 			PrivateServicesDto privateServicesDto = new PrivateServicesDto();
 			privateServicesDto.setId(serviceId);
-			dto.setPrivateServices(privateServicesDto);
+			dto.setPrivateService(privateServicesDto);
 			responseApi.setData(privateService.savePrivateServicesParking(dto));
 			return responseApi;
 		} catch (Exception ex) {
@@ -242,14 +247,14 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * liemnh Tạo 1 dịch vụ của customer
+	 * liemnh Thêm mới 1 dịch vụ của customer
 	 * 
 	 * @param oldId
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/private-service-customer/create", method = RequestMethod.POST)
-	@ApiOperation("Tạo 1 dịch vụ của customer")
+	@ApiOperation("Thêm mới 1 dịch vụ của customer")
 	public @ResponseBody ResponseApi createPrivateServiceParkingCustomer(
 			@RequestParam(name = "customer-id") Long customerId, @RequestParam(name = "parking-id") Long parkingId,
 			@RequestParam(name = "service-id") Long serviceId, @RequestParam(name = "info") String info) {
@@ -288,14 +293,14 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * liemnh Tạo 1 dịch vụ của customer
+	 * liemnh Cập nhật 1 dịch vụ của customer
 	 * 
 	 * @param oldId
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/private-service-customer/update", method = RequestMethod.POST)
-	@ApiOperation("Tạo 1 dịch vụ của customer")
+	@ApiOperation("Cập nhật 1 dịch vụ của customer")
 	public @ResponseBody ResponseApi updatePrivateServiceParkingCustomer(@RequestParam(name = "id") Long id,
 			@RequestParam(name = "info", required = false) String info, @RequestParam(name = "status") Integer status) {
 		ResponseApi responseApi = new ResponseApi();
@@ -330,14 +335,14 @@ public class PrivateServicesEndpoint {
 	}
 
 	/**
-	 * liemnh Xoa dich vu của 1 customer
+	 * liemnh Xóa dịch vụ của 1 customer
 	 * 
 	 * @param oldId
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/private-service-customer/delete", method = RequestMethod.DELETE)
-	@ApiOperation("Xoa dich vu của 1 customer")
+	@ApiOperation("Xóa dịch vụ của 1 customer")
 	public @ResponseBody ResponseApi deletePrivateServiceParkingCustomer(@RequestParam(name = "id") Long id) {
 		ResponseApi responseApi = new ResponseApi();
 		ErrorDto errorDto = new ErrorDto();
@@ -358,6 +363,41 @@ public class PrivateServicesEndpoint {
 			privateService.savePrivateServicesParkingCus(objPrivateServicesParkingCustomerDto);
 			return responseApi;
 		} catch (Exception ex) {
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
+
+	/**
+	 * liemnh Lấy thông tin thanh toán cần thanh toán của customer
+	 * 
+	 * @param oldId
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/bill-customer", method = RequestMethod.GET)
+	@ApiOperation("Lấy thông tin thanh toán cần thanh toán của customer")
+	public @ResponseBody ResponseApi getBillPaymentByCustomer(HttpServletRequest request) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		responseApi.setError(errorDto);
+		try {
+			String customerId = TokenAuthenticationService.getAuthenticationInfo(request);
+			if (StringUtils.isEmpty(customerId)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			responseApi.setData(privateService.getBillCusstomers(Long.parseLong(customerId),
+					PrivateServiceConstans.BILL_STATUS_UNPAID));
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
 			LOGGER.error(ex.getMessage());
 			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
 			errorDto.setMessage(ex.getMessage());
