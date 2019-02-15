@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -17,8 +19,9 @@ public class PrivateServicesParkingCusEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@Column(name = "parking_service_parking_id")
-	private Long parkingServiceParkingId;
+	@ManyToOne
+	@JoinColumn(name = "parking_service_parking_id", referencedColumnName = "id")
+	private PrivateServicesParkingEntity parkingServiceParking;
 
 	@Column(name = "cus_id")
 	private Long cusId;
@@ -51,12 +54,12 @@ public class PrivateServicesParkingCusEntity {
 		this.id = id;
 	}
 
-	public Long getParkingServiceParkingId() {
-		return parkingServiceParkingId;
+	public PrivateServicesParkingEntity getParkingServiceParking() {
+		return parkingServiceParking;
 	}
 
-	public void setParkingServiceParkingId(Long parkingServiceParkingId) {
-		this.parkingServiceParkingId = parkingServiceParkingId;
+	public void setParkingServiceParking(PrivateServicesParkingEntity parkingServiceParking) {
+		this.parkingServiceParking = parkingServiceParking;
 	}
 
 	public Long getCusId() {

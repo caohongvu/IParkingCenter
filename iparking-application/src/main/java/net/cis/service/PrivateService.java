@@ -2,6 +2,7 @@ package net.cis.service;
 
 import java.util.List;
 
+import net.cis.dto.BillDto;
 import net.cis.dto.PrivateServicesDto;
 import net.cis.dto.PrivateServicesParkingCusDto;
 import net.cis.dto.PrivateServicesParkingCusViewDto;
@@ -29,7 +30,9 @@ public interface PrivateService {
 			PrivateServicesParkingCusDto privateServicesParkingCusDto);
 
 	// PrivateServices
-
 	List<PrivateServicesDto> getPrivateServices();
+
+	// bill customer
+	List<BillDto> getBillCusstomers(Long customerId, Integer status);
 
 }
