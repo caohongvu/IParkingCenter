@@ -851,7 +851,7 @@ public class CustomerEndpoint {
 			UserInfo userInfo = new UserInfo();
 			userInfo.setToken(TokenAuthenticationService.createTokenCustomer(String.valueOf(objCustomerDto.getOldId()),
 					objCustomerDto.getPhone2()));
-			List<MenuDto> menus = customerService.getMenuByRoleForWeb(CustomerConstans.CUSTOMER_ROLE_DEFAULT);
+			List<MenuDto> menus = customerService.getMenuCustomerByRoleForWeb(CustomerConstans.CUSTOMER_ROLE_DEFAULT);
 			userInfo.setMenus(menus);
 			responseDto.setData(userInfo);
 			return responseDto;
