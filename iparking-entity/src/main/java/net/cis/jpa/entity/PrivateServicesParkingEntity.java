@@ -24,7 +24,7 @@ public class PrivateServicesParkingEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "private_service_id", referencedColumnName = "id")
-	private PrivateServicesEntity privateServices;
+	private PrivateServicesEntity privateService;
 
 	@Column(name = "created_at")
 	private Date createdAt;
@@ -35,12 +35,12 @@ public class PrivateServicesParkingEntity {
 	@Column(name = "status")
 	private Integer status;
 
-	public PrivateServicesEntity getPrivateServices() {
-		return privateServices;
+	public PrivateServicesEntity getPrivateService() {
+		return privateService;
 	}
 
-	public void setPrivateServices(PrivateServicesEntity privateServices) {
-		this.privateServices = privateServices;
+	public void setPrivateService(PrivateServicesEntity privateService) {
+		this.privateService = privateService;
 	}
 
 	public Integer getStatus() {

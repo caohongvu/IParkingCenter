@@ -370,15 +370,9 @@ public class ParkingPlaceEndpoint {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@ApiOperation("create parking place")
 	public @ResponseBody Object create(ParkingSynDto parkingSynDto) throws Exception {
-
 		ResponseApi endpoint = new ResponseApi();
-
-		ParkingDto parkingDto = new ParkingDto();
-
 		ParkingSynDto parking = parkingService.create(parkingSynDto);
-
 		endpoint.setData(parking);
-
 		return endpoint;
 	}
 
@@ -386,15 +380,9 @@ public class ParkingPlaceEndpoint {
 	@RequestMapping(value = "/assign/provider", method = RequestMethod.POST)
 	@ApiOperation("assign parking place")
 	public @ResponseBody Object assignProvider(ParkingSynDto parkingSynDto) throws Exception {
-
 		ResponseApi endpoint = new ResponseApi();
-
-		ParkingDto parkingDto = new ParkingDto();
-
 		ParkingSynDto parking = parkingService.updateAssignProvider(parkingSynDto);
-
 		endpoint.setData(parking);
-
 		return endpoint;
 	}
 

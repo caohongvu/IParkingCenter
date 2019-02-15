@@ -9,14 +9,17 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.cis.dto.BillDto;
 import net.cis.dto.PrivateServicesDto;
 import net.cis.dto.PrivateServicesParkingCusDto;
 import net.cis.dto.PrivateServicesParkingCusViewDto;
 import net.cis.dto.PrivateServicesParkingDto;
+import net.cis.jpa.entity.BillEntity;
 import net.cis.jpa.entity.PrivateServicesEntity;
 import net.cis.jpa.entity.PrivateServicesParkingCusEntity;
 import net.cis.jpa.entity.PrivateServicesParkingCusViewEntity;
 import net.cis.jpa.entity.PrivateServicesParkingEntity;
+import net.cis.repository.BillRepository;
 import net.cis.repository.ParkingRepository;
 import net.cis.repository.PrivateServiceRepository;
 import net.cis.repository.PrivateServicesParkingCusRepository;
@@ -34,6 +37,9 @@ public class PrivateServicesServiceImpl implements PrivateService {
 	PrivateServicesParkingCusRepository privateServicesParkingCustomerRepository;
 	@Autowired
 	PrivateServicesParkingCusViewRepository privateServicesParkingCusViewRepository;
+	@Autowired
+	BillRepository billRepository;
+
 	@Autowired
 	ParkingRepository parkingRepository;
 
@@ -118,7 +124,6 @@ public class PrivateServicesServiceImpl implements PrivateService {
 	@Override
 	public PrivateServicesParkingCusDto findPrivateServicesParkingCusById(Long id) {
 		PrivateServicesParkingCusEntity entity = privateServicesParkingCustomerRepository.findOne(id);
-
 		if (entity == null)
 			return null;
 		PrivateServicesParkingCusDto dto = new PrivateServicesParkingCusDto();
@@ -149,7 +154,7 @@ public class PrivateServicesServiceImpl implements PrivateService {
 		psEntity.setId(privateServiceId);
 
 		PrivateServicesParkingEntity entity = privateServicesParkingRepository
-				.findByParkingIdAndPrivateServicesAndStatus(parkingId, psEntity, status);
+				.findByParkingIdAndPrivateServiceAndStatus(parkingId, psEntity, status);
 		if (entity == null)
 			return null;
 
@@ -168,7 +173,7 @@ public class PrivateServicesServiceImpl implements PrivateService {
 		psEntity.setId(privateServiceId);
 
 		PrivateServicesParkingEntity entity = privateServicesParkingRepository
-				.findByParkingIdAndPrivateServices(parkingId, psEntity);
+				.findByParkingIdAndPrivateService(parkingId, psEntity);
 		if (entity == null)
 			return null;
 
@@ -198,6 +203,26 @@ public class PrivateServicesServiceImpl implements PrivateService {
 		entity = privateServicesParkingRepository.save(entity);
 		mapper.map(entity, dto);
 		return dto;
+	}
+
+	/**
+	 * Thong tin thanh toan cua customer
+	 */
+	public List<BillDto> getBillCusstomers(Long customerId, Integer status) {
+		List<BillEntity> lstBillEntity = billRepository.findBillByCustomerAndStatus(customerId, status);
+		return this.mapBillCusstomers(lstBillEntity);
+	}
+
+	private List<BillDto> mapBillCusstomers(List<BillEntity> source) {
+		List<BillDto> rtn = new ArrayList<>();
+		source.stream().map((entity) -> {
+			BillDto dto = new BillDto();
+			mapper.map(entity, dto);
+			return dto;
+		}).forEachOrdered((dto) -> {
+			rtn.add(dto);
+		});
+		return rtn;
 	}
 
 }

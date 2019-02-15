@@ -4,6 +4,7 @@ package net.cis.controller;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -378,10 +379,9 @@ public class TicketEndpoint extends BaseEndpoint {
 					objCustomerDto.setOtp(codeOtp);
 					customerService.saveCustomerInIparkingCenter(objCustomerDto);
 					responseDto.setCode(HttpStatus.OK.toString());
-					Object dataObject = new Object() {
-						public String otp = codeOtp;
-					};
-					responseDto.setData(dataObject);
+					Map<String, Object> map = new HashMap<>();
+					map.put("otp", codeOtp);
+					responseDto.setData(map);
 					return responseDto;
 				}
 			}

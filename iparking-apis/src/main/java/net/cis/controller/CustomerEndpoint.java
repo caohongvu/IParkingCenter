@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -111,15 +112,14 @@ public class CustomerEndpoint {
 				CustomerInfoDto objCustomerInfoDto = customerService
 						.findCustomerInfoByCusId(objCustomerCarDto.getCustomer());
 				CustomerDto objCustomerDto = customerService.findCustomerByOldId(objCustomerCarDto.getCustomer());
-				Object dataObject = new Object() {
-					public long id = objCustomerCarDto.getCustomer();
-					public String phone = objCustomerDto.getPhone();
-					public String phone2 = objCustomerDto.getPhone2();
-					public int status = objCustomerDto.getStatus();
-					public String numberPlate = objCustomerCarDto.getNumberPlate();
-					public String email = objCustomerInfoDto == null ? null : objCustomerInfoDto.getEmail();
-				};
-				lstResult.add(dataObject);
+				Map<String, Object> map = new HashMap<>();
+				map.put("id", objCustomerCarDto.getCustomer());
+				map.put("phone", objCustomerDto.getPhone());
+				map.put("phone2", objCustomerDto.getPhone2());
+				map.put("status", objCustomerDto.getStatus());
+				map.put("numberPlate", objCustomerCarDto.getNumberPlate());
+				map.put("email", objCustomerInfoDto == null ? null : objCustomerInfoDto.getEmail());
+				lstResult.add(map);
 			}
 			responseDto.setData(lstResult);
 			responseDto.setError(errorDto);
@@ -885,15 +885,14 @@ public class CustomerEndpoint {
 			}
 			CustomerDto objCustomerDto = customerService.findCustomerByOldId(Long.parseLong(cusId));
 			CustomerInfoDto objCustomerInfoDto = customerService.findCustomerInfoByCusId(objCustomerDto.getOldId());
-			Object dataObject = new Object() {
-				public long id = objCustomerDto.getOldId();
-				public String phone = objCustomerDto.getPhone();
-				public String phone2 = objCustomerDto.getPhone2();
-				public int status = objCustomerDto.getStatus();
-				public String email = objCustomerInfoDto == null ? null : objCustomerInfoDto.getEmail();
-			};
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", objCustomerDto.getOldId());
+			map.put("phone", objCustomerDto.getPhone());
+			map.put("phone2", objCustomerDto.getPhone2());
+			map.put("status", objCustomerDto.getStatus());
+			map.put("email", objCustomerInfoDto == null ? null : objCustomerInfoDto.getEmail());
 			responseApi.setError(errorDto);
-			responseApi.setData(dataObject);
+			responseApi.setData(map);
 			return responseApi;
 		} catch (Exception ex) {
 			ex.printStackTrace();
