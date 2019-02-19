@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.cis.common.util.DateTimeUtil;
 import net.cis.common.util.StatusUtil;
 import net.cis.common.util.constant.TicketConstants;
 import net.cis.constants.ResponseErrorCodeConstants;
@@ -106,6 +107,11 @@ public class ParkingPlaceEndpoint {
 		if (companyEntity != null && (companyEntity.getDailyInvoice() == 1 || companyEntity.getMonthlyInvoice() == 1)) {
 			isProvideEInvoice = true;
 		}
+		// thuc hien tinh toan thoi gian cap nhat so o trong moi nhat
+		if (ticketsInsession != null && ticketsInsession.size() > 0
+				&& parkingDto.getUpdatedAt().compareTo(ticketsInsession.get(0).getCreatedAt()) < 0) {
+			parkingDto.setUpdatedAt(ticketsInsession.get(0).getCreatedAt());
+		}
 		parkingDto.setIsProvideEInvoice(isProvideEInvoice);
 		return parkingDto;
 	}
@@ -134,6 +140,7 @@ public class ParkingPlaceEndpoint {
 			newAdjust = currentTicketInssessionFromDatabase;
 		}
 		parkingDto.setAdjust(newAdjust);
+		parkingDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
 		parkingDto = parkingService.save(parkingDto);
 
 		return parkingDto;

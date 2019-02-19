@@ -278,4 +278,41 @@ public class NotificationEndpoint {
 			return responseApi;
 		}
 	}
+
+	/**
+	 * liemnh lay lich su gui thong bao
+	 * 
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/getNotificationDetail", method = RequestMethod.GET)
+	@ApiOperation("Chi tiet notification")
+	public @ResponseBody ResponseApi getNotificationCustomerHistory(HttpServletRequest request,
+			@RequestParam(name = "id") Long id) {
+		ResponseApi responseApi = new ResponseApi();
+		ErrorDto errorDto = new ErrorDto();
+		errorDto.setCode(ResponseErrorCodeConstants.StatusOK);
+		try {
+			String cusId = TokenAuthenticationService.getAuthenticationInfo(request);
+			if (StringUtils.isEmpty(cusId)) {
+				errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+				errorDto.setMessage("Authentication faile!");
+				responseApi.setError(errorDto);
+				return responseApi;
+			}
+			// lay thong tin notification cua customer
+			NotificationDto dto = notificationHistoryService.findNotification(Long.parseLong(cusId), id);
+			responseApi.setError(errorDto);
+			responseApi.setData(dto);
+			return responseApi;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+			errorDto.setCode(ResponseErrorCodeConstants.StatusBadRequest);
+			errorDto.setMessage(ex.getMessage());
+			responseApi.setError(errorDto);
+			return responseApi;
+		}
+	}
 }

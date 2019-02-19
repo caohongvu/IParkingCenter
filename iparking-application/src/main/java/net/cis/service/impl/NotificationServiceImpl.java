@@ -10,12 +10,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+
 import net.cis.common.util.DateTimeUtil;
 import net.cis.constants.CustomerConstans;
 import net.cis.constants.NotificationType;
 import net.cis.constants.NotificationTypeEnum;
 import net.cis.dto.CustomerNotificationDto;
 import net.cis.dto.NotificationCustomerDto;
+import net.cis.dto.NotificationData;
 import net.cis.dto.NotificationDto;
 import net.cis.dto.NotificationParkingPlaceDto;
 import net.cis.dto.NotificationTypeDto;
@@ -152,6 +155,13 @@ public class NotificationServiceImpl implements NotificationService {
 		objNotificationHistoryDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 		objNotificationHistoryDto = saveNotification(objNotificationHistoryDto);
 
+		NotificationData notificationData = new NotificationData();
+		notificationData.setType(NotificationTypeEnum.OTHER);
+		notificationData.setId(objNotificationHistoryDto.getId());
+		Gson gson = new Gson();
+		objNotificationHistoryDto.setData(gson.toJson(notificationData));
+		objNotificationHistoryDto = saveNotification(objNotificationHistoryDto);
+
 		for (ParkingContractInfoDto objParkingContractInfoDto : lstParkingContractInfoDto) {
 			// thuc hien luu danh sach customer nhan tin
 			NotificationCustomerDto objNotificationCustomerDto = new NotificationCustomerDto();
@@ -254,7 +264,6 @@ public class NotificationServiceImpl implements NotificationService {
 			dto.setTypes(lstTypes);
 			dto.setParkingId(
 					notificationParkingPlaceEntity != null ? notificationParkingPlaceEntity.getParkingId() : 0L);
-
 			return dto;
 		}).forEachOrdered((dto) -> {
 			rtn.add(dto);
@@ -308,6 +317,22 @@ public class NotificationServiceImpl implements NotificationService {
 		objNotificationTypeDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
 		saveNotificationType(objNotificationTypeDto);
 		pushNotificationService.sendNotificationForPlayerIds(playerIds, NotificationTypeEnum.OTHER, title, content);
+	}
+
+	@Override
+	public NotificationDto findNotification(Long cusId, Long notificationId) {
+		NotificationCustomerEntity entity = notificationCustomerRepository.findByCusIdAndNotificationId(cusId,
+				notificationId);
+		if (entity == null)
+			return null;
+		
+		NotificationDto dto = new NotificationDto();
+		NotificationEntity entityNotification = notificationRepository.findOne(notificationId);
+		if (entityNotification == null)
+			return null;
+		mapper.map(entityNotification, dto);
+		dto.setIsRead(entity.getIsRead());
+		return dto;
 	}
 
 }

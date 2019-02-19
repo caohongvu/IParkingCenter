@@ -94,8 +94,12 @@ public class VerifyUserServiceImpl implements VerifyUserService {
 			objNotificationHistoryDto.setTitle(title);
 			objNotificationHistoryDto.setContent(content);
 			objNotificationHistoryDto.setCreatedAt(DateTimeUtil.getCurrentDateTime());
+			
+			objNotificationHistoryDto = notificationService.saveNotification(objNotificationHistoryDto);
+			
 			NotificationData notificationData = new NotificationData();
 			notificationData.setType(NotificationTypeEnum.VERIFY_EMAIL);
+			notificationData.setId(objNotificationHistoryDto.getId());
 			Gson gson = new Gson();
 			objNotificationHistoryDto.setData(gson.toJson(notificationData));
 			objNotificationHistoryDto = notificationService.saveNotification(objNotificationHistoryDto);

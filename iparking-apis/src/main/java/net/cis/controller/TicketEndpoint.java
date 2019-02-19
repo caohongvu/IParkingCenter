@@ -45,6 +45,7 @@ import net.cis.security.filter.TokenAuthenticationService;
 import net.cis.service.CustomerService;
 import net.cis.service.EmailService;
 import net.cis.service.MonthlyTicketService;
+import net.cis.service.ParkingService;
 import net.cis.service.SmsService;
 import net.cis.service.TicketService;
 import net.cis.service.cache.MonthlyTicketCache;
@@ -77,6 +78,9 @@ public class TicketEndpoint extends BaseEndpoint {
 
 	@Autowired
 	SmsService smsService;
+	
+	@Autowired
+	ParkingService parkingService;
 
 	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	SimpleDateFormat shortFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -218,8 +222,14 @@ public class TicketEndpoint extends BaseEndpoint {
 		ticket.setInSession(false);
 		ticket.setActualEndTime(Utils.getDatetimeFormatVN(Calendar.getInstance().getTime(), "yyyy-MM-dd HH:mm:ss"));
 		ticket = ticketService.save(ticket);
+		
+		// thuc hien cap nhat updated_at của diem do (muc dich cap nhat so o trong)
+		ParkingDto parkingDto = parkingService.findByOldId(ticket.getParkingPlace());
+		if(parkingDto !=null){
+			parkingDto.setUpdatedAt(DateTimeUtil.getCurrentDateTime());
+			parkingService.save(parkingDto);
+		}
 		monthlyTicketCache.remove(ticket.getMonthlyTicketId());
-
 		return ticket;
 	}
 
